@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { apiClient } from "../../api/client"
+import { createJobStatusWatcher } from "../../api/jobStatusWatcher"
+import type { FetchJobResult, WatcherDeps } from "../../api/jobStatusWatcher"
 import type { Job, JobStatus, JobWatch } from "./createVideoTypes"
-import { createJobStatusWatcher } from "./jobStatusWatcher"
-import type { FetchJobResult, WatcherDeps } from "./jobStatusWatcher"
 
 const initialWatch: JobWatch = {
   job: null,
@@ -14,7 +14,7 @@ const initialWatch: JobWatch = {
 
 type WatchState = { jobId: string | null; watch: JobWatch }
 
-async function fetchJob(jobId: string): Promise<FetchJobResult> {
+async function fetchJob(jobId: string): Promise<FetchJobResult<Job>> {
   try {
     const { data, response } = await apiClient.GET("/api/v1/jobs/{job_id}", {
       params: { path: { job_id: jobId } },
@@ -27,7 +27,7 @@ async function fetchJob(jobId: string): Promise<FetchJobResult> {
   }
 }
 
-const watcherDeps: WatcherDeps = {
+const watcherDeps: WatcherDeps<Job> = {
   openEventSource: (url: string) => new EventSource(url),
   fetchJob,
 }
@@ -54,7 +54,7 @@ export function useJobEvents(jobId: string | null): JobWatch {
       setState((current) =>
         current.jobId === jobId ? { ...current, watch: change(current.watch) } : current,
       )
-    const watcher = createJobStatusWatcher(jobId, watcherDeps, {
+    const watcher = createJobStatusWatcher<Job>(jobId, watcherDeps, {
       onJob: (job) => apply((current) => applyJob(current, job)),
       onStatus: (status) => apply((current) => applyStatus(current, status)),
       onConnection: (connection) => apply((current) => ({ ...current, connection })),

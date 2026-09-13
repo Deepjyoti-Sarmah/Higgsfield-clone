@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { isTerminalJobStatus } from "./canvasPhase"
+import { isTerminalJobStatus } from "../../api/jobStatus"
 import type {
   ImageUploadControls,
   InsufficientCredits,

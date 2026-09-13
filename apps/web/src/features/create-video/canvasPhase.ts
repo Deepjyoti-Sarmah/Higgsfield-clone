@@ -1,8 +1,5 @@
-import type { CanvasPhase, JobStatus, SubmitState, UploadState } from "./createVideoTypes"
-
-export function isTerminalJobStatus(status: JobStatus): boolean {
-  return status === "succeeded" || status === "failed"
-}
+import type { JobStatus } from "../../api/jobStatus"
+import type { CanvasPhase, SubmitState, UploadState } from "./createVideoTypes"
 
 const phaseByJobStatus: Record<JobStatus, CanvasPhase> = {
   queued: "queued",

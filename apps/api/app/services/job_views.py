@@ -37,7 +37,7 @@ async def read_owned_job(
     job_id: uuid.UUID,
 ) -> JobView | None:
     job = await find_user_job(session, user_id, job_id)
-    if job is None:
+    if job is None or job.preset_slug is None or job.input_asset_id is None:
         return None
     preset = await find_active_preset(session, job.preset_slug)
     output_ids = [job.output_video_asset_id, job.output_poster_asset_id]
@@ -65,11 +65,18 @@ async def list_owned_jobs_view(
         return []
     preset_names = {preset.slug: preset.name for preset in await list_active_presets(session)}
     assets = await find_assets_by_ids(session, _referenced_asset_ids(jobs))
-    return [_library_item_view(storage, settings, job, preset_names, assets) for job in jobs]
+    items: list[LibraryItemView] = []
+    for job in jobs:
+        if job.preset_slug is None:
+            continue
+        items.append(
+            _library_item_view(storage, settings, job, job.preset_slug, preset_names, assets)
+        )
+    return items
 
 
 def _referenced_asset_ids(jobs: list[Job]) -> list[uuid.UUID]:
-    ids = [job.input_asset_id for job in jobs]
+    ids = [job.input_asset_id for job in jobs if job.input_asset_id is not None]
     ids.extend(
         asset_id
         for job in jobs
@@ -83,6 +90,7 @@ def _library_item_view(
     storage: ObjectStorage,
     settings: Settings,
     job: Job,
+    preset_slug: str,
     preset_names: dict[str, str],
     assets: dict[uuid.UUID, Asset],
 ) -> LibraryItemView:
@@ -90,7 +98,7 @@ def _library_item_view(
     input_url = _asset_url(storage, settings, assets, job.input_asset_id)
     return LibraryItemView(
         job=job,
-        preset_name=preset_names.get(job.preset_slug, job.preset_slug),
+        preset_name=preset_names.get(preset_slug, preset_slug),
         thumbnail_url=poster_url or input_url,
         video_url=_asset_url(storage, settings, assets, job.output_video_asset_id),
     )

@@ -27,7 +27,8 @@ async def read_public_job(
     job_id: uuid.UUID,
 ) -> PublicJobView | None:
     job = await find_job(session, job_id)
-    if job is None:
+    # The public share page is video-only (spec 007); an image job id answers 404.
+    if job is None or job.preset_slug is None:
         return None
     preset = await find_active_preset(session, job.preset_slug)
     asset_ids = [

@@ -33,6 +33,7 @@ async def insert_job(
 ) -> Job:
     job = Job(
         user_id=user_id,
+        kind="video",
         preset_slug=preset_slug,
         input_asset_id=input_asset_id,
         prompt=prompt,
@@ -46,7 +47,9 @@ async def insert_job(
 
 
 async def find_user_job(session: AsyncSession, user_id: uuid.UUID, job_id: uuid.UUID) -> Job | None:
-    result = await session.execute(select(Job).where(Job.id == job_id, Job.user_id == user_id))
+    result = await session.execute(
+        select(Job).where(Job.id == job_id, Job.user_id == user_id, Job.kind == "video")
+    )
     return result.scalar_one_or_none()
 
 
@@ -57,7 +60,7 @@ async def find_job(session: AsyncSession, job_id: uuid.UUID) -> Job | None:
 async def list_owned_jobs(session: AsyncSession, user_id: uuid.UUID, limit: int) -> list[Job]:
     result = await session.execute(
         select(Job)
-        .where(Job.user_id == user_id)
+        .where(Job.user_id == user_id, Job.kind == "video")
         .order_by(Job.created_at.desc(), Job.id.desc())
         .limit(limit)
     )

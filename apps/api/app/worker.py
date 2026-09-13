@@ -5,9 +5,16 @@ import socket
 import time
 import uuid
 
-from app.adapters.backend_selection import select_model_adapter
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+from app.adapters.backend_selection import select_image_adapter, select_model_adapter
+from app.adapters.image_model_adapter import ImageModelAdapter
+from app.adapters.model_adapter import ModelAdapter
+from app.adapters.object_storage import ObjectStorage
 from app.db import create_database_engine, create_session_maker
+from app.repositories.job_steps import ClaimedStep
 from app.services.generation_runs import RunSettings, run_claimed_step
+from app.services.image_generation_runs import run_image_step
 from app.services.lease_reaper import REAPER_BATCH_LIMIT, reap_expired_steps
 from app.services.step_claiming import claim_step
 from app.settings import get_settings
@@ -15,9 +22,41 @@ from app.storage_dependencies import get_object_storage
 
 logger = logging.getLogger("worker")
 
+IMAGE_STEP_KIND = "generate_image"
+
 
 def build_worker_id() -> str:
     return f"{socket.gethostname()}:{os.getpid()}:{uuid.uuid4().hex[:8]}"
+
+
+async def run_claimed_step_for_kind(
+    session_maker: async_sessionmaker[AsyncSession],
+    *,
+    storage: ObjectStorage,
+    adapter: ModelAdapter,
+    image_adapter: ImageModelAdapter,
+    claimed: ClaimedStep,
+    worker_id: str,
+    settings: RunSettings,
+) -> None:
+    if claimed.kind == IMAGE_STEP_KIND:
+        await run_image_step(
+            session_maker,
+            storage=storage,
+            adapter=image_adapter,
+            claimed=claimed,
+            worker_id=worker_id,
+            settings=settings,
+        )
+        return
+    await run_claimed_step(
+        session_maker,
+        storage=storage,
+        adapter=adapter,
+        claimed=claimed,
+        worker_id=worker_id,
+        settings=settings,
+    )
 
 
 async def run_worker_loop() -> None:
@@ -26,6 +65,7 @@ async def run_worker_loop() -> None:
     session_maker = create_session_maker(engine)
     storage = get_object_storage()
     adapter = select_model_adapter(settings)
+    image_adapter = select_image_adapter(settings)
     run_settings = RunSettings(
         lease_seconds=settings.worker_lease_seconds,
         generation_timeout_seconds=settings.generation_timeout_seconds,
@@ -33,9 +73,10 @@ async def run_worker_loop() -> None:
     )
     worker_id = build_worker_id()
     logger.info(
-        "worker %s backend=%s lease=%ss poll=%ss",
+        "worker %s backend=%s image_backend=%s lease=%ss poll=%ss",
         worker_id,
         adapter.name,
+        image_adapter.name,
         settings.worker_lease_seconds,
         settings.worker_poll_seconds,
     )
@@ -56,10 +97,11 @@ async def run_worker_loop() -> None:
                 logger.info(
                     "claimed step %s job=%s attempt=%s", claimed.id, claimed.job_id, claimed.attempt
                 )
-                await run_claimed_step(
+                await run_claimed_step_for_kind(
                     session_maker,
                     storage=storage,
                     adapter=adapter,
+                    image_adapter=image_adapter,
                     claimed=claimed,
                     worker_id=worker_id,
                     settings=run_settings,

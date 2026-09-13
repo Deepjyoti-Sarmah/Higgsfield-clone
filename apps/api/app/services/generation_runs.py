@@ -168,7 +168,8 @@ async def load_step_inputs(
 ) -> StepInputs | None:
     async with session_maker() as session:
         job = await find_job(session, claimed.job_id)
-        if job is None:
+        # The video run needs both video-only columns; an image step never reaches here.
+        if job is None or job.input_asset_id is None or job.preset_slug is None:
             return None
         asset = await find_user_asset(session, job.user_id, job.input_asset_id)
         if asset is None:

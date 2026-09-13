@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest"
-import type { Job, JobStatus } from "./createVideoTypes"
+import type { JobStatus } from "./jobStatus"
 import {
   POLL_INTERVAL_MS,
   RECONNECT_DELAYS_MS,
@@ -8,6 +8,9 @@ import {
 import type { EventSourceLike, FetchJobResult, WatcherDeps } from "./jobStatusWatcher"
 
 type Listener = (event: MessageEvent | Event) => void
+
+// The watcher is generic: it only ever reads `status`, so a minimal job keeps this test honest.
+type TestJob = { id: string; status: JobStatus }
 
 class FakeEventSource implements EventSourceLike {
   readyState = 0
@@ -28,23 +31,8 @@ class FakeEventSource implements EventSourceLike {
   }
 }
 
-function makeJob(status: JobStatus): Job {
-  return {
-    id: "job-1",
-    status,
-    preset_slug: "dolly-in",
-    preset_name: "Dolly In",
-    prompt: null,
-    credit_cost: 20,
-    input_asset_id: "asset-1",
-    input_image_url: null,
-    video_url: null,
-    poster_url: null,
-    error_message: null,
-    created_at: "2026-01-01T00:00:00Z",
-    started_at: null,
-    finished_at: null,
-  }
+function makeJob(status: JobStatus): TestJob {
+  return { id: "job-1", status }
 }
 
 function statusFrame(status: JobStatus, jobId = "job-1"): MessageEvent {
@@ -53,8 +41,10 @@ function statusFrame(status: JobStatus, jobId = "job-1"): MessageEvent {
 
 function makeHarness() {
   const sources: FakeEventSource[] = []
-  const fetchJob = vi.fn(async (): Promise<FetchJobResult> => ({ kind: "ok", job: makeJob("queued") }))
-  const deps: WatcherDeps = {
+  const fetchJob = vi.fn(
+    async (): Promise<FetchJobResult<TestJob>> => ({ kind: "ok", job: makeJob("queued") }),
+  )
+  const deps: WatcherDeps<TestJob> = {
     openEventSource: () => {
       const source = new FakeEventSource()
       sources.push(source)
@@ -130,10 +120,10 @@ test("a closed EventSource reconnects on the backoff ladder", async () => {
 })
 test("a late poll cannot override a newer live status frame", async () => {
   const harness = makeHarness()
-  let resolvePoll: (result: FetchJobResult) => void = () => undefined
+  let resolvePoll: (result: FetchJobResult<TestJob>) => void = () => undefined
   harness.fetchJob.mockImplementationOnce(async () => ({ kind: "ok", job: makeJob("queued") }))
   harness.fetchJob.mockImplementationOnce(
-    () => new Promise<FetchJobResult>((resolve) => {
+    () => new Promise<FetchJobResult<TestJob>>((resolve) => {
       resolvePoll = resolve
     }),
   )

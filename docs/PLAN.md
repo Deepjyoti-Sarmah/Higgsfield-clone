@@ -76,12 +76,12 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-008-3 | Web UI: `creditsCopy`, `CreditsBalanceCard`, `CreditsTopUpCard`, `CreditsPage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-3/report.md` |
 | T-008-4 | Assembly + manual check: route `/credits` to `CreditsPage` and prove the signed-out top-up | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-4/report.md` |
 | T-009-0 | Design spec 009 Create image + publish the contract (`image_rules`, the image schemas, the 3 × 501 stubs, openapi; D-014: placeholder backend, real model P2) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/009-image-create/`, `docs/tasks/T-009-0/report.md` |
-| T-009-1 | API data: migration `0004`, `job.kind`/params/`output_image`/`job_image`, image repositories, video-only Library/read filters | TODO | TBD | `docs/tasks/T-009-1/brief.md` |
-| T-009-2 | Web shared data: watcher → `api/` (generic), shared balance, `api/imageOptions.ts`, `api/imageJobs.ts`, regenerate the client | TODO | TBD | `docs/tasks/T-009-2/brief.md` |
-| T-009-3 | API image backend: `ImageModelAdapter` port, PNG placeholder, placeholder/unconfigured adapters, `select_image_adapter` | TODO | TBD | `docs/tasks/T-009-3/brief.md` |
-| T-009-4 | API image surface: create service (one transaction + HOLD), owner read, public options, router bodies + tests | TODO | TBD | `docs/tasks/T-009-4/brief.md` |
-| T-009-5 | API worker image step: dispatch in `worker.py`, image run, image success completion (SETTLE + `output_image` + `job_image`) | TODO | TBD | `docs/tasks/T-009-5/brief.md` |
-| T-009-6 | Web UI: `imageCreateCopy`, settings/cost helpers, page, composer, settings row, stage, result grid, failure view | TODO | TBD | `docs/tasks/T-009-6/brief.md` |
+| T-009-1 | API data: migration `0004`, `job.kind`/params/`output_image`/`job_image`, image repositories, video-only Library/read filters | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-1/report.md` |
+| T-009-2 | Web shared data: watcher → `api/` (generic), shared balance, `api/imageOptions.ts`, `api/imageJobs.ts`, regenerate the client | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-2/report.md` |
+| T-009-3 | API image backend: `ImageModelAdapter` port, PNG placeholder, placeholder/unconfigured adapters, `select_image_adapter` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-3/report.md` |
+| T-009-4 | API image surface: create service (one transaction + HOLD), owner read, public options, router bodies + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-4/report.md` |
+| T-009-5 | API worker image step: dispatch in `worker.py`, image run, image success completion (SETTLE + `output_image` + `job_image`) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-5/report.md` |
+| T-009-6 | Web UI: `imageCreateCopy`, settings/cost helpers, page, composer, settings row, stage, result grid, failure view | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-6/report.md` |
 | T-009-7 | Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end | TODO | TBD | `docs/tasks/T-009-7/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 

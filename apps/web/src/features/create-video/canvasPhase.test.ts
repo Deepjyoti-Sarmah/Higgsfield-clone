@@ -1,5 +1,6 @@
 import { expect, test } from "vitest"
-import { CANVAS_TRANSITIONS, deriveCanvasPhase, isTerminalJobStatus } from "./canvasPhase"
+import { isTerminalJobStatus } from "../../api/jobStatus"
+import { CANVAS_TRANSITIONS, deriveCanvasPhase } from "./canvasPhase"
 import type { CanvasPhase, JobStatus } from "./createVideoTypes"
 
 type PhaseInput = Parameters<typeof deriveCanvasPhase>[0]

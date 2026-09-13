@@ -1,19 +1,19 @@
-import { isTerminalJobStatus } from "./canvasPhase"
-import type { Job, JobStatus, JobStatusEvent } from "./createVideoTypes"
+import { isTerminalJobStatus } from "./jobStatus"
+import type { JobStatus } from "./jobStatus"
 export type EventSourceLike = {
   readyState: number
   close(): void
   addEventListener(type: "open" | "error" | "status", listener: (event: MessageEvent | Event) => void): void
 }
-export type FetchJobResult = { kind: "ok"; job: Job } | { kind: "missing" } | { kind: "network" }
+export type FetchJobResult<J> = { kind: "ok"; job: J } | { kind: "missing" } | { kind: "network" }
 export type WatcherTimers = Pick<typeof globalThis, "setTimeout" | "clearTimeout" | "setInterval" | "clearInterval">
-export type WatcherDeps = {
+export type WatcherDeps<J> = {
   openEventSource(url: string): EventSourceLike
-  fetchJob(jobId: string): Promise<FetchJobResult>
+  fetchJob(jobId: string): Promise<FetchJobResult<J>>
   timers?: WatcherTimers
 }
-export type WatcherCallbacks = {
-  onJob(job: Job): void
+export type WatcherCallbacks<J> = {
+  onJob(job: J): void
   onStatus(status: JobStatus): void
   onConnection(connection: "live" | "polling"): void
   onMissing(): void
@@ -28,14 +28,14 @@ type TimerId = ReturnType<typeof globalThis.setTimeout>
 function parseStatus(data: unknown, jobId: string): JobStatus | null {
   if (typeof data !== "string") return null
   try {
-    const frame = JSON.parse(data) as JobStatusEvent
+    const frame = JSON.parse(data) as { job_id: string; status: JobStatus }
     return frame.job_id === jobId ? frame.status : null
   } catch {
     return null
   }
 }
 
-class JobStatusWatcherRuntime {
+class JobStatusWatcherRuntime<J extends { status: JobStatus }> {
   private source: EventSourceLike | null = null
   private pollTimer: TimerId | null = null
   private reconnectTimer: TimerId | null = null
@@ -46,10 +46,10 @@ class JobStatusWatcherRuntime {
   private isFinalizing = false
   private isStopped = false
   private readonly jobId: string
-  private readonly deps: WatcherDeps
-  private readonly callbacks: WatcherCallbacks
+  private readonly deps: WatcherDeps<J>
+  private readonly callbacks: WatcherCallbacks<J>
   private readonly timers: WatcherTimers
-  constructor(jobId: string, deps: WatcherDeps, callbacks: WatcherCallbacks) {
+  constructor(jobId: string, deps: WatcherDeps<J>, callbacks: WatcherCallbacks<J>) {
     this.jobId = jobId
     this.deps = deps
     this.callbacks = callbacks
@@ -186,12 +186,12 @@ class JobStatusWatcherRuntime {
   }
 }
 
-export function createJobStatusWatcher(
+export function createJobStatusWatcher<J extends { status: JobStatus }>(
   jobId: string,
-  deps: WatcherDeps,
-  callbacks: WatcherCallbacks,
+  deps: WatcherDeps<J>,
+  callbacks: WatcherCallbacks<J>,
 ): JobStatusWatcher {
-  const runtime = new JobStatusWatcherRuntime(jobId, deps, callbacks)
+  const runtime = new JobStatusWatcherRuntime<J>(jobId, deps, callbacks)
   runtime.start()
   return { stop: () => runtime.stop() }
 }

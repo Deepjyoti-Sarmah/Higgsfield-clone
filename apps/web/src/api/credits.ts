@@ -48,7 +48,7 @@ type BalanceState = {
   status: BalanceStatus
   balance: number | null
   reload: () => void
-  applyTopUp: (result: TopUpResult) => void
+  applyBalance: (next: number) => void
 }
 
 function useBalanceState(runWithGuestSession: RunWithGuestSession): BalanceState {
@@ -74,9 +74,9 @@ function useBalanceState(runWithGuestSession: RunWithGuestSession): BalanceState
     })
   }, [runWithGuestSession])
 
-  const applyTopUp = useCallback((result: TopUpResult) => {
+  const applyBalance = useCallback((next: number) => {
     hasBalanceRef.current = true
-    setBalance(result.balance)
+    setBalance(next)
     setStatus("known")
   }, [])
 
@@ -88,7 +88,7 @@ function useBalanceState(runWithGuestSession: RunWithGuestSession): BalanceState
     }
   }, [reload])
 
-  return { status, balance, reload, applyTopUp }
+  return { status, balance, reload, applyBalance }
 }
 
 type TopUpState = {
@@ -136,10 +136,34 @@ function useTopUpState(
   return { status, grantedAmount, topUp }
 }
 
+export type CreditBalanceState = {
+  status: BalanceStatus
+  balance: number | null
+  refresh: () => void
+  applyKnownBalance: (balance: number) => void
+}
+
+export function useCreditBalance(session: GuestSessionSource): CreditBalanceState {
+  const runWithGuestSession = useGuestSessionRunner(session)
+  const balanceState = useBalanceState(runWithGuestSession)
+
+  return {
+    status: balanceState.status,
+    balance: balanceState.balance,
+    refresh: balanceState.reload,
+    applyKnownBalance: balanceState.applyBalance,
+  }
+}
+
 export function useCreditsPage(session: GuestSessionSource): CreditsPageState {
   const runWithGuestSession = useGuestSessionRunner(session)
   const balanceState = useBalanceState(runWithGuestSession)
-  const topUpState = useTopUpState(runWithGuestSession, balanceState.applyTopUp)
+  const applyBalance = balanceState.applyBalance
+  const onGranted = useCallback(
+    (result: TopUpResult) => applyBalance(result.balance),
+    [applyBalance],
+  )
+  const topUpState = useTopUpState(runWithGuestSession, onGranted)
 
   return {
     balanceStatus: balanceState.status,

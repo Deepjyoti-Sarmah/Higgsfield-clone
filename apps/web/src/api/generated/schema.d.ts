@@ -192,6 +192,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/image-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Image Options */
+        get: operations["read_image_options_api_v1_image_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/image-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Image Job */
+        post: operations["create_image_job_api_v1_image_jobs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/image-jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Image Job */
+        get: operations["read_image_job_api_v1_image_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/public/jobs/{job_id}": {
         parameters: {
             query?: never;
@@ -264,6 +315,103 @@ export interface components {
              * @enum {string}
              */
             database: "ok" | "down";
+        };
+        /** ImageCreditCosts */
+        ImageCreditCosts: {
+            /** Standard */
+            standard: number;
+            /** High */
+            high: number;
+        };
+        /** ImageJobCreateRequest */
+        ImageJobCreateRequest: {
+            /** Prompt */
+            prompt: string;
+            /**
+             * Aspect Ratio
+             * @enum {string}
+             */
+            aspect_ratio: "1:1" | "4:5" | "3:2" | "16:9" | "9:16";
+            /**
+             * Quality
+             * @enum {string}
+             */
+            quality: "standard" | "high";
+            /** Count */
+            count: number;
+            /** Idempotency Key */
+            idempotency_key: string;
+        };
+        /** ImageJobCreatedResponse */
+        ImageJobCreatedResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "succeeded" | "failed";
+            /** Credit Cost */
+            credit_cost: number;
+            /** Image Count */
+            image_count: number;
+        };
+        /** ImageJobResponse */
+        ImageJobResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "succeeded" | "failed";
+            /** Prompt */
+            prompt: string;
+            /**
+             * Aspect Ratio
+             * @enum {string}
+             */
+            aspect_ratio: "1:1" | "4:5" | "3:2" | "16:9" | "9:16";
+            /**
+             * Quality
+             * @enum {string}
+             */
+            quality: "standard" | "high";
+            /** Count */
+            count: number;
+            /** Credit Cost */
+            credit_cost: number;
+            /** Backend */
+            backend: string | null;
+            /** Image Urls */
+            image_urls: string[];
+            /** Error Message */
+            error_message: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Started At */
+            started_at: string | null;
+            /** Finished At */
+            finished_at: string | null;
+        };
+        /** ImageOptionsResponse */
+        ImageOptionsResponse: {
+            /** Aspect Ratios */
+            aspect_ratios: ("1:1" | "4:5" | "3:2" | "16:9" | "9:16")[];
+            /** Qualities */
+            qualities: ("standard" | "high")[];
+            /** Max Count */
+            max_count: number;
+            credit_costs: components["schemas"]["ImageCreditCosts"];
         };
         /** InsufficientCreditsResponse */
         InsufficientCreditsResponse: {
@@ -1012,6 +1160,130 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_image_options_api_v1_image_options_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImageOptionsResponse"];
+                };
+            };
+        };
+    };
+    create_image_job_api_v1_image_jobs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImageJobCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImageJobCreatedResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Payment Required */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsufficientCreditsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_image_job_api_v1_image_jobs__job_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImageJobResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown job or not the caller's */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
