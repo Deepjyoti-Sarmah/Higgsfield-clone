@@ -42,7 +42,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-003-1 | Contract + migrations: settings, models, migrations 0002/0003, domain rules, Protocols, S3 adapter, test fixtures | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/{models,domain,adapters}/`, `apps/api/migrations/versions/000{2,3}_*.py`, `apps/api/tests/conftest.py`, `docs/tasks/T-003-1/report.md` |
 | T-003-2 | Repositories incl. claim/lease/reaper SQL | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/repositories/`, `apps/api/tests/test_{job_step,ledger}_repository.py`, `docs/tasks/T-003-2/report.md` |
 | T-003-6 | Backends: local-motion ffmpeg, mock, modal/openrouter placeholders, selection, ffmpeg in image | TODO (wave 2, after T-003-1; parallel with T-003-2) | — | `docs/tasks/T-003-6/brief.md` |
-| T-003-3 | Presets, uploads, credits endpoints + guest grant | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-3/brief.md` |
+| T-003-3 | Presets, uploads, credits endpoints + guest grant | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/services/{presets,uploads,credits,guest_accounts}.py`, `apps/api/app/routers/{presets,uploads,credits}.py`, `docs/tasks/T-003-3/report.md` |
 | T-003-4 | Jobs API: create, read, SSE events | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-4/brief.md` |
 | T-003-5 | Worker: claim loop, lease, completion, reaper | TODO (wave 3, after T-003-2 + T-003-6) | — | `docs/tasks/T-003-5/brief.md` |
 | T-003-7 | End-to-end smoke (reviewer, different model) | TODO (wave 4) | — | `docs/tasks/T-003-7/brief.md` |
