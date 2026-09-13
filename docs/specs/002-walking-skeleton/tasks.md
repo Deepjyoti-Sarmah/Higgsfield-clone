@@ -11,7 +11,7 @@ Rules: one task = one agent run; parallel tasks don't share files; every task ha
   - Verify: `cd apps/web && npm run gen:api && npm run lint && npm run typecheck && npm run build && cd ../.. && scripts/check-standards`
   - Role: implementer (any coding model) · Depends on: T-002-1 (openapi.json)
 - [ ] **T-002-3** · Container: Dockerfile (web build → python), `APP_ROLE` entrypoint, `railway.json`
-  - Files: `Dockerfile`, `.dockerignore`, `railway.json`, `apps/api/app/entrypoint.sh`
+  - Files: `Dockerfile`, `.dockerignore`, `railway.json`, `apps/api/entrypoint.sh`
   - Verify: `docker build -t hf-clone . && docker run --rm --network host --env-file .env.local hf-clone` then `curl localhost:8000/api/health` and `curl localhost:8000/` (HTML)
   - Role: orchestrator · Depends on: T-002-1, T-002-2
 - [ ] **T-002-4** · Deploy: Neon DB, Railway `api` + `worker` services, env vars, migrations on release

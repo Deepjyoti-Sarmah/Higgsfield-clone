@@ -20,7 +20,7 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Codex account out of quota until 2026-09-30 | `.agent-logs/*codex_T-000-4.md` (response is the quota error) | no real non-Claude agent answer yet; the wrapper itself works | use `openrouter:<model>` once `OPENROUTER_API_KEY` is set, or another CLI |
 | First Codex run hung for 180s (stdin left open), so only its PROMPT was logged | same log file, entry 1 | cosmetic | fixed: stdin closed, `AGENT_RUN_TIMEOUT` logs timeouts as a response |
 | `gemini`, `aider` not installed; `OPENROUTER_API_KEY` not set | — | only Claude Code and Codex are usable as agents right now | install/set when needed |
-| No deploy credentials on this machine: `railway`, `modal`, `neonctl` CLIs missing; no `DATABASE_URL`, R2 or Modal keys | — | blocks T-002-4 (deploy) and T-002-5 (Modal spike); local work continues | user: create accounts and log in (see the latest chat handoff) |
+| Deploy + Modal are PLACEHOLDERS (user's decision 2026-09-13: the user sets up Railway/Neon/R2/Modal personally) | `docs/runbooks/deploy.md`, `railway.json`, `apps/gpu/ltx_spike.py` | no live URL yet; all features are built and verified locally until then | user follows the runbook, then tells the agent "credentials are set" |
 | `gh` CLI login broken (keyring) | — | can't create the public GitHub repo from here | user: `gh auth login` |
 
 ## NOT STARTED

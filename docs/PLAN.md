@@ -35,8 +35,12 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-002-1 | API skeleton (health, guest session, worker heartbeat, openapi) | DONE | Claude Opus 5 | `docs/specs/002-walking-skeleton/tasks.md` |
 | T-002-2 | Web shell (nav, guest button, generated client) | IN PROGRESS (delegated, brief `docs/tasks/T-002-2/brief.md`) | Claude Sonnet 5 (implementer) | same |
 | T-002-3 | Dockerfile + railway.json | TODO | Claude Opus 5 | same |
-| T-002-4 | Deploy Railway + Neon | BLOCKED (user credentials) | Claude Opus 5 | same |
-| T-002-5 | Modal LTX spike | BLOCKED (Modal token + R2 keys) | Claude Opus 5 | same |
+| T-002-3 | (see above) Dockerfile, entrypoint, railway.json written; `docker build` waits for T-002-2 | IN PROGRESS | Claude Opus 5 | `Dockerfile` |
+| T-002-4 | Deploy Railway + Neon | PLACEHOLDER: the user deploys, following `docs/runbooks/deploy.md` | user | same |
+| T-002-5 | Modal LTX spike | PLACEHOLDER: the user sets Modal + R2 credentials; code in `apps/gpu/ltx_spike.py` | user | same |
+| S-003 | Spec 003 generation core (presets, uploads, jobs + ledger, worker queue, local-motion backend, SSE) | SPEC DRAFT, awaiting approval | Claude Opus 5 | `docs/specs/003-generation-core/` |
+| S-004 | Spec 004 Create video page | SPEC DRAFT, awaiting approval | Claude Opus 5 | `docs/specs/004-create-video/` |
+| S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | TODO (after 004) | — | — |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | WAITING on user screenshots | user | `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (draft until M1; the final version lives in `docs/research/product-map.md`)
