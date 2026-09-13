@@ -63,10 +63,10 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-005-2 | Web data: move the guest runner to `api/guestSession.ts`, add `api/library.ts` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-2/report.md` |
 | T-005-3 | Web copy + `formatCreatedAt` helper (+ test) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-3/report.md` |
 | T-005-4 | Web UI: Library page, list, items, states, result panel, `?job=` selection | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-4/report.md` |
-| T-005-5 | Assembly: route `/library` to `LibraryPage` + manual check | TODO (after T-005-1 + T-005-4) | — | `docs/tasks/T-005-5/brief.md` |
+| T-005-5 | Assembly: route `/library` to `LibraryPage` + manual check | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-5/report.md` |
 | T-007-0 | Design spec 007 Share page + publish `GET /api/v1/public/jobs/{job_id}` (schema + 501 stub + openapi) and the `/v/{job_id}` OG HTML plan | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/007-share/`, `docs/tasks/T-007-0/report.md` |
-| T-007-1 | API: public read `GET /api/v1/public/jobs/{job_id}` (view builder + router + tests) | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-007-1/brief.md` |
-| T-007-3 | Web data + copy: `api/share.ts` (`usePublicJob`), `features/share/shareCopy.ts` | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-007-3/brief.md` |
+| T-007-1 | API: public read `GET /api/v1/public/jobs/{job_id}` (view builder + router + tests) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-1/report.md` |
+| T-007-3 | Web data + copy: `api/share.ts` (`usePublicJob`), `features/share/shareCopy.ts` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-3/report.md` |
 | T-007-2 | API: serve `/v/{job_id}` HTML with OG meta tags (no JS) | TODO (wave 2, after T-007-1) | — | `docs/tasks/T-007-2/brief.md` |
 | T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | TODO (wave 2, after T-007-3) | — | `docs/tasks/T-007-4/brief.md` |
 | T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | TODO (wave 3, after T-007-1/2/4) | — | `docs/tasks/T-007-5/brief.md` |

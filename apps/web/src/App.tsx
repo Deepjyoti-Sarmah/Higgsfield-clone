@@ -3,6 +3,7 @@ import { AppShell } from "./ui/AppShell"
 import { EmptyState } from "./ui/EmptyState"
 import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
 import { ExplorePage } from "./features/explore/ExplorePage"
+import { LibraryPage } from "./features/library/LibraryPage"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
 import { useSession } from "./features/session/useSession"
@@ -36,7 +37,7 @@ export function App() {
           path="create/image"
           element={<Placeholder title="Create image" />}
         />
-        <Route path="library" element={<Placeholder title="Library" />} />
+        <Route path="library" element={<LibraryPage />} />
         <Route path="credits" element={<Placeholder title="Credits" />} />
         <Route
           path="v/:jobId"

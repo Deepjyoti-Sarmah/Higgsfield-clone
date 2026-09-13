@@ -29,7 +29,7 @@ T-005-1 is API-only, T-005-2/T-005-3 are web-only and disjoint from each other, 
   - Files: `apps/web/src/features/library/{LibraryPage,LibraryList,LibraryItem,LibraryStates,LibraryResultView}.tsx`, `apps/web/src/features/library/useLibraryJobParam.ts`, `docs/tasks/T-005-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-005-2, T-005-3
-- [ ] **T-005-5** · Assembly + manual check: route `/library` to `LibraryPage` and verify the signed-out flow
+- [x] **T-005-5** · Assembly + manual check: route `/library` to `LibraryPage` and verify the signed-out flow
   - Files: `apps/web/src/App.tsx`, `docs/tasks/T-005-5/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: reviewer (a different model from the T-005-4 implementer, if one is available) · Depends on: T-005-1, T-005-4

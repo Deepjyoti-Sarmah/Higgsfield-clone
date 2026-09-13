@@ -15,7 +15,7 @@ T-007-2 needs T-007-1's public view builder; T-007-4 needs T-007-3's hook and co
   - Files: `docs/specs/007-share/**`, `docs/tasks/T-007-*/**`, `apps/api/app/schemas/share.py`, `apps/api/app/routers/share.py`, `apps/api/app/main.py`, `packages/contracts/openapi.json`
   - Verify: `python3 -c "import json;print('\n'.join(sorted(json.load(open('packages/contracts/openapi.json'))['paths'])))" && ls docs/tasks | grep T-007 && scripts/check-standards`
   - Suggested role: orchestrator/designer · Depends on: —
-- [ ] **T-007-1** · API: public read `GET /api/v1/public/jobs/{job_id}` — view builder, router body, tests
+- [x] **T-007-1** · API: public read `GET /api/v1/public/jobs/{job_id}` — view builder, router body, tests
   - Files: `apps/api/app/routers/share.py`, `apps/api/app/services/share_views.py`, `apps/api/tests/test_share_api.py`, `docs/tasks/T-007-1/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-007-0
@@ -23,7 +23,7 @@ T-007-2 needs T-007-1's public view builder; T-007-4 needs T-007-3's hook and co
   - Files: `apps/api/app/routers/share_page.py`, `apps/api/app/services/share_html.py`, `apps/api/app/main.py`, `apps/api/tests/test_share_page.py`, `docs/tasks/T-007-2/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer (orchestrator for the route-order/escaping details) · Depends on: T-007-1
-- [ ] **T-007-3** · Web data + copy: `api/share.ts` (`usePublicJob`) and `features/share/shareCopy.ts`
+- [x] **T-007-3** · Web data + copy: `api/share.ts` (`usePublicJob`) and `features/share/shareCopy.ts`
   - Files: `apps/web/src/api/share.ts`, `apps/web/src/features/share/shareCopy.ts`, `docs/tasks/T-007-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (small model is fine) · Depends on: T-007-0
