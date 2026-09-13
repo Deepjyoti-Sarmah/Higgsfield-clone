@@ -4,7 +4,7 @@ from alembic import context
 from sqlalchemy.engine import Connection
 
 from app.db import Base, create_database_engine
-from app.models import user  # noqa: F401  (registers the table on Base.metadata)
+from app.models import asset, job, job_step, ledger_entry, preset, user  # noqa: F401
 from app.settings import get_settings
 
 

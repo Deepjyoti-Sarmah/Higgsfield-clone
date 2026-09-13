@@ -1,10 +1,13 @@
 from functools import lru_cache
+from typing import Literal
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 LOCAL_SESSION_SECRET = "local-dev-secret-not-for-production"
+
+GenerationBackend = Literal["local-motion", "mock", "modal", "openrouter"]
 
 
 class Settings(BaseSettings):
@@ -17,6 +20,25 @@ class Settings(BaseSettings):
     session_secret: str = LOCAL_SESSION_SECRET
     session_ttl_days: int = 30
     static_dir: str = "../web/dist"
+
+    generation_backend: GenerationBackend = "local-motion"
+    s3_endpoint_url: str = "http://localhost:9000"
+    s3_bucket: str = "media"
+    s3_access_key_id: str = "minioadmin"
+    s3_secret_access_key: str = "minioadmin"
+    s3_region: str = "us-east-1"
+    s3_public_base_url: str = ""
+    upload_url_ttl_seconds: int = 900
+    download_url_ttl_seconds: int = 3600
+    worker_lease_seconds: int = 300
+    worker_poll_seconds: float = 1.0
+    worker_reaper_seconds: int = 30
+    generation_timeout_seconds: int = 240
+    mock_generation_fails: bool = False
+    modal_endpoint_url: str = ""
+    modal_webhook_secret: str = ""
+    openrouter_api_key: str = ""
+    paid_budget_cents: int = 500
 
     @property
     def is_local(self) -> bool:
