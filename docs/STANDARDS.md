@@ -66,7 +66,7 @@ api/                  client generated from packages/contracts/openapi.json (no 
 | Python types on services/adapters | `mypy --strict` |
 | API layer rules | `import-linter` contracts |
 | TS size/complexity/naming/feature isolation | `eslint`: `max-lines: 200`, `max-lines-per-function: 40`, `max-depth: 3`, `complexity: 8`, `@typescript-eslint/naming-convention`, `no-restricted-imports` |
-| TS types | `tsc --noEmit` |
+| TS types | `tsc -b` |
 | Web styling is Tailwind v4 utilities only; no CSS modules / CSS-in-JS / `tailwind.config.js` | reviewer: grep `apps/web/src` for `*.module.css`, `styled-components`, `emotion`, `@apply`-heavy component CSS |
 
 ## Spec tie-in
