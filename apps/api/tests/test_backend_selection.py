@@ -59,11 +59,11 @@ async def test_modal_without_endpoint_is_not_configured(tmp_path: Path) -> None:
         await adapter.generate_video(_request(tmp_path))
 
 
-async def test_modal_with_endpoint_reports_not_implemented(tmp_path: Path) -> None:
+async def test_modal_with_endpoint_attempts_network(tmp_path: Path) -> None:
     adapter = select_model_adapter(
-        Settings(generation_backend="modal", modal_endpoint_url="https://modal.example")
+        Settings(generation_backend="modal", modal_endpoint_url="http://127.0.0.1:9/clip")
     )
-    with pytest.raises(GenerationError, match="not implemented yet"):
+    with pytest.raises(GenerationError, match="refunded"):
         await adapter.generate_video(_request(tmp_path))
 
 

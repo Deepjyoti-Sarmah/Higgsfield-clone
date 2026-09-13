@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     worker_lease_seconds: int = 300
     worker_poll_seconds: float = 1.0
     worker_reaper_seconds: int = 30
-    generation_timeout_seconds: int = 240
+    generation_timeout_seconds: int = 600
     mock_generation_fails: bool = False
     modal_endpoint_url: str = ""
     modal_webhook_secret: str = ""
