@@ -681,6 +681,65 @@
         }
       }
     },
+    "/api/v1/credits/topup": {
+      "post": {
+        "tags": [
+          "credits"
+        ],
+        "summary": "Top Up Credits",
+        "operationId": "top_up_credits_api_v1_credits_topup_post",
+        "parameters": [
+          {
+            "name": "session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopUpResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/public/jobs/{job_id}": {
       "get": {
         "tags": [
@@ -1343,6 +1402,24 @@
           "created_at"
         ],
         "title": "PublicJobResponse"
+      },
+      "TopUpResponse": {
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "balance": {
+            "type": "integer",
+            "title": "Balance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount",
+          "balance"
+        ],
+        "title": "TopUpResponse"
       },
       "UploadCreateRequest": {
         "properties": {

@@ -93,3 +93,11 @@ Never edit an old entry. To change a decision, add a new one that supersedes it.
 - **P1:** Image create, face swap (images), pricing with a fake top-up, model galleries.
 - **P2:** model picker, community/profiles, search, upscale/inpaint/edit.
 - **CUT:** Genjutsu, Edit/Motion/Extend video, audio/lipsync, MCP/plugin/Supercomputer, the studios, promo timers and discount toasts, notifications, Enterprise.
+
+## D-013 · 2026-09-13 · The fake top-up is P0 and writes a `TOPUP` ledger row
+**Why:**
+- `docs/PLAN.md` § Scope and D-007 already put "credits with HOLD/SETTLE/RELEASE and a fake top-up" in the **P0 core loop**, while D-012's P1 list said "pricing with a fake top-up". The live board plus D-007 win: spec 008 is **P0**, and the orchestrator instruction for it says P0-simple.
+- The ledger already pre-provisions the kind, so no migration is needed: `TOPUP` is in `ck_ledger_entry_kind` and in `domain/credit_rules.LedgerKind`, and `ck_ledger_entry_amount_sign` requires `amount > 0` with a NULL `job_id`.
+- `GRANT` **cannot** be reused for a top-up: `uq_ledger_entry_guest_grant` is a partial unique index on `(user_id) WHERE kind = 'GRANT'`, and every guest already received that one-time welcome grant at account creation (`services/guest_accounts.py`). A second `GRANT` is a unique violation. A top-up is repeatable, job-less and positive — exactly `TOPUP`.
+
+**Rejected:** a `GRANT` top-up (violates the one-time index); a new ledger kind or a migration (the kind already exists); a top-up cap (P1 — `POST /auth/guest` is already an unbounded faucet, so the cap would not close the hole that D-003's `PAID_BUDGET_CENTS` + `GENERATION_BACKEND=mock` already guard).
