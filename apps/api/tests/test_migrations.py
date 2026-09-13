@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from sqlalchemy import TextClause, bindparam, text
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.db import create_database_engine
 from app.settings import get_settings
@@ -29,11 +30,21 @@ def catalog_names_query(catalog: str, table: str) -> TextClause:
     ).bindparams(bindparam("names", expanding=True))
 
 
+async def truncate_generation_tables(engine: AsyncEngine) -> None:
+    """0003's downgrade drops presets, which fails while a job row still references one."""
+    async with engine.begin() as connection:
+        await connection.execute(
+            text("TRUNCATE job_step, ledger_entry, job, asset RESTART IDENTITY CASCADE")
+        )
+
+
 async def test_upgrade_downgrade_upgrade_seeds_catalog_and_creates_indexes() -> None:
     run_alembic("upgrade", "head")
-    run_alembic("downgrade", "0001")
 
     engine = create_database_engine(get_settings())
+    await truncate_generation_tables(engine)
+    run_alembic("downgrade", "0001")
+
     async with engine.connect() as connection:
         assert await connection.scalar(text("SELECT to_regclass('public.preset')")) is None
 
