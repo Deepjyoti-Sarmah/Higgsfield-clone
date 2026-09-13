@@ -92,6 +92,9 @@ jobs:
       - name: Check standards
         run: scripts/check-standards
 
+      - name: Check links
+        run: scripts/check-links
+
       - name: Build image
         run: docker build -t hf-clone .
 
