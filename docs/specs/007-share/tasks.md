@@ -19,7 +19,7 @@ T-007-2 needs T-007-1's public view builder; T-007-4 needs T-007-3's hook and co
   - Files: `apps/api/app/routers/share.py`, `apps/api/app/services/share_views.py`, `apps/api/tests/test_share_api.py`, `docs/tasks/T-007-1/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-007-0
-- [ ] **T-007-2** · API: serve `/v/{job_id}` HTML with OG meta tags (no JS required)
+- [x] **T-007-2** · API: serve `/v/{job_id}` HTML with OG meta tags (no JS required)
   - Files: `apps/api/app/routers/share_page.py`, `apps/api/app/services/share_html.py`, `apps/api/app/main.py`, `apps/api/tests/test_share_page.py`, `docs/tasks/T-007-2/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer (orchestrator for the route-order/escaping details) · Depends on: T-007-1
@@ -27,7 +27,7 @@ T-007-2 needs T-007-1's public view builder; T-007-4 needs T-007-3's hook and co
   - Files: `apps/web/src/api/share.ts`, `apps/web/src/features/share/shareCopy.ts`, `docs/tasks/T-007-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (small model is fine) · Depends on: T-007-0
-- [ ] **T-007-4** · Web UI: `SharePage`, `ShareResult`, `ShareStates`
+- [x] **T-007-4** · Web UI: `SharePage`, `ShareResult`, `ShareStates`
   - Files: `apps/web/src/features/share/{SharePage,ShareResult,ShareStates}.tsx`, `docs/tasks/T-007-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-007-3

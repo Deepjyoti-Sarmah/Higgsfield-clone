@@ -67,8 +67,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-007-0 | Design spec 007 Share page + publish `GET /api/v1/public/jobs/{job_id}` (schema + 501 stub + openapi) and the `/v/{job_id}` OG HTML plan | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/007-share/`, `docs/tasks/T-007-0/report.md` |
 | T-007-1 | API: public read `GET /api/v1/public/jobs/{job_id}` (view builder + router + tests) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-1/report.md` |
 | T-007-3 | Web data + copy: `api/share.ts` (`usePublicJob`), `features/share/shareCopy.ts` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-3/report.md` |
-| T-007-2 | API: serve `/v/{job_id}` HTML with OG meta tags (no JS) | TODO (wave 2, after T-007-1) | — | `docs/tasks/T-007-2/brief.md` |
-| T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | TODO (wave 2, after T-007-3) | — | `docs/tasks/T-007-4/brief.md` |
+| T-007-2 | API: serve `/v/{job_id}` HTML with OG meta tags (no JS) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-2/report.md` |
+| T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-4/report.md` |
 | T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | TODO (wave 3, after T-007-1/2/4) | — | `docs/tasks/T-007-5/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
