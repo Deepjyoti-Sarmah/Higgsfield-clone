@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { AppShell } from "./ui/AppShell"
 import { EmptyState } from "./ui/EmptyState"
+import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
 import { HomePage } from "./features/home/HomePage"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
@@ -30,16 +31,22 @@ export function App() {
         element={<AppShell rightSlot={rightSlot} outletContext={session} />}
       >
         <Route index element={<HomePage />} />
-        <Route
-          path="create/video"
-          element={<Placeholder title="Create video" />}
-        />
+        <Route path="create/video" element={<CreateVideoPage />} />
         <Route
           path="create/image"
           element={<Placeholder title="Create image" />}
         />
         <Route path="library" element={<Placeholder title="Library" />} />
         <Route path="credits" element={<Placeholder title="Credits" />} />
+        <Route
+          path="v/:jobId"
+          element={
+            <EmptyState
+              title="Share page"
+              description="Public share pages are coming soon."
+            />
+          }
+        />
       </Route>
     </Routes>
   )

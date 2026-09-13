@@ -14,7 +14,7 @@ T-004-3 is gated on T-004-2 because `useActiveJob.ts` consumes the `CreditsContr
   - Files: `docs/specs/004-create-video/**`, `docs/tasks/T-004-*/**`
   - Verify: `python3 -c "import json;print('\n'.join(sorted(json.load(open('packages/contracts/openapi.json'))['paths'])))" && ls docs/tasks | grep T-004 && scripts/check-standards`
   - Suggested role: designer (strongest model) · Depends on: T-003-0
-- [ ] **T-004-1** · Shared types, copy tables, pure helpers, `ui/` primitives and the vitest runner
+- [x] **T-004-1** · Shared types, copy tables, pure helpers, `ui/` primitives and the vitest runner
   - Files:
     - `apps/web/package.json`, `apps/web/package-lock.json` (add `vitest@^5` devDependency + `"test": "vitest run"`)
     - `apps/web/src/styles.css` (motion-hint + indeterminate-progress keyframes and `--animate-*` tokens)
@@ -23,26 +23,26 @@ T-004-3 is gated on T-004-2 because `useActiveJob.ts` consumes the `CreditsContr
     - `docs/tasks/T-004-1/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-004-0
-- [ ] **T-004-2** · Data hooks: guest runner, presets, URL selection, credits, session history, image upload
+- [x] **T-004-2** · Data hooks: guest runner, presets, URL selection, credits, session history, image upload
   - Files:
     - `apps/web/src/features/create-video/{useGuestSessionRunner,usePresets,usePresetSelection,useCredits,sessionHistoryStore,sessionHistoryStore.test,useSessionHistory,putFileWithProgress,useImageUpload}.ts`
     - `docs/tasks/T-004-2/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-004-1
-- [ ] **T-004-3** · Job hooks: idempotent create, SSE watcher + poll fallback, events, elapsed, active job
+- [x] **T-004-3** · Job hooks: idempotent create, SSE watcher + poll fallback, events, elapsed, active job
   - Files:
     - `apps/web/src/features/create-video/{useCreateJob,jobStatusWatcher,jobStatusWatcher.test,useJobEvents,useElapsedSeconds,useActiveJob}.ts`
     - `docs/tasks/T-004-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (orchestrator if available: the SSE watcher) · Depends on: T-004-1, T-004-2
-- [ ] **T-004-4** · Panel components: drop zone, thumbnail, preset picker, prompt field, generate section
+- [x] **T-004-4** · Panel components: drop zone, thumbnail, preset picker, prompt field, generate section
   - Files:
     - `apps/web/src/features/create-video/useClipboardImagePaste.ts`
     - `apps/web/src/features/create-video/{CreateVideoPanel,ImageDropZone,ImageThumbnail,PresetPicker,PresetCategoryChips,PresetCard,PromptField,GenerateSection}.tsx`
     - `docs/tasks/T-004-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-004-1
-- [ ] **T-004-5** · Page assembly, canvas views, `App.tsx` routes, session history strip
+- [x] **T-004-5** · Page assembly, canvas views, `App.tsx` routes, session history strip
   - Files:
     - `apps/web/src/features/create-video/{CreateVideoPage,StatusAnnouncer,CreateVideoCanvas,CanvasHeading,HowItWorks,HowItWorksStep,JobProgressView,StatusSteps,ResultView,ResultActions,FailureView,SessionHistoryStrip}.tsx`
     - `apps/web/src/features/create-video/useResultActions.ts`
