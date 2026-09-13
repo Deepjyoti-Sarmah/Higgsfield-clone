@@ -37,6 +37,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-002-3 | Dockerfile + entrypoint + railway.json | DONE (image runs as api and worker locally) | Claude Opus 5 | `Dockerfile`, `apps/api/entrypoint.sh`, `railway.json` |
 | T-002-4 | Deploy Railway + Neon | PLACEHOLDER: the user deploys, following `docs/runbooks/deploy.md` | user | same |
 | T-002-5 | Modal LTX spike | PLACEHOLDER: the user sets Modal + R2 credentials; code in `apps/gpu/ltx_spike.py` | user | same |
+| T-002-7 | Fix `<button>` nested in `<Link>` on HomePage | READY FOR HANDOFF (small model) | — | `docs/tasks/T-002-7/brief.md` |
 | T-003-0 | Design spec 003 + publish contract (writes the T-003-k briefs) | READY FOR HANDOFF (strongest model) | — | `docs/tasks/T-003-0/brief.md` |
 | T-004-0 | Design spec 004 (writes the T-004-k briefs) | READY FOR HANDOFF after T-003-0 | — | `docs/tasks/T-004-0/brief.md` |
 | S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | TODO (after 004) | — | — |
