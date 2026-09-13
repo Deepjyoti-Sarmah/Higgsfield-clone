@@ -31,7 +31,7 @@ Rules:
   - Files: `apps/api/app/worker.py`, `apps/api/app/services/{step_claiming,generation_runs,step_completion,lease_reaper}.py`, `apps/api/tests/fakes/scripted_model_adapter.py`, `apps/api/tests/{test_step_claiming,test_step_completion,test_lease_reaper}.py`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && (cd apps/api && GENERATION_BACKEND=mock timeout 6 uv run python -m app.worker; test $? -eq 124) && scripts/check-standards`
   - Suggested role: orchestrator (claim/lease core) · Depends on: T-003-2, T-003-6
-- [ ] **T-003-6** · Generation backends: local-motion (ffmpeg recipes), mock, modal + openrouter placeholders, backend selection, ffmpeg in the image
+- [x] **T-003-6** · Generation backends: local-motion (ffmpeg recipes), mock, modal + openrouter placeholders, backend selection, ffmpeg in the image
   - Files: `apps/api/app/adapters/{motion_recipes,local_motion_adapter,mock_model_adapter,modal_adapter,openrouter_adapter,backend_selection}.py`, `apps/api/app/adapters/fixtures/{mock-video.mp4,mock-poster.jpg}`, `Dockerfile`, `apps/api/tests/{test_local_motion_adapter,test_backend_selection}.py`
   - Verify: `uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q tests/test_local_motion_adapter.py tests/test_backend_selection.py && docker build -t hf-clone . && docker run --rm --entrypoint ffmpeg hf-clone -version && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-003-1
