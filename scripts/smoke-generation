@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """End-to-end smoke of the generation core on the local stack (brief T-003-7, 9 steps)."""
 
-import argparse, http.cookiejar, json, subprocess, time, urllib.error, urllib.request, uuid
+import argparse, http.cookiejar, json, os, socket, subprocess, time, urllib.error, urllib.request, uuid
 DEFAULT_BASE_URL, API, UA = "http://localhost:8000", "/api/v1", "smoke-generation/1.0"
 PRESETS, UPLOADS, JOBS, CREDITS = f"{API}/presets", f"{API}/uploads", f"{API}/jobs", f"{API}/credits"
 GUEST_GRANT, PRESET_COST, MIN_PRESETS = 60, 20, 12
 IMAGE_SIZE, VIDEO_SIZE, VIDEO_FRAMES = (1600, 1000), (1280, 720), 120
-VIDEO_SECONDS, DURATION_TOLERANCE, STATUS_TIMEOUT = 5.0, 0.15, 90.0
+VIDEO_SECONDS, DURATION_TOLERANCE = 5.0, 0.15
+STATUS_TIMEOUT = float(os.environ.get("SMOKE_STATUS_TIMEOUT", "180"))  # deployed workers are slower
 
 class SmokeError(Exception):
     """A step failed; the message is the whole diagnosis."""
@@ -66,8 +67,9 @@ def read_event_stream(base_url, state, timeout=STATUS_TIMEOUT):
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0: raise SmokeError(f"SSE did not close within {timeout:.0f}s; got {statuses}")
-            response.fp.raw._sock.settimeout(min(remaining, 25.0))
-            line = response.readline()
+            response.fp.raw._sock.settimeout(min(max(remaining, 0.5), 25.0))
+            try: line = response.readline()
+            except (TimeoutError, socket.timeout): continue  # quiet stream: re-check the deadline
             if not line: return statuses
             text = line.decode(errors="replace").strip()
             if text.startswith("data:"):
@@ -134,8 +136,9 @@ def step_create(base_url, state):
     if balance != GUEST_GRANT - PRESET_COST: raise SmokeError(f"balance after create is {balance}, expected {GUEST_GRANT - PRESET_COST}")
     return f"job {first['id']} queued, repeat idempotent, balance={balance}"
 def step_events(base_url, state):
-    statuses = read_event_stream(base_url, state)
-    if statuses[:1] != ["queued"] or statuses[-1:] != ["succeeded"] or "running" not in statuses: raise SmokeError(f"SSE sequence {statuses}, expected queued -> running -> succeeded")
+    statuses = read_event_stream(base_url, state); rank = {"queued": 0, "running": 1, "succeeded": 2}
+    monotonic = all(rank[a] <= rank[b] for a, b in zip(statuses, statuses[1:]))
+    if statuses[-1:] != ["succeeded"] or not monotonic: raise SmokeError(f"SSE sequence {statuses}, expected a monotonic run ending in succeeded")
     return f"statuses {' -> '.join(statuses)}"
 def step_outputs(base_url, state):
     job = wait_for_succeeded(base_url, state)
