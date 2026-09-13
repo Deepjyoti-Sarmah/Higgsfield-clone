@@ -27,13 +27,13 @@ data and pure helpers. T-006-4 is gated on both because `ExplorePage` renders ev
     - `docs/tasks/T-006-1/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-006-0
-- [ ] **T-006-2** · Hero and tool cards
+- [x] **T-006-2** · Hero and tool cards
   - Files:
     - `apps/web/src/features/explore/{ExploreHero,ToolCard,ToolCards}.tsx`
     - `docs/tasks/T-006-2/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-006-1
-- [ ] **T-006-3** · Effect gallery: cards, per-category sections and the three states
+- [x] **T-006-3** · Effect gallery: cards, per-category sections and the three states
   - Files:
     - `apps/web/src/features/explore/{PresetGallery,PresetGalleryCard,PresetGalleryStates}.tsx`
     - `docs/tasks/T-006-3/report.md`
