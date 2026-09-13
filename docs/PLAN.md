@@ -47,7 +47,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-003-5 | Worker: claim loop, lease, completion, reaper | TODO (wave 3, after T-003-2 + T-003-6) | — | `docs/tasks/T-003-5/brief.md` |
 | T-003-7 | End-to-end smoke (reviewer, different model) | TODO (wave 4) | — | `docs/tasks/T-003-7/brief.md` |
 | T-004-0 | Design spec 004 (writes the T-004-k briefs) | DONE (design by Claude Opus 5, tasks/briefs by deepseek-flash; review by a different model pending) | Claude Opus 5 + deepseek-flash | `docs/specs/004-create-video/{design,tasks}.md`, `docs/tasks/T-004-0/report.md` |
-| T-004-1 | Web: shared types, copy, pure helpers, `ui/` primitives, vitest runner | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-004-1/brief.md` |
+| T-004-1 | Web: shared types, copy, pure helpers, `ui/` primitives, vitest runner | DONE (deepseek-flash via DSH; regenerated the stale `api/generated/schema.d.ts`) | deepseek-flash | `apps/web/src/features/create-video/*.ts`, `apps/web/src/ui/*`, `apps/web/package.json`, `docs/tasks/T-004-1/report.md` |
 | T-004-2 | Web: data hooks (guest, presets, selection, credits, history, upload) | TODO (wave 2, after T-004-1) | — | `docs/tasks/T-004-2/brief.md` |
 | T-004-4 | Web: panel components (drop zone, presets, prompt, generate) | TODO (wave 2, after T-004-1) | — | `docs/tasks/T-004-4/brief.md` |
 | T-004-3 | Web: job hooks (idempotent create, SSE watcher + poll fallback) | TODO (wave 2, after T-004-1 + T-004-2) | — | `docs/tasks/T-004-3/brief.md` |

@@ -1,21 +1,10 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react"
-
-type ButtonVariant = "primary" | "secondary"
+import { buttonClasses, type ButtonVariant } from "./buttonStyles"
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant
   isLoading?: boolean
   children: ReactNode
-}
-
-const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold " +
-  "transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-
-const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-accent-ink hover:bg-accent/90",
-  secondary:
-    "bg-surface text-text border border-border hover:border-accent/60",
 }
 
 function Spinner() {
@@ -37,7 +26,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      className={`${buttonClasses(variant)} ${className}`}
       disabled={disabled || isLoading}
       {...rest}
     >

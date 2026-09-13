@@ -13,6 +13,79 @@
 
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
+
+  --animate-hf-motion-zoom-in: hf-zoom-in 2.4s ease-in-out infinite alternate;
+  --animate-hf-motion-zoom-out: hf-zoom-out 2.4s ease-in-out infinite alternate;
+  --animate-hf-motion-pan-left: hf-pan-left 2.4s ease-in-out infinite alternate;
+  --animate-hf-motion-pan-right: hf-pan-right 2.4s ease-in-out infinite alternate;
+  --animate-hf-motion-tilt-up: hf-tilt-up 2.4s ease-in-out infinite alternate;
+  --animate-hf-motion-shake: hf-shake 0.5s linear infinite;
+  --animate-hf-progress: hf-progress 1.4s ease-in-out infinite;
+
+  /* Transforms only, scale capped at 1.15 so object-cover never shows an edge. */
+  @keyframes hf-zoom-in {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.15);
+    }
+  }
+
+  @keyframes hf-zoom-out {
+    from {
+      transform: scale(1.15);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes hf-pan-left {
+    from {
+      transform: scale(1.12) translateX(2.5%);
+    }
+    to {
+      transform: scale(1.12) translateX(-2.5%);
+    }
+  }
+
+  @keyframes hf-pan-right {
+    from {
+      transform: scale(1.12) translateX(-2.5%);
+    }
+    to {
+      transform: scale(1.12) translateX(2.5%);
+    }
+  }
+
+  @keyframes hf-tilt-up {
+    from {
+      transform: scale(1.12) translateY(2.5%);
+    }
+    to {
+      transform: scale(1.12) translateY(-2.5%);
+    }
+  }
+
+  @keyframes hf-shake {
+    0%,
+    100% {
+      transform: scale(1.06) translateX(-2%);
+    }
+    50% {
+      transform: scale(1.06) translateX(2%);
+    }
+  }
+
+  @keyframes hf-progress {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(320%);
+    }
+  }
 }
 
 body {
