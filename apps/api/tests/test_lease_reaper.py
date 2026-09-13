@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.models.job import Job
 from app.models.job_step import JobStep
 from app.models.ledger_entry import LedgerEntry
-from app.repositories.job_steps import claim_next_queued_step
 from app.services.lease_reaper import (
     FIRST_EXPIRY_ERROR,
     SECOND_EXPIRY_ERROR,
@@ -20,16 +19,16 @@ from tests.job_api_helpers import GUEST_GRANT, PRESET_COST, balance_of, create_q
 
 LEASE_SECONDS = 300
 WORKER_ID = "reaper-test-worker"
-DRAIN_WORKER = "drain-worker"
 
 
-async def drain_queued_steps(session_maker: async_sessionmaker[AsyncSession]) -> None:
-    while True:
-        async with session_maker() as session:
-            claimed = await claim_next_queued_step(session, DRAIN_WORKER, LEASE_SECONDS)
-            await session.commit()
-        if claimed is None:
-            return
+async def clear_reapable_steps(session_maker: async_sessionmaker[AsyncSession]) -> None:
+    """Delete non-terminal leftovers the global claim/reaper could pick instead of this test's.
+
+    Ledger/job/asset rows are kept: the assertions below read this guest's ledger balance.
+    """
+    async with session_maker() as session:
+        await session.execute(text("DELETE FROM job_step WHERE status IN ('queued', 'running')"))
+        await session.commit()
 
 
 async def expire_lease(session_maker: async_sessionmaker[AsyncSession], step_id: uuid.UUID) -> None:
@@ -85,7 +84,7 @@ async def test_first_expiry_requeues_then_second_fails_and_refunds(
     object_storage: InMemoryObjectStorage,
     session_maker: async_sessionmaker[AsyncSession],
 ) -> None:
-    await drain_queued_steps(session_maker)
+    await clear_reapable_steps(session_maker)
     job_id = uuid.UUID(await create_queued_job(guest_client, object_storage, "reaper-key-0001"))
 
     first = await claim_step(session_maker, WORKER_ID, LEASE_SECONDS)
@@ -123,7 +122,7 @@ async def test_reaper_leaves_a_step_with_a_live_lease_alone(
     object_storage: InMemoryObjectStorage,
     session_maker: async_sessionmaker[AsyncSession],
 ) -> None:
-    await drain_queued_steps(session_maker)
+    await clear_reapable_steps(session_maker)
     job_id = uuid.UUID(await create_queued_job(guest_client, object_storage, "reaper-key-0002"))
     claimed = await claim_step(session_maker, WORKER_ID, LEASE_SECONDS)
     assert claimed is not None and claimed.job_id == job_id

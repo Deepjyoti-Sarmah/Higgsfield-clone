@@ -15,3 +15,6 @@ pixovid/
 
 # Scratch area for raw screenshots the user drops in (may contain credentials); never commit
 reference-images/
+
+# Wrangler CLI scratch dir
+.wrangler/

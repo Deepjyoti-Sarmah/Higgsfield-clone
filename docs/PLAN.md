@@ -53,7 +53,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-004-3 | Web: job hooks (idempotent create, SSE watcher + poll fallback) | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/web/src/features/create-video/{useCreateJob,jobStatusWatcher,useJobEvents,useElapsedSeconds,useActiveJob}.ts`, `docs/tasks/T-004-3/report.md` |
 | T-004-5 | Web: page assembly, canvas views, `App.tsx` routes | DONE (deepseek-flash via DSH; browser-level verify-slice still to run) | deepseek-flash | `apps/web/src/features/create-video/*`, `apps/web/src/App.tsx`, `docs/tasks/T-004-5/report.md` |
 | S-005..009 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up · Create image | ALL CODE-COMPLETE and committed (specs 005/006/007/008/009, T-009-8 closed the image-job SSE 404) | deepseek-flash | `docs/specs/00{5,6,7,8,9}-*/` |
-| T-003-8 | Test isolation: the lease-reaper test must stop going red in the full suite (shared dev DB) | TODO (found while verifying T-009-8) | — | `docs/tasks/T-003-8/brief.md` |
+| T-003-8 | Test isolation: the lease-reaper test must stop going red in the full suite (shared dev DB) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-003-8/report.md` |
 | T-006-0 | Design spec 006 Explore: spec + design + tasks + 4 briefs (no contract change) | DONE | deepseek-flash | `docs/specs/006-explore/`, `docs/tasks/T-006-0/report.md` |
 | T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-1/report.md` |
 | T-006-2 | Web: Explore hero + tool cards | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-2/report.md` |
