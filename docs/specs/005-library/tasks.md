@@ -25,7 +25,7 @@ T-005-1 is API-only, T-005-2/T-005-3 are web-only and disjoint from each other, 
   - Files: `apps/web/src/features/library/libraryCopy.ts`, `apps/web/src/features/library/formatCreatedAt.ts`, `apps/web/src/features/library/formatCreatedAt.test.ts`, `docs/tasks/T-005-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (small model is fine) · Depends on: T-005-0
-- [ ] **T-005-4** · Web UI: `LibraryPage`, `LibraryList`, `LibraryItem`, `LibraryStates`, `LibraryResultView`, `?job=` selection
+- [x] **T-005-4** · Web UI: `LibraryPage`, `LibraryList`, `LibraryItem`, `LibraryStates`, `LibraryResultView`, `?job=` selection
   - Files: `apps/web/src/features/library/{LibraryPage,LibraryList,LibraryItem,LibraryStates,LibraryResultView}.tsx`, `apps/web/src/features/library/useLibraryJobParam.ts`, `docs/tasks/T-005-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-005-2, T-005-3
