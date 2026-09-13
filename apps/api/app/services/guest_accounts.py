@@ -1,0 +1,16 @@
+import uuid
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.user import AppUser
+from app.repositories.users import find_user_by_id, insert_guest_user
+
+
+async def create_guest_account(session: AsyncSession) -> AppUser:
+    user = await insert_guest_user(session)
+    await session.commit()
+    return user
+
+
+async def find_account(session: AsyncSession, user_id: uuid.UUID) -> AppUser | None:
+    return await find_user_by_id(session, user_id)

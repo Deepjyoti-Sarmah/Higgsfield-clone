@@ -10,6 +10,7 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Stop-hook race fix (final text flushed after hook fires) | `.claude/hooks/capture.py` | replayed truncated transcript + late append, full text captured | 2026-09-12 23:45 |
 | Subagent capture: delegation prompt (`DELEGATE`) + output (`SUBAGENT_RESPONSE`), tagged with the subagent's model | `.claude/hooks/capture.py` (`delegate`, `subagent`), `.claude/settings.json` | live: Haiku canary subagent logged in `.agent-logs/*ff164378*.md`; offline: synthetic transcript tests | 2026-09-13 01:23 |
 | `agent-run` wrapper logs the prompt + response of a non-Claude CLI (including errors and timeouts) | `scripts/agent-run` | `scripts/agent-run codex T-000-4` → `.agent-logs/2026-09-13_01-19-16_codex_T-000-4.md` | 2026-09-13 01:24 |
+| API skeleton: `GET /api/health` (200/503), `POST /api/v1/auth/guest` (httpOnly cookie), `GET /api/v1/me` (401 without/tampered cookie), worker heartbeat, migration `0001` | `apps/api/`, `packages/contracts/openapi.json` | `docker compose up -d db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run pytest -q` → 7 passed; ruff + mypy strict clean | 2026-09-13 02:05 (local only, not deployed) |
 | Standards check (file ≤200 lines, comment block ≤3 lines) | `scripts/check-standards` | passes on the repo; a planted 205-line file with a 4-line comment fails with exit 1 | 2026-09-13 01:18 |
 
 ## BROKEN / KNOWN ISSUES
@@ -19,6 +20,8 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Codex account out of quota until 2026-09-30 | `.agent-logs/*codex_T-000-4.md` (response is the quota error) | no real non-Claude agent answer yet; the wrapper itself works | use `openrouter:<model>` once `OPENROUTER_API_KEY` is set, or another CLI |
 | First Codex run hung for 180s (stdin left open), so only its PROMPT was logged | same log file, entry 1 | cosmetic | fixed: stdin closed, `AGENT_RUN_TIMEOUT` logs timeouts as a response |
 | `gemini`, `aider` not installed; `OPENROUTER_API_KEY` not set | — | only Claude Code and Codex are usable as agents right now | install/set when needed |
+| No deploy credentials on this machine: `railway`, `modal`, `neonctl` CLIs missing; no `DATABASE_URL`, R2 or Modal keys | — | blocks T-002-4 (deploy) and T-002-5 (Modal spike); local work continues | user: create accounts and log in (see the latest chat handoff) |
+| `gh` CLI login broken (keyring) | — | can't create the public GitHub repo from here | user: `gh auth login` |
 
 ## NOT STARTED
 - Product research (`docs/research/`): waiting on screenshots

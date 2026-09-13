@@ -79,3 +79,17 @@ Never edit an old entry. To change a decision, add a new one that supersedes it.
 
 ## D-010 · 2026-09-13 · Commits carry no attribution trailers
 **Why:** the user's instruction. No `Co-Authored-By` or session lines in commit messages.
+
+## D-012 · 2026-09-13 · Scope locked as in `docs/research/product-map.md`
+**Why:** the user approved the drafted verdicts.
+
+- **P0:**
+  - simplified Explore (hero, tool cards, preset gallery with Recreate)
+  - Video create (image + ~12 presets + prompt, one default model)
+  - one History/Assets library
+  - credit cost on the Generate button
+  - guest sign-in
+  - `/v/{id}` share page
+- **P1:** Image create, face swap (images), pricing with a fake top-up, model galleries.
+- **P2:** model picker, community/profiles, search, upscale/inpaint/edit.
+- **CUT:** Genjutsu, Edit/Motion/Extend video, audio/lipsync, MCP/plugin/Supercomputer, the studios, promo timers and discount toasts, notifications, Enterprise.

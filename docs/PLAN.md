@@ -16,9 +16,9 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | M | What | Box | Status | Exit criterion |
 |---|---|---|---|---|
 | M0 | Scaffolding: docs, playbooks, templates, capture for subagents + other tools, standards check | 1h | DONE (non-Claude canary answer pending, see STATUS) | Claude subagent + non-Claude agent both logged in `.agent-logs/` |
-| M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | IN REVIEW: 3 flows done, map drafted, 7 gaps listed | user approves scope |
-| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike | 3h | TODO | public URL opens signed out; one clip in R2 |
-| M3 | P0 slices (specs 001–007) | 10h | TODO | each verified live via `verify-slice` |
+| M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | DONE: scope approved (D-012); 7 flows still to capture | user approves scope |
+| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | IN PROGRESS | public URL opens signed out; one clip in R2 |
+| M3 | P0 slices (specs 003+) | 10h | TODO | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
 | M5 | Ship: signed-out pass, README, public repo, walkthrough | 2h | TODO | checklist below all ticked |
 
@@ -31,7 +31,12 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-000-4 | `scripts/agent-run` wrapper for non-Claude agents | DONE (wrapper); real non-Claude answer pending (Codex quota) | Claude Opus 5 | `scripts/agent-run`, `docs/tasks/T-000-4/` |
 | T-000-5 | `scripts/check-standards` | DONE | Claude Opus 5 | `scripts/check-standards` |
 | T-001-1 | Flow docs: explore, image-create, video-create (16 screenshots) | DONE | Claude Opus 5 | `docs/research/flows/` |
-| T-001-2 | Product map with verdicts | DRAFT, awaiting user approval | Claude Opus 5 | `docs/research/product-map.md` |
+| T-001-2 | Product map with verdicts | DONE (approved) | Claude Opus 5 | `docs/research/product-map.md` |
+| T-002-1 | API skeleton (health, guest session, worker heartbeat, openapi) | DONE | Claude Opus 5 | `docs/specs/002-walking-skeleton/tasks.md` |
+| T-002-2 | Web shell (nav, guest button, generated client) | IN PROGRESS (delegated, brief `docs/tasks/T-002-2/brief.md`) | Claude Sonnet 5 (implementer) | same |
+| T-002-3 | Dockerfile + railway.json | TODO | Claude Opus 5 | same |
+| T-002-4 | Deploy Railway + Neon | BLOCKED (user credentials) | Claude Opus 5 | same |
+| T-002-5 | Modal LTX spike | BLOCKED (Modal token + R2 keys) | Claude Opus 5 | same |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | WAITING on user screenshots | user | `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (draft until M1; the final version lives in `docs/research/product-map.md`)

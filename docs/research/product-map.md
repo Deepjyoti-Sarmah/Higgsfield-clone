@@ -2,7 +2,7 @@
 
 Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities in `docs/PLAN.md`.
 
-**Status:** DRAFT. It needs the user's approval (the M1 exit gate). Evidence so far covers 16 screenshots and 3 flows.
+**Status:** APPROVED by the user on 2026-09-13 (D-012). Evidence covers 16 screenshots and 3 flows. When the missing flows below are captured, they refine specs within this scope; they don't reopen it.
 
 ## Observed surfaces
 | Surface | Flow doc | Signed out? | Verdict | Reason |

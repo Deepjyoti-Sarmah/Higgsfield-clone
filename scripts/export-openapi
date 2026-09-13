@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""Write the FastAPI OpenAPI schema to packages/contracts/openapi.json, the contract every agent codes against."""
+import subprocess, sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CONTRACT = ROOT / "packages" / "contracts" / "openapi.json"
+EXPORT_CODE = "import json; from app.main import create_app; print(json.dumps(create_app().openapi(), indent=2))"
+
+
+def main():
+    result = subprocess.run(["uv", "run", "--quiet", "python", "-c", EXPORT_CODE],
+                            cwd=ROOT / "apps" / "api", capture_output=True, text=True)
+    if result.returncode:
+        sys.exit(result.stderr)
+    CONTRACT.parent.mkdir(parents=True, exist_ok=True)
+    CONTRACT.write_text(result.stdout, encoding="utf-8")
+    print(f"wrote {CONTRACT.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    main()

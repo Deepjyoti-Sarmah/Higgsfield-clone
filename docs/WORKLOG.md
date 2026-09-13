@@ -10,3 +10,6 @@
 - 2026-09-13 01:24 · Claude Opus 5 · T-000-4 agent-run · `scripts/agent-run`, `docs/tasks/T-000-4/` · first run hung (stdin), fixed; second run logged Codex's quota error as the response · see `git log`
 - 2026-09-13 01:35 · Claude Opus 5 · T-001-1/2 research · `docs/research/screenshots/01..16`, `docs/research/flows/{explore,image-create,video-create}.md`, `docs/research/product-map.md` · 3 flows documented, map drafted, gaps listed · see `git log`
 - 2026-09-13 01:18 · Claude Opus 5 · T-000-5 check-standards · `scripts/check-standards` · passes on repo, fails on planted file · see `git log`
+- 2026-09-13 01:45 · Claude Opus 5 · M1 close + spec 002 · `docs/research/product-map.md`, `docs/DECISIONS.md` (D-012), `docs/specs/002-walking-skeleton/` · scope locked; skeleton spec/design/tasks written · see `git log`
+- 2026-09-13 02:05 · Claude Opus 5 · T-002-1 API skeleton · `apps/api/**`, `docker-compose.yml`, `.env.example`, `scripts/export-openapi`, `packages/contracts/openapi.json` · 7 tests pass, ruff/mypy clean, contract exported · see `git log`
+- 2026-09-13 02:05 · Claude Opus 5 · T-002-5 spike code (unverified, blocked on Modal/R2 credentials) · `apps/gpu/ltx_spike.py` · written from the LTX-2.5-Diffusers model card · see `git log`
