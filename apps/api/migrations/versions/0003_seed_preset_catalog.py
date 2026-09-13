@@ -11,13 +11,14 @@ depends_on = None
 
 UPSERT_PRESET = text(
     """
-    INSERT INTO preset (slug, name, description, category, credit_cost, sort_order, is_active)
-    VALUES (:slug, :name, :description, :category, :credit_cost, :sort_order, true)
+    INSERT INTO preset (slug, name, description, category, credit_cost, preview_url, sort_order, is_active)
+    VALUES (:slug, :name, :description, :category, :credit_cost, :preview_url, :sort_order, true)
     ON CONFLICT (slug) DO UPDATE SET
         name = EXCLUDED.name,
         description = EXCLUDED.description,
         category = EXCLUDED.category,
         credit_cost = EXCLUDED.credit_cost,
+        preview_url = EXCLUDED.preview_url,
         sort_order = EXCLUDED.sort_order,
         is_active = true
     """
@@ -35,6 +36,7 @@ def upgrade() -> None:
                 "description": preset.description,
                 "category": preset.category,
                 "credit_cost": preset.credit_cost,
+                "preview_url": None,
                 "sort_order": preset.sort_order,
             },
         )

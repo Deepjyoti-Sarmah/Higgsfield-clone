@@ -18,7 +18,7 @@ class Preset(Base):
     description: Mapped[str] = mapped_column(String(240), nullable=False)
     category: Mapped[str] = mapped_column(String(16), nullable=False)
     credit_cost: Mapped[int] = mapped_column(Integer, nullable=False)
-    preview_url: Mapped[str | None] = mapped_column(Text)
+    preview_key: Mapped[str | None] = mapped_column(Text)
     sort_order: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
     created_at: Mapped[datetime] = mapped_column(

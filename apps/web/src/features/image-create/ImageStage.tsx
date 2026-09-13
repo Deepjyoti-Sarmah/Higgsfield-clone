@@ -1,3 +1,4 @@
+import { SHOWCASE_STILLS } from "../../api/webMedia"
 import { Button } from "../../ui/Button"
 import { EmptyState } from "../../ui/EmptyState"
 import { ImageFailureView } from "./ImageFailureView"
@@ -78,6 +79,38 @@ function SucceededStage({
   )
 }
 
+function ImageIdleShowcase() {
+  return (
+    <div className="flex w-full flex-col gap-4 py-6">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-xs uppercase tracking-wider text-muted">
+          ✦ Sample Image Generations
+        </h2>
+        <span className="text-xs font-semibold text-accent">GPT IMAGE 2 · 4K</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {SHOWCASE_STILLS.map((img) => (
+          <div
+            key={img.title}
+            className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-transform duration-300 hover:scale-[1.02] hover:border-accent/60"
+          >
+            <img
+              src={img.url}
+              alt={img.title}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-3 text-left">
+              <span className="text-[10px] font-bold text-accent">{img.aspect}</span>
+              <span className="text-xs font-semibold text-text line-clamp-1">{img.title}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function ImageStage({ phase, watch, onRetry, onMakeAnother }: ImageStageProps) {
   if (phase === "options-loading") return <OptionsLoading />
   if (phase === "options-error") return <OptionsError onRetry={onRetry} />
@@ -92,6 +125,9 @@ export function ImageStage({ phase, watch, onRetry, onMakeAnother }: ImageStageP
         onMakeAnother={onMakeAnother}
       />
     )
+  }
+  if (phase === "idle") {
+    return <ImageIdleShowcase />
   }
   return <JobProgress phase={phase} />
 }

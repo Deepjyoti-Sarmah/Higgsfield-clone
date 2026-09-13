@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { previewClipUrl, SHOWCASE_MEDIA } from "../../api/webMedia"
 import { createVideoCopy } from "./createVideoCopy"
 
 export type HowItWorksStepState = "todo" | "current" | "busy" | "done"
@@ -14,20 +15,41 @@ type HowItWorksStepProps = {
 
 function ImageIllustration() {
   return (
-    <div className="flex aspect-video items-center justify-center rounded-xl border-2 border-dashed border-border text-muted">
-      <span aria-hidden="true" className="text-xl">
-        ↑
-      </span>
+    <div className="relative flex aspect-video overflow-hidden rounded-xl border border-border">
+      <img
+        src="/showcase/sample-01.jpg"
+        alt={createVideoCopy.howItWorks.imageAlt}
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+        <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-lg font-bold text-accent-ink shadow-lg">
+          ↑
+        </span>
+      </div>
     </div>
+  )
+}
+
+function PreviewTile({ slug, className }: { slug: string; className: string }) {
+  return (
+    <video
+      src={previewClipUrl(slug)}
+      autoPlay
+      loop
+      muted
+      playsInline
+      aria-hidden="true"
+      className={className}
+    />
   )
 }
 
 function PresetIllustration() {
   return (
-    <div className="flex aspect-video items-center justify-center gap-1">
-      <span className="h-8 w-6 rounded bg-border" />
-      <span className="h-11 w-8 rounded border-2 border-accent bg-border" />
-      <span className="h-8 w-6 rounded bg-border" />
+    <div className="flex aspect-video items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-border bg-black/40 p-2">
+      <PreviewTile slug={SHOWCASE_MEDIA.dollyOutSlug} className="h-full w-1/3 rounded-lg object-cover opacity-60" />
+      <PreviewTile slug={SHOWCASE_MEDIA.dollyIn.slug} className="h-full w-1/3 rounded-lg border border-accent object-cover shadow-md shadow-accent/20" />
+      <PreviewTile slug={SHOWCASE_MEDIA.panLeftSlug} className="h-full w-1/3 rounded-lg object-cover opacity-60" />
     </div>
   )
 }
@@ -35,7 +57,7 @@ function PresetIllustration() {
 function VideoIllustration() {
   return (
     <div className="aspect-video overflow-hidden rounded-xl border border-border">
-      <div className="h-full w-full bg-gradient-to-br from-accent/40 to-bg motion-safe:animate-hf-motion-zoom-in" />
+      <PreviewTile slug={SHOWCASE_MEDIA.kenBurns.slug} className="h-full w-full object-cover" />
     </div>
   )
 }

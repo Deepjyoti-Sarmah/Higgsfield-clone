@@ -6,7 +6,7 @@ from typing import Protocol
 
 @dataclass(frozen=True)
 class GenerationRequest:
-    job_id: uuid.UUID
+    job_id: uuid.UUID | None
     preset_slug: str
     prompt: str | None
     input_image_path: Path

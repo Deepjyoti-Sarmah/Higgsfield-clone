@@ -23,9 +23,21 @@ function PreviewMedia({
   src: string
   motionClasses: string
 }) {
-  return (
-    <img src={src} alt="" className={`h-full w-full object-cover ${motionClasses}`} />
-  )
+  const isVideo = src.endsWith(".mp4") || src.endsWith(".webm") || src.includes(".mp4")
+  if (isVideo) {
+    return (
+      <video
+        src={src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+        className="h-full w-full object-cover"
+      />
+    )
+  }
+  return <img src={src} alt="" className={`h-full w-full object-cover ${motionClasses}`} />
 }
 
 export function PresetCard({
@@ -35,6 +47,7 @@ export function PresetCard({
   onSelect,
 }: PresetCardProps) {
   const motionClasses = presetMotionClass(preset.slug)
+  const mediaSrc = previewImageUrl ?? preset.preview_url
   const tileClasses = isSelected
     ? "border-accent shadow-lg shadow-accent/25"
     : "border-transparent hover:border-accent/50"
@@ -51,7 +64,7 @@ export function PresetCard({
           onChange={() => onSelect(preset.slug)}
           className="sr-only"
         />
-        {previewImageUrl !== null && <PreviewMedia src={previewImageUrl} motionClasses={motionClasses} />}
+        {mediaSrc !== null && <PreviewMedia src={mediaSrc} motionClasses={motionClasses} />}
         {isSelected && <CheckBadge />}
       </span>
       <span className="mt-1.5 block line-clamp-2 text-xs font-semibold text-text">

@@ -87,6 +87,7 @@ export const createVideoCopy = {
       presetCount === 0 ? "Choose a camera move." : `Choose one of ${presetCount} camera moves.`,
     step3Title: "Generate",
     step3Body: "Get a 5-second video to download and share.",
+    imageAlt: "Your uploaded reference photo",
     badgeDone: "Done",
     badgeUploading: "Uploading…",
   },

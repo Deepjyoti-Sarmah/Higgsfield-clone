@@ -11,7 +11,7 @@
 - **Script:**
   > "Hi! I'm Deepjyoti Sarmah. This is my 24-hour rebuild of Higgsfield.ai, an AI-native image and video generation platform.
   > Notice the signed-out Explore landing page — top brand header with Higgsfield SVG mark, hero showcase video cards (`MOTION DESIGNER`, `EFFECTS STUDIO`, `CINEMATIC CAMERA`), tool cards, and a gallery of 12 motion presets grouped into Camera, Cinematic, and Dynamic categories.
-  > All preset cards feature live autoplaying looping motion previews extracted directly from Higgsfield CDN."
+  > All preset cards feature live autoplaying looping motion previews that we generate ourselves and serve from our own storage."
 
 ---
 
