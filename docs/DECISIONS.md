@@ -71,5 +71,11 @@ Never edit an old entry. To change a decision, add a new one that supersedes it.
 - Names that say what the code does.
 - Layered API, ports only at real boundaries, rule of two for reuse.
 
+## D-011 · 2026-09-13 · `pixovid/` is ignored
+**Why:** it's an unrelated local project, and the user chose to ignore it.
+- It's in `.gitignore`.
+- Agents must not read, reuse or reference it.
+- Everything here is built fresh under the approved plan.
+
 ## D-010 · 2026-09-13 · Commits carry no attribution trailers
 **Why:** the user's instruction. No `Co-Authored-By` or session lines in commit messages.

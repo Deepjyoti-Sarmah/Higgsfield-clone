@@ -8,4 +8,5 @@
 - 2026-09-13 01:10 · Claude Opus 5 · T-000-1..2 scaffolding · `AGENTS.md`, `CLAUDE.md`, `docs/*`, `.claude/skills/*` · written · see `git log`
 - 2026-09-13 01:23 · Claude Opus 5 · T-000-3 subagent capture · `.claude/hooks/capture.py`, `.claude/settings.json` · live Haiku canary logged DELEGATE + SUBAGENT_RESPONSE; model tag fixed · see `git log`
 - 2026-09-13 01:24 · Claude Opus 5 · T-000-4 agent-run · `scripts/agent-run`, `docs/tasks/T-000-4/` · first run hung (stdin), fixed; second run logged Codex's quota error as the response · see `git log`
+- 2026-09-13 01:35 · Claude Opus 5 · T-001-1/2 research · `docs/research/screenshots/01..16`, `docs/research/flows/{explore,image-create,video-create}.md`, `docs/research/product-map.md` · 3 flows documented, map drafted, gaps listed · see `git log`
 - 2026-09-13 01:18 · Claude Opus 5 · T-000-5 check-standards · `scripts/check-standards` · passes on repo, fails on planted file · see `git log`

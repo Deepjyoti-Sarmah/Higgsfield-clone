@@ -16,7 +16,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | M | What | Box | Status | Exit criterion |
 |---|---|---|---|---|
 | M0 | Scaffolding: docs, playbooks, templates, capture for subagents + other tools, standards check | 1h | DONE (non-Claude canary answer pending, see STATUS) | Claude subagent + non-Claude agent both logged in `.agent-logs/` |
-| M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | WAITING on screenshots | user approves scope |
+| M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | IN REVIEW: 3 flows done, map drafted, 7 gaps listed | user approves scope |
 | M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike | 3h | TODO | public URL opens signed out; one clip in R2 |
 | M3 | P0 slices (specs 001–007) | 10h | TODO | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
@@ -30,7 +30,9 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-000-3 | Capture: SubagentStop + PreToolUse(Agent) hooks | DONE | Claude Opus 5 | `.claude/hooks/capture.py` |
 | T-000-4 | `scripts/agent-run` wrapper for non-Claude agents | DONE (wrapper); real non-Claude answer pending (Codex quota) | Claude Opus 5 | `scripts/agent-run`, `docs/tasks/T-000-4/` |
 | T-000-5 | `scripts/check-standards` | DONE | Claude Opus 5 | `scripts/check-standards` |
-| T-001-* | Research flows from screenshots | BLOCKED (screenshots) | — | `docs/research/` |
+| T-001-1 | Flow docs: explore, image-create, video-create (16 screenshots) | DONE | Claude Opus 5 | `docs/research/flows/` |
+| T-001-2 | Product map with verdicts | DRAFT, awaiting user approval | Claude Opus 5 | `docs/research/product-map.md` |
+| T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | WAITING on user screenshots | user | `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (draft until M1; the final version lives in `docs/research/product-map.md`)
 - **P0, the core loop:**
