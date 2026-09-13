@@ -91,7 +91,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 - **CUT:** real payments, transcoding pipeline, teams, lipsync, self-managed GPU servers.
 
 ## Pre-hand-in checklist
-- [ ] Live link opens in a signed-out browser
-- [ ] Repo public, `.agent-logs/` present, committed incrementally (`git log -- .agent-logs`)
-- [ ] README has labelled links (Live, Repo)
+- [ ] Live link opens in a signed-out browser — blocked on R2 + Railway deploy
+- [x] `.agent-logs/` present (35 tracked files) and committed incrementally (`git log -- .agent-logs` → 36 commits); 17 late DSH tasks have no transcript (accepted gap, STATUS § BROKEN)
+- [ ] Repo public — blocked on `gh auth login`
+- [ ] README has labelled links (Live, Repo) — labels and honesty done; both URLs TBD until deploy + `gh auth login`
 - [ ] Walkthrough ≤ 5 min, camera on

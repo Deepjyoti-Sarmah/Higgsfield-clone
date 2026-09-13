@@ -1,22 +1,24 @@
 # Higgsfield (clone)
 
 A rebuild of [higgsfield.ai](https://higgsfield.ai) — AI image and video generation — built in a 24-hour window.
-Guests get credits, upload media, queue an image/video job, watch progress over SSE, and share the result.
+A visitor lands on a signed-out Explore page, picks one of 12 motion presets, drops in a photo and gets a
+5-second video back in about a minute. It is one origin: a React SPA served by FastAPI, an append-only credit
+ledger in Postgres, presigned uploads to S3/R2, and a worker that calls the model adapter.
 
 | | |
 |---|---|
-| Live | TODO: add the deployed URL |
-| Repo | TODO: add the repository URL |
-| Status | `docs/STATUS.md` — what works, what's broken, what hasn't started |
-| Plan | `docs/PLAN.md` — milestones, task board, role assignments |
+| **Live:** | TBD until deploy (no public URL yet — `docs/runbooks/deploy.md`) |
+| **Repo:** | TBD (public GitHub URL — `gh auth login` is still broken, see `docs/STATUS.md`) |
+| **Status:** | `docs/STATUS.md` — what works, what's broken, what hasn't started |
+| **Plan:** | `docs/PLAN.md` — milestones, task board, role assignments |
 
 ## What it does
 
-- Email/guest sign-in with an httpOnly JWT cookie; credit balance comes from an append-only ledger.
-- Uploads go straight to S3-compatible storage (MinIO locally, R2 in production) via presigned URLs.
-- `POST /api/v1/jobs` validates, holds credits, inserts the job + step, and returns `202` in one transaction.
+- Guest sign-in with an httpOnly JWT cookie; the credit balance is `SUM(ledger)`, never stored on the user.
+- Uploads go straight to S3-compatible storage (MinIO locally, Cloudflare R2 in production) via presigned URLs.
+- `POST /api/v1/jobs` validates, holds credits, inserts the job + step and returns `202` in one transaction.
 - A worker claims steps with `FOR UPDATE SKIP LOCKED`, leases them, and calls a model adapter.
-- The browser follows progress over SSE (with a 5s polling fallback) and loads the finished asset.
+- The browser follows progress over SSE (with a 5s polling fallback) and plays the finished clip.
 
 ## Architecture
 
@@ -40,43 +42,57 @@ ModelAdapter: modal | openrouter (paid budget) | mock (tests)
 
 One Docker image runs both roles (`APP_ROLE=api` or `worker`). See `docs/DECISIONS.md` for why.
 
-## Local development
+## Run it locally
 
-Prerequisites: Docker, [uv](https://docs.astral.sh/uv/), Node 24, npm.
+Prerequisites: Docker + Compose v2, [uv](https://docs.astral.sh/uv/), Node 24 + npm.
+Full runbook, including troubleshooting and a clean-slate reset: [`docs/runbooks/local-dev.md`](docs/runbooks/local-dev.md).
 
 ```sh
-cp .env.example .env.local                              # names only; never commit values
-docker compose up -d --wait db                          # Postgres on :5432 (and MinIO on :9000)
-uv --directory apps/api sync                            # create apps/api/.venv
-uv --directory apps/api run alembic upgrade head        # apply migrations
-uv --directory apps/api run uvicorn app.main:app --reload   # API on http://localhost:8000
+cp .env.example .env.local                          # names only; never commit values
+scripts/install-hooks                               # git config core.hooksPath .githooks
+
+docker compose up -d --wait db minio                # Postgres :5432, MinIO :9000 (console :9001)
+docker compose run --rm minio-init                  # creates the `media` bucket
+
+uv --directory apps/api sync                        # creates apps/api/.venv
+uv --directory apps/api run alembic upgrade head    # applies migrations
 
 npm --prefix apps/web install
-npm --prefix apps/web run dev                           # Vite dev server (proxies /api to :8000)
 ```
 
-Set `GENERATION_BACKEND=mock` (the `.env.example` default) so no paid generation runs locally.
-Generated API client: `npm --prefix apps/web run gen:api` regenerates it from `packages/contracts/openapi.json`.
+Then the two dev servers, in separate terminals:
+
+```sh
+uv --directory apps/api run uvicorn app.main:app --reload    # API on http://localhost:8000
+npm --prefix apps/web run dev                                # SPA on http://localhost:5173
+```
+
+Vite proxies `/api` to `:8000` (`apps/web/vite.config.ts`), so the browser only talks to `:5173`.
+Keep `GENERATION_BACKEND=mock` (the `.env.example` default): generation is instant and free, and paid
+`modal`/`openrouter` calls must never run in tests. Regenerate the typed client with
+`scripts/export-openapi && npm --prefix apps/web run gen:api`.
 
 Checks before you commit:
 
 ```sh
-scripts/check-standards                                 # file/comment size rules (docs/STANDARDS.md)
+scripts/check-standards                 # file/comment size rules (docs/STANDARDS.md)
+scripts/check-links                     # markdown links point at real files
 uv --directory apps/api run ruff check .
 uv --directory apps/api run mypy
 uv --directory apps/api run pytest -q
-npm --prefix apps/web run lint && npm --prefix apps/web run typecheck
+npm --prefix apps/web run lint
+npm --prefix apps/web run typecheck
 ```
 
 ## Repo map
 
 ```
-apps/web/            Vite + React + TS SPA, served by FastAPI as static files (one origin)
-apps/api/            FastAPI: routers, services, repositories, models, migrations, tests
-apps/gpu/            Modal app: LTX-2.5 (video), LLaDA-Image
+apps/web/            Vite + React + TS SPA (served by FastAPI as static files: one origin)
+apps/api/            FastAPI (api + worker entrypoints, one image)
+apps/gpu/            Modal app (LTX-2.5 video, LLaDA-Image)
 packages/contracts/  openapi.json -> generated TS client
-docs/                SPEC/STATUS/PLAN/DECISIONS/STANDARDS, specs, tasks, research, playbooks, templates
-scripts/             agent-run, check-standards, export-openapi, install-hooks
+docs/                plan, status, decisions, standards, specs, tasks, research, playbooks, templates, architecture
+scripts/             agent-run, check-standards, check-links, export-openapi, install-hooks
 .agent-logs/         captured prompts/responses: committed, never edited by hand
 Dockerfile           one image for api + worker (web build baked in)
 docker-compose.yml   local Postgres + MinIO
