@@ -89,7 +89,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-010 | STATUS truth pass: retire the falsified R2/deploy/gh/Neon-hang rows, fix pooled→unpooled, rewrite NOT STARTED for specs 002–009 | DONE | opencode / Muse Spark | `docs/STATUS.md`, `docs/PLAN.md`, `docs/WORKLOG.md`, `docs/tasks/T-010/` |
 | T-011 | Live slice verification per spec (AC walk + `docs/verification/` screenshots; curl substitute if no browser) | TODO | TBD | `docs/verification/`, `docs/specs/00N-*/spec.md` |
 | T-020 | Reference-look reskin (styles only) + delete the WhatsApp credential screenshot | DONE | opencode / Muse Spark | `apps/web/src/…`, `docs/tasks/T-020/` |
-| T-012 | Modal LTX-2.5 spike: run `apps/gpu/ltx_spike.py` until a real clip lands in R2; record cost + function ref | TODO (paid H100, time-boxed) | TBD | `apps/gpu/ltx_spike.py` |
+| T-012 | Modal LTX-2.5 spike: run `apps/gpu/ltx_spike.py` until a real clip lands in R2; record cost + function ref | BLOCKED on HF gating (`gated:auto` → 401; A10G path builds/starts fine; ~$0.03 spent) — needs human license click + `huggingface` secret, then re-run | opencode / Muse Spark | `apps/gpu/ltx_spike.py`, `docs/tasks/T-012/` |
 | T-013 | Real `ModalAdapter` behind the frozen `ModelAdapter` protocol (server-side only, no contract change) | TODO | TBD | `apps/api/app/adapters/modal_adapter.py` |
 | T-014 | Prompt-conditioned generation proof on the live URL (`GENERATION_BACKEND=modal`), `local-motion` stays default | TODO | TBD | `apps/api/app/adapters/`, `scripts/smoke-generation` |
 | T-015 | Library delete + pagination (contract-first: publish the delete route like T-005-0) | TODO | TBD | `docs/specs/005-library/` |
