@@ -1,10 +1,11 @@
-import { Link, useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 import { Button } from "../../ui/Button"
 import { GuestButton } from "../session/GuestButton"
 import type { SessionContextValue } from "../session/useSession"
 
 export function HomePage() {
   const { status, startGuestSession } = useOutletContext<SessionContextValue>()
+  const navigate = useNavigate()
 
   return (
     <section className="mx-auto flex max-w-2xl flex-col items-center gap-6 py-16 text-center">
@@ -14,9 +15,9 @@ export function HomePage() {
         no sign-up required.
       </p>
       {status === "signed-in" ? (
-        <Link to="/create/video">
-          <Button variant="primary">Create video</Button>
-        </Link>
+        <Button variant="primary" onClick={() => navigate("/create/video")}>
+          Create video
+        </Button>
       ) : (
         <GuestButton startGuestSession={startGuestSession} />
       )}
