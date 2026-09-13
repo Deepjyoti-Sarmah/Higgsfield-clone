@@ -12,3 +12,6 @@ dist/
 # Unrelated local project; never part of this repo (D-011)
 pixovid/
 .neon
+
+# Scratch area for raw screenshots the user drops in (may contain credentials); never commit
+reference-images/
