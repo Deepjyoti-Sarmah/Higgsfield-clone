@@ -1,6 +1,6 @@
 # Spec 004: Create video page
 
-**Status:** DRAFT  ·  **Priority:** P0
+**Status:** APPROVED  ·  **Priority:** P0
 **Research refs:** `docs/research/flows/video-create.md` + screenshot `16`; friction notes in `docs/research/product-map.md` § "Better than the original"
 **Depends on:** spec 003 contracts (`openapi.json`)
 
