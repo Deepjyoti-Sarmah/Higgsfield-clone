@@ -166,3 +166,35 @@ def test_notify_payload_parsing_ignores_junk() -> None:
     assert parse_job_id(f'{{"job_id":"{job_id}"}}') == job_id
     assert parse_job_id("not json") is None
     assert parse_job_id('{"job_id":"nope"}') is None
+
+
+async def _image_job(guest_client: AsyncClient, key: str) -> uuid.UUID:
+    body = {"prompt": "a cat", "aspect_ratio": "1:1", "quality": "standard", "count": 1}
+    body.update(idempotency_key=key)
+    response = await guest_client.post("/api/v1/image-jobs", json=body)
+    assert response.status_code == 202
+    return uuid.UUID(response.json()["id"])
+
+
+async def test_events_endpoint_streams_for_an_image_job_owner(
+    guest_client: AsyncClient, app: FastAPI, session_maker: async_sessionmaker[AsyncSession]
+) -> None:
+    job_id = await _image_job(guest_client, "events-image-key1")
+    await transition(session_maker, job_id, "failed")
+    async with open_broker(session_maker) as broker:
+        app.state.job_event_broker = broker
+        response = await guest_client.get(f"/api/v1/jobs/{job_id}/events")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/event-stream")
+    assert f'data: {{"job_id":"{job_id}","status":"failed"}}' in response.text
+
+
+async def test_events_and_the_video_read_keep_their_404_and_422_boundaries(
+    guest_client: AsyncClient, other_guest_client: AsyncClient, object_storage: InMemoryObjectStorage
+) -> None:
+    image_id = await _image_job(guest_client, "events-image-key2")
+    video_id = await create_queued_job(guest_client, object_storage, "events-other-1")
+    assert (await guest_client.get(f"/api/v1/jobs/{image_id}")).status_code == 404
+    assert (await guest_client.get("/api/v1/jobs/not-a-uuid/events")).status_code == 422
+    assert (await other_guest_client.get(f"/api/v1/jobs/{image_id}/events")).status_code == 404
+    assert (await other_guest_client.get(f"/api/v1/jobs/{video_id}/events")).status_code == 404

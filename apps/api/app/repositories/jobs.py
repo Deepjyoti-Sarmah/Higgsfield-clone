@@ -53,6 +53,12 @@ async def find_user_job(session: AsyncSession, user_id: uuid.UUID, job_id: uuid.
     return result.scalar_one_or_none()
 
 
+async def find_owned_job(session: AsyncSession, user_id: uuid.UUID, job_id: uuid.UUID) -> Job | None:
+    """Ownership only, kind-agnostic: the SSE route streams image jobs too."""
+    result = await session.execute(select(Job).where(Job.id == job_id, Job.user_id == user_id))
+    return result.scalar_one_or_none()
+
+
 async def find_job(session: AsyncSession, job_id: uuid.UUID) -> Job | None:
     return await session.get(Job, job_id)
 

@@ -1,6 +1,6 @@
 # Spec 009: Create image (text → image)
 
-**Status:** APPROVED (handing off this pack is the user's approval, the convention specs 004–008 use)  ·  **Priority:** P1
+**Status:** DONE  ·  **Priority:** P1
 **Research refs:** `docs/research/product-map.md` row "Image create: prompt + aspect/quality/count → images" (**P1**, "Second creation mode. Images can also be generated and fed into Video create"); `docs/research/flows/image-create.md` (screenshot `15`, empty state only — generating/results were never captured); `docs/DECISIONS.md` D-002 (image model = LLaDA-Image Turbo on Modal, **licence unverified**), D-012 (Image create is P1); `docs/specs/003-generation-core/design.md` (the job/asset/ledger core this reuses); `docs/specs/004-create-video/design.md` (the page conventions)
 
 ## Problem / why

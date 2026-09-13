@@ -10,6 +10,7 @@ from app.auth_dependencies import require_current_user
 from app.db import get_session
 from app.job_event_dependencies import get_job_event_broker
 from app.models.user import AppUser
+from app.repositories.jobs import find_owned_job
 from app.schemas.jobs import (
     InsufficientCreditsResponse,
     JobCreatedResponse,
@@ -135,11 +136,9 @@ async def stream_job_events(
     request: Request,
     user: Annotated[AppUser, Depends(require_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
-    storage: Annotated[ObjectStorage, Depends(get_object_storage)],
-    settings: Annotated[Settings, Depends(get_settings)],
 ) -> EventStreamResponse:
-    view = await read_owned_job(session, storage, settings, user.id, job_id)
-    if view is None:
+    # Ownership only: an image job has no preset/input for read_owned_job to describe.
+    if await find_owned_job(session, user.id, job_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Job not found")
     # resolved after the ownership check so a non-owner always gets plain JSON 404
     broker = await get_job_event_broker(request)
