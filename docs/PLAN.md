@@ -17,7 +17,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 |---|---|---|---|---|
 | M0 | Scaffolding: docs, playbooks, templates, capture for subagents + other tools, standards check | 1h | DONE (non-Claude canary answer pending, see STATUS) | Claude subagent + non-Claude agent both logged in `.agent-logs/` |
 | M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | DONE: scope approved (D-012); 7 flows still to capture | user approves scope |
-| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | CODE DONE locally; deploy + Modal are user placeholders | public URL opens signed out; one clip in R2 |
+| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | **DEPLOYED**: api + SPA live on Railway against Neon (health ok, presets 12, `/me` 401 signed out). Still pending: R2 storage keys (so uploads/generation are not live) and the Modal LTX spike | public URL opens signed out ✅; one clip in R2 ⬜ |
 | M3 | P0 slices (specs 003+) | 10h | CODE COMPLETE: specs 003–008 all tasks done + committed; live `verify-slice` pending deploy | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
 | M5 | Ship: signed-out pass, README, public repo, walkthrough | 2h | TODO | checklist below all ticked |
@@ -101,7 +101,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 - **CUT:** real payments, transcoding pipeline, teams, lipsync, self-managed GPU servers.
 
 ## Pre-hand-in checklist
-- [ ] Live link opens in a signed-out browser — blocked on R2 + Railway deploy
+- [x] Live link opens in a signed-out browser — https://api-production-8afc.up.railway.app (health 200, `/me` 401 signed out, deep links serve the SPA); storage keys still pending, so generation is not yet live
 - [x] `.agent-logs/` present (35 tracked files) and committed incrementally (`git log -- .agent-logs` → 36 commits); 17 late DSH tasks have no transcript (accepted gap, STATUS § BROKEN)
 - [ ] Repo public — blocked on `gh auth login`
 - [ ] README has labelled links (Live, Repo) — labels and honesty done; both URLs TBD until deploy + `gh auth login`

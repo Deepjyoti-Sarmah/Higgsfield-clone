@@ -7,7 +7,7 @@ ledger in Postgres, presigned uploads to S3/R2, and a worker that calls the mode
 
 | | |
 |---|---|
-| **Live:** | TBD until deploy (no public URL yet — `docs/runbooks/deploy.md`) |
+| **Live:** | **https://api-production-8afc.up.railway.app** — Railway + your Neon Postgres. R2 storage keys are still pending, so browsing works but uploads/generation are not live yet |
 | **Repo:** | TBD (public GitHub URL — `gh auth login` is still broken, see `docs/STATUS.md`) |
 | **Status:** | `docs/STATUS.md` — what works, what's broken, what hasn't started |
 | **Plan:** | `docs/PLAN.md` — milestones, task board, role assignments |
