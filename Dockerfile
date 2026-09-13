@@ -13,6 +13,10 @@ FROM python:3.12-slim AS app
 COPY --from=ghcr.io/astral-sh/uv:0.9 /uv /usr/local/bin/uv
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/app/.venv UV_PYTHON_DOWNLOADS=never
+# Local-motion generation shells out to ffmpeg/ffprobe (spec 003, AC-8).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 COPY apps/api/pyproject.toml apps/api/uv.lock apps/api/.python-version ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY apps/api/ ./
