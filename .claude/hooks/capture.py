@@ -70,8 +70,10 @@ def final_response(rows):
             elif b.get("type") == "text" and b.get("text", "").strip():
                 tail.append(b["text"])
                 all_text.append(b["text"])
-    text = "\n\n".join(tail) or ("\n\n".join(all_text[-1:]))
-    return text, last_model(turn or rows)
+    # `tail` is empty both when the turn ended on a tool call and when the
+    # closing text hasn't been flushed yet, so the fallback is returned
+    # separately and only used once polling gives up.
+    return "\n\n".join(tail), "\n\n".join(all_text[-1:]), last_model(turn or rows)
 
 
 def log_path(log_dir, session_id):
@@ -134,16 +136,17 @@ def main():
         rows = read_transcript(transcript)
         write_entry(path, session_id, "PROMPT", data.get("prompt", ""), last_model(rows))
     elif event == "response":
-        text, model = "", DEFAULT_MODEL
+        text, fallback, model = "", "", DEFAULT_MODEL
         # The transcript may lag the Stop event by a moment; poll briefly.
         for _ in range(20):
-            text, model = final_response(read_transcript(transcript))
+            text, fallback, model = final_response(read_transcript(transcript))
             if text:
                 break
             time.sleep(0.25)
         msg = data.get("last_assistant_message")
         if not text and isinstance(msg, str):
             text = msg
+        text = text or fallback
         write_entry(path, session_id, "RESPONSE", text or "(no text response captured)", model)
 
 
