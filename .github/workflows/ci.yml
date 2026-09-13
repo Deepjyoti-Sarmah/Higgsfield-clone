@@ -50,6 +50,11 @@ jobs:
       - name: Test
         run: uv --directory apps/api run pytest -q
 
+      - name: Check contract is in sync
+        run: |
+          scripts/export-openapi
+          git diff --exit-code packages/contracts/openapi.json
+
   web:
     runs-on: ubuntu-latest
     defaults:
@@ -88,4 +93,9 @@ jobs:
         run: scripts/check-standards
 
       - name: Build image
-        run: docker build .
+        run: docker build -t hf-clone .
+
+      - name: Check ffmpeg in image
+        run: |
+          docker run --rm --entrypoint ffmpeg hf-clone -version
+          docker run --rm --entrypoint ffprobe hf-clone -version
