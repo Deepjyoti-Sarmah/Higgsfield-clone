@@ -38,8 +38,15 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-002-4 | Deploy Railway + Neon | PLACEHOLDER: the user deploys, following `docs/runbooks/deploy.md` | user | same |
 | T-002-5 | Modal LTX spike | PLACEHOLDER: the user sets Modal + R2 credentials; code in `apps/gpu/ltx_spike.py` | user | same |
 | T-002-7 | Fix `<button>` nested in `<Link>` on HomePage | DONE | deepseek-flash | `apps/web/src/features/home/HomePage.tsx`, `docs/tasks/T-002-7/report.md` |
-| T-003-0 | Design spec 003 + publish contract (writes the T-003-k briefs) | READY FOR HANDOFF (strongest model) | — | `docs/tasks/T-003-0/brief.md` |
-| T-004-0 | Design spec 004 (writes the T-004-k briefs) | READY FOR HANDOFF after T-003-0 | — | `docs/tasks/T-004-0/brief.md` |
+| T-003-0 | Design spec 003 + publish contract (writes the T-003-k briefs) | DONE (review by a different model pending) | Claude Opus 5 | `docs/specs/003-generation-core/{design,tasks}.md`, `docs/tasks/T-003-0/report.md` |
+| T-003-1 | Contract + migrations: settings, models, migrations 0002/0003, domain rules, Protocols, S3 adapter, test fixtures | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-003-1/brief.md` |
+| T-003-2 | Repositories incl. claim/lease/reaper SQL | TODO (wave 2, after T-003-1) | — | `docs/tasks/T-003-2/brief.md` |
+| T-003-6 | Backends: local-motion ffmpeg, mock, modal/openrouter placeholders, selection, ffmpeg in image | TODO (wave 2, after T-003-1; parallel with T-003-2) | — | `docs/tasks/T-003-6/brief.md` |
+| T-003-3 | Presets, uploads, credits endpoints + guest grant | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-3/brief.md` |
+| T-003-4 | Jobs API: create, read, SSE events | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-4/brief.md` |
+| T-003-5 | Worker: claim loop, lease, completion, reaper | TODO (wave 3, after T-003-2 + T-003-6) | — | `docs/tasks/T-003-5/brief.md` |
+| T-003-7 | End-to-end smoke (reviewer, different model) | TODO (wave 4) | — | `docs/tasks/T-003-7/brief.md` |
+| T-004-0 | Design spec 004 (writes the T-004-k briefs) | READY FOR HANDOFF (contract published by T-003-0) | — | `docs/tasks/T-004-0/brief.md` |
 | S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | TODO (after 004) | — | — |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | WAITING on user screenshots | user | `docs/research/product-map.md` § Not yet observed |
 

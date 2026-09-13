@@ -1,6 +1,6 @@
 # Spec 003: Generation core (presets, uploads, jobs, credits, worker, live progress)
 
-**Status:** DRAFT  ·  **Priority:** P0
+**Status:** APPROVED (2026-09-13, by handoff of T-003-0)  ·  **Priority:** P0
 **Research refs:** `docs/research/flows/video-create.md` (presets, cost on Generate, History); `docs/architecture/architecture.md` invariants 1–5; D-001, D-002, D-003, D-006
 
 ## Problem / why

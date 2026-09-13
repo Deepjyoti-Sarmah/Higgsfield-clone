@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.db import create_database_engine, create_session_maker
-from app.routers import auth, health
+from app.routers import auth, credits, health, jobs, presets, uploads
 from app.settings import get_settings
 
 
@@ -38,6 +38,10 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Higgsfield Clone API", version="0.1.0", lifespan=open_database)
     app.include_router(health.router)
     app.include_router(auth.router)
+    app.include_router(presets.router)
+    app.include_router(uploads.router)
+    app.include_router(jobs.router)
+    app.include_router(credits.router)
     mount_single_page_app(app, Path(get_settings().static_dir))
     return app
 

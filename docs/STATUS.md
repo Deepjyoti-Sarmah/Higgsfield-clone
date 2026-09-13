@@ -15,6 +15,8 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Container image: web build → Python; `APP_ROLE=api` runs migrations + uvicorn and serves the SPA with deep links; `APP_ROLE=worker` logs a heartbeat | `Dockerfile`, `apps/api/entrypoint.sh`, `.dockerignore`, `railway.json` | `docker build -t hf-clone .`; `docker run --network host -e DATABASE_URL=postgresql://…localhost:5432/higgsfield hf-clone` → health 200, `/` + `/create/video` 200, guest 201, me 200; worker run → 2 heartbeats in 12s | 2026-09-13 01:50 (local) |
 | Standards check (file ≤200 lines, comment block ≤3 lines) | `scripts/check-standards` | passes on the repo; a planted 205-line file with a 4-line comment fails with exit 1 | 2026-09-13 01:18 |
 | Home "Create video" button uses `navigate("/create/video")` instead of nesting a `<button>` in a `<Link>` (valid HTML, one focus stop) | `apps/web/src/features/home/HomePage.tsx` | `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards` all pass; `grep -n "<Link"` on the file prints nothing | 2026-09-13 01:55 |
+| Spec 003 contract published: `/api/v1/presets`, `/uploads`, `/uploads/{asset_id}/complete`, `/jobs`, `/jobs/{job_id}`, `/jobs/{job_id}/events` (SSE), `/credits` with final schemas; handlers return **501** until T-003-3/4 | `apps/api/app/schemas/{presets,uploads,jobs,credits}.py`, `apps/api/app/routers/{presets,uploads,jobs,credits}.py`, `packages/contracts/openapi.json` | `uv --directory apps/api run ruff check . && uv --directory apps/api run pytest -q && scripts/export-openapi && scripts/check-standards` → 7 passed, 10 paths listed | 2026-09-13 02:18 (local) |
+| Spec 003 design + 7 parallel-safe task briefs (77 files, no overlap); 12 ffmpeg motion recipes rendered on ffmpeg 7.1.4 (5s, 120 frames, h264, faststart, no black corners) | `docs/specs/003-generation-core/{design,tasks}.md`, `docs/tasks/T-003-{1..7}/brief.md` | tasks.md file-overlap script + recipe renders, both in `docs/tasks/T-003-0/report.md` | 2026-09-13 02:18 |
 
 ## BROKEN / KNOWN ISSUES
 | What | Where | Impact | Next step |
@@ -27,6 +29,7 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | `gh` CLI login broken (keyring) | — | can't create the public GitHub repo from here | user: `gh auth login` |
 
 ## NOT STARTED
-- Specs 003 (generation core) and 004 (Create video): briefs `docs/tasks/T-003-0`, `T-004-0` ready for handoff
+- Spec 003 implementation: T-003-1 ready for handoff (`docs/tasks/T-003-1/brief.md`), then waves per `docs/specs/003-generation-core/tasks.md`
+- Spec 004 (Create video): `docs/tasks/T-004-0` ready for handoff (the contract it needs is published)
 - Specs 005–008: Library, Explore, Share page, Credits + top-up
 - Live deploy + Modal spike (user placeholders, `docs/runbooks/deploy.md`)
