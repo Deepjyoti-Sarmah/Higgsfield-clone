@@ -1,11 +1,20 @@
 import { useCallback, useRef } from "react"
-import type { SessionContextValue } from "../session/useSession"
-import type { GuestSessionOutcome, RunWithGuestSession } from "./createVideoTypes"
 
-type SessionStatus = SessionContextValue["status"]
+export type GuestSessionSource = {
+  status: "loading" | "signed-out" | "signed-in"
+  startGuestSession: () => Promise<boolean>
+}
 
-export function useGuestSessionRunner(session: SessionContextValue): RunWithGuestSession {
-  const statusRef = useRef<SessionStatus>(session.status)
+export type GuestSessionOutcome<T> =
+  | { outcome: "done"; result: T }
+  | { outcome: "session-failed" }
+
+export type RunWithGuestSession = <T extends { response: Response }>(
+  request: () => Promise<T>,
+) => Promise<GuestSessionOutcome<T>>
+
+export function useGuestSessionRunner(session: GuestSessionSource): RunWithGuestSession {
+  const statusRef = useRef<GuestSessionSource["status"]>(session.status)
   const startGuestSessionRef = useRef(session.startGuestSession)
   const guestPromiseRef = useRef<Promise<boolean> | null>(null)
 

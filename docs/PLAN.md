@@ -59,9 +59,9 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-006-3 | Web: effect gallery cards, per-category sections, states | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-3/report.md` |
 | T-006-4 | Web: assemble `ExplorePage`, route `/`, retire `HomePage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-4/report.md` |
 | T-005-0 | Design spec 005 Library + publish `GET /api/v1/jobs` (schema + 501 stub + openapi) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/005-library/`, `docs/tasks/T-005-0/report.md` |
-| T-005-1 | API: `GET /api/v1/jobs` list (repository + view builder + router + tests) | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-005-1/brief.md` |
-| T-005-2 | Web data: move the guest runner to `api/guestSession.ts`, add `api/library.ts` | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-005-2/brief.md` |
-| T-005-3 | Web copy + `formatCreatedAt` helper (+ test) | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-005-3/brief.md` |
+| T-005-1 | API: `GET /api/v1/jobs` list (repository + view builder + router + tests) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-1/report.md` |
+| T-005-2 | Web data: move the guest runner to `api/guestSession.ts`, add `api/library.ts` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-2/report.md` |
+| T-005-3 | Web copy + `formatCreatedAt` helper (+ test) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-3/report.md` |
 | T-005-4 | Web UI: Library page, list, items, states, result panel, `?job=` selection | TODO (after T-005-2 + T-005-3) | — | `docs/tasks/T-005-4/brief.md` |
 | T-005-5 | Assembly: route `/library` to `LibraryPage` + manual check | TODO (after T-005-1 + T-005-4) | — | `docs/tasks/T-005-5/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |

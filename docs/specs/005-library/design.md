@@ -90,7 +90,7 @@ LibraryPage                       (features/library/LibraryPage.tsx)
 | `time.label(iso)` | `formatCreatedAt` output |
 
 ### `formatCreatedAt(iso)` (pure, tested)
-`Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })` → `"13 Sep 2026, 19:40"`. **UTC is deliberate:** a local-time renderer would make the unit test depend on the machine's timezone. Invalid input returns `""` rather than throwing.
+`Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })` → `"13 Sep 2026, 19:40"`. **UTC is deliberate:** a local-time renderer would make the unit test depend on the machine's timezone. Invalid input returns `""` rather than throwing. **ICU note (observed during T-005-3):** some runtimes render September's `month:"short"` as `"Sept"`, so the implementation normalises that one token to `"Sep"` to hit the mandated string.
 
 ## Files (each ≤ 200 lines; one component per file; paths relative to the repo root)
 | File | New/Edit | Task | Responsibility |

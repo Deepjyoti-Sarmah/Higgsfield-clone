@@ -113,7 +113,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Jobs */
+        get: operations["list_jobs_api_v1_jobs_get"];
         put?: never;
         /** Create Job */
         post: operations["create_job_api_v1_jobs_post"];
@@ -323,6 +324,39 @@ export interface components {
              * @enum {string}
              */
             status: "queued" | "running" | "succeeded" | "failed";
+        };
+        /** LibraryItemResponse */
+        LibraryItemResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "succeeded" | "failed";
+            /** Preset Slug */
+            preset_slug: string;
+            /** Preset Name */
+            preset_name: string;
+            /** Thumbnail Url */
+            thumbnail_url: string | null;
+            /** Video Url */
+            video_url: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Error Message */
+            error_message: string | null;
+        };
+        /** LibraryListResponse */
+        LibraryListResponse: {
+            /** Items */
+            items: components["schemas"]["LibraryItemResponse"][];
         };
         /** PresetListResponse */
         PresetListResponse: {
@@ -616,6 +650,48 @@ export interface operations {
             };
             /** @description Object not found in storage yet */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_jobs_api_v1_jobs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryListResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

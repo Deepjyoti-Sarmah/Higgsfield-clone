@@ -2,6 +2,7 @@ import type { components } from "../../api/generated/schema"
 import type { Preset, PresetsState } from "../../api/presets"
 
 export type { Preset, PresetsState }
+export type { GuestSessionOutcome, RunWithGuestSession } from "../../api/guestSession"
 
 export type PresetCategory = Preset["category"]
 export type Asset = components["schemas"]["AssetResponse"]
@@ -112,11 +113,3 @@ export type HistoryEntry = {
   thumbnailUrl: string | null
   createdAt: string
 }
-
-export type GuestSessionOutcome<T> =
-  | { outcome: "done"; result: T }
-  | { outcome: "session-failed" }
-
-export type RunWithGuestSession = <T extends { response: Response }>(
-  request: () => Promise<T>,
-) => Promise<GuestSessionOutcome<T>>

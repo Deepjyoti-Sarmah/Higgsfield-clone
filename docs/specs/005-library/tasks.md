@@ -13,15 +13,15 @@ T-005-1 is API-only, T-005-2/T-005-3 are web-only and disjoint from each other, 
   - Files: `docs/specs/005-library/**`, `docs/tasks/T-005-*/**`, `apps/api/app/schemas/jobs.py`, `apps/api/app/routers/jobs.py`, `packages/contracts/openapi.json`
   - Verify: `python3 -c "import json;print('\n'.join(sorted(json.load(open('packages/contracts/openapi.json'))['paths'])))" && ls docs/tasks | grep T-005 && scripts/check-standards`
   - Suggested role: orchestrator/designer · Depends on: —
-- [ ] **T-005-1** · API: `GET /api/v1/jobs` — repository query, view builder, router body, tests
+- [x] **T-005-1** · API: `GET /api/v1/jobs` — repository query, view builder, router body, tests
   - Files: `apps/api/app/repositories/jobs.py`, `apps/api/app/services/job_views.py`, `apps/api/app/routers/jobs.py`, `apps/api/tests/test_library_api.py`, `docs/tasks/T-005-1/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer (orchestrator for the ordering/ownership rules) · Depends on: T-005-0
-- [ ] **T-005-2** · Web data: move the guest-session runner to `api/guestSession.ts`, add `api/library.ts` (`useLibrary`)
+- [x] **T-005-2** · Web data: move the guest-session runner to `api/guestSession.ts`, add `api/library.ts` (`useLibrary`)
   - Files: `apps/web/src/api/guestSession.ts`, `apps/web/src/features/create-video/useGuestSessionRunner.ts` (delete), `apps/web/src/features/create-video/CreateVideoPage.tsx`, `apps/web/src/api/library.ts`, `docs/tasks/T-005-2/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-005-0
-- [ ] **T-005-3** · Web copy + helper: `libraryCopy.ts`, `formatCreatedAt.ts` (+ test)
+- [x] **T-005-3** · Web copy + helper: `libraryCopy.ts`, `formatCreatedAt.ts` (+ test)
   - Files: `apps/web/src/features/library/libraryCopy.ts`, `apps/web/src/features/library/formatCreatedAt.ts`, `apps/web/src/features/library/formatCreatedAt.test.ts`, `docs/tasks/T-005-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (small model is fine) · Depends on: T-005-0

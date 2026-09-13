@@ -54,6 +54,16 @@ async def find_job(session: AsyncSession, job_id: uuid.UUID) -> Job | None:
     return await session.get(Job, job_id)
 
 
+async def list_owned_jobs(session: AsyncSession, user_id: uuid.UUID, limit: int) -> list[Job]:
+    result = await session.execute(
+        select(Job)
+        .where(Job.user_id == user_id)
+        .order_by(Job.created_at.desc(), Job.id.desc())
+        .limit(limit)
+    )
+    return list(result.scalars())
+
+
 async def read_job_status(session: AsyncSession, job_id: uuid.UUID) -> str | None:
     return cast("str | None", await session.scalar(select(Job.status).where(Job.id == job_id)))
 

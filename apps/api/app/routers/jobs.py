@@ -16,6 +16,7 @@ from app.schemas.jobs import (
     JobCreateRequest,
     JobResponse,
     JobStatusEvent,
+    LibraryItemResponse,
     LibraryListResponse,
 )
 from app.schemas.user import ErrorResponse
@@ -27,7 +28,7 @@ from app.services.job_creation import (
     PresetNotFoundError,
 )
 from app.services.job_event_stream import stream_job_status_events
-from app.services.job_views import JobView, read_owned_job
+from app.services.job_views import JobView, list_owned_jobs_view, read_owned_job
 from app.settings import Settings, get_settings
 from app.storage_dependencies import get_object_storage
 
@@ -84,8 +85,6 @@ async def create_job(
     return JobCreatedResponse(id=created.id, status=created.status, credit_cost=created.credit_cost)
 
 
-# T-005-0 stub for the Library contract. T-005-1 replaces the body: keep this handler
-# name, signature and responses map so openapi.json stays byte-identical.
 @router.get(
     "/jobs",
     response_model=LibraryListResponse,
@@ -94,9 +93,26 @@ async def create_job(
 async def list_jobs(
     user: Annotated[AppUser, Depends(require_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[ObjectStorage, Depends(get_object_storage)],
+    settings: Annotated[Settings, Depends(get_settings)],
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> LibraryListResponse:
-    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented")
+    views = await list_owned_jobs_view(session, storage, settings, user.id, limit)
+    return LibraryListResponse(
+        items=[
+            LibraryItemResponse(
+                id=view.job.id,
+                status=view.job.status,
+                preset_slug=view.job.preset_slug,
+                preset_name=view.preset_name,
+                thumbnail_url=view.thumbnail_url,
+                video_url=view.video_url,
+                created_at=view.job.created_at,
+                error_message=view.job.error_message,
+            )
+            for view in views
+        ]
+    )
 
 
 @router.get("/jobs/{job_id}", responses=NOT_OWNED_RESPONSE)
