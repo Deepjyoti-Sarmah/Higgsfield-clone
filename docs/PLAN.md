@@ -40,7 +40,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-002-7 | Fix `<button>` nested in `<Link>` on HomePage | DONE | deepseek-flash | `apps/web/src/features/home/HomePage.tsx`, `docs/tasks/T-002-7/report.md` |
 | T-003-0 | Design spec 003 + publish contract (writes the T-003-k briefs) | DONE (review by a different model pending) | Claude Opus 5 | `docs/specs/003-generation-core/{design,tasks}.md`, `docs/tasks/T-003-0/report.md` |
 | T-003-1 | Contract + migrations: settings, models, migrations 0002/0003, domain rules, Protocols, S3 adapter, test fixtures | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/{models,domain,adapters}/`, `apps/api/migrations/versions/000{2,3}_*.py`, `apps/api/tests/conftest.py`, `docs/tasks/T-003-1/report.md` |
-| T-003-2 | Repositories incl. claim/lease/reaper SQL | TODO (wave 2, after T-003-1) | — | `docs/tasks/T-003-2/brief.md` |
+| T-003-2 | Repositories incl. claim/lease/reaper SQL | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/repositories/`, `apps/api/tests/test_{job_step,ledger}_repository.py`, `docs/tasks/T-003-2/report.md` |
 | T-003-6 | Backends: local-motion ffmpeg, mock, modal/openrouter placeholders, selection, ffmpeg in image | TODO (wave 2, after T-003-1; parallel with T-003-2) | — | `docs/tasks/T-003-6/brief.md` |
 | T-003-3 | Presets, uploads, credits endpoints + guest grant | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-3/brief.md` |
 | T-003-4 | Jobs API: create, read, SSE events | TODO (wave 3, after T-003-2) | — | `docs/tasks/T-003-4/brief.md` |
