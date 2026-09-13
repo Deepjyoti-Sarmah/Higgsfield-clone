@@ -17,6 +17,7 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Home "Create video" button uses `navigate("/create/video")` instead of nesting a `<button>` in a `<Link>` (valid HTML, one focus stop) | `apps/web/src/features/home/HomePage.tsx` | `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards` all pass; `grep -n "<Link"` on the file prints nothing | 2026-09-13 01:55 |
 | Spec 003 contract published: `/api/v1/presets`, `/uploads`, `/uploads/{asset_id}/complete`, `/jobs`, `/jobs/{job_id}`, `/jobs/{job_id}/events` (SSE), `/credits` with final schemas; handlers return **501** until T-003-3/4 | `apps/api/app/schemas/{presets,uploads,jobs,credits}.py`, `apps/api/app/routers/{presets,uploads,jobs,credits}.py`, `packages/contracts/openapi.json` | `uv --directory apps/api run ruff check . && uv --directory apps/api run pytest -q && scripts/export-openapi && scripts/check-standards` → 7 passed, 10 paths listed | 2026-09-13 02:18 (local) |
 | Spec 003 design + 7 parallel-safe task briefs (77 files, no overlap); 12 ffmpeg motion recipes rendered on ffmpeg 7.1.4 (5s, 120 frames, h264, faststart, no black corners) | `docs/specs/003-generation-core/{design,tasks}.md`, `docs/tasks/T-003-{1..7}/brief.md` | tasks.md file-overlap script + recipe renders, both in `docs/tasks/T-003-0/report.md` | 2026-09-13 02:18 |
+| Spec 004 design + 5 parallel-safe web task briefs (61 files, no overlap); every API path in the design exists in `openapi.json`; `vitest@^5` peer range re-checked against the installed `vite@^8` | `docs/specs/004-create-video/{design,tasks}.md`, `docs/tasks/T-004-{1..5}/brief.md` | `python3 -c openapi-paths && ls docs/tasks (filter T-004) && scripts/check-standards` → 10 paths, 5 briefs, 0 violations (full output in `docs/tasks/T-004-0/report.md`) | 2026-09-13 02:35 |
 
 ## BROKEN / KNOWN ISSUES
 | What | Where | Impact | Next step |
@@ -30,6 +31,6 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 
 ## NOT STARTED
 - Spec 003 implementation: T-003-1 ready for handoff (`docs/tasks/T-003-1/brief.md`), then waves per `docs/specs/003-generation-core/tasks.md`
-- Spec 004 (Create video): `docs/tasks/T-004-0` ready for handoff (the contract it needs is published)
+- Spec 004 implementation: T-004-1..T-004-5 briefs ready (`docs/tasks/T-004-{1..5}/brief.md`), waves per `docs/specs/004-create-video/tasks.md`
 - Specs 005–008: Library, Explore, Share page, Credits + top-up
 - Live deploy + Modal spike (user placeholders, `docs/runbooks/deploy.md`)
