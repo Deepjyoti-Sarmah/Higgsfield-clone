@@ -55,7 +55,7 @@ async def find_job(session: AsyncSession, job_id: uuid.UUID) -> Job | None:
 
 
 async def read_job_status(session: AsyncSession, job_id: uuid.UUID) -> str | None:
-    return await session.scalar(select(Job.status).where(Job.id == job_id))
+    return cast("str | None", await session.scalar(select(Job.status).where(Job.id == job_id)))
 
 
 async def transition_job_status(

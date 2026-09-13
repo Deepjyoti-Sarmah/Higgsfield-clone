@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.db import create_database_engine, create_session_maker
 from app.routers import auth, credits, health, jobs, presets, uploads
+from app.services.job_event_broker import JobEventBroker
 from app.settings import get_settings
 
 
@@ -15,8 +16,14 @@ from app.settings import get_settings
 async def open_database(app: FastAPI) -> AsyncIterator[None]:
     engine = create_database_engine(get_settings())
     app.state.session_maker = create_session_maker(engine)
-    yield
-    await engine.dispose()
+    broker = JobEventBroker(engine)
+    await broker.start()
+    app.state.job_event_broker = broker
+    try:
+        yield
+    finally:
+        await broker.stop()
+        await engine.dispose()
 
 
 def mount_single_page_app(app: FastAPI, static_dir: Path) -> None:

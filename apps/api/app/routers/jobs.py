@@ -1,10 +1,14 @@
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import JSONResponse, StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.adapters.object_storage import ObjectStorage
 from app.auth_dependencies import require_current_user
+from app.db import get_session
+from app.job_event_dependencies import get_job_event_broker
 from app.models.user import AppUser
 from app.schemas.jobs import (
     InsufficientCreditsResponse,
@@ -14,6 +18,17 @@ from app.schemas.jobs import (
     JobStatusEvent,
 )
 from app.schemas.user import ErrorResponse
+from app.services import job_creation
+from app.services.job_creation import (
+    InputAssetNotFoundError,
+    InputAssetNotReadyError,
+    InsufficientCreditsError,
+    PresetNotFoundError,
+)
+from app.services.job_event_stream import stream_job_status_events
+from app.services.job_views import JobView, read_owned_job
+from app.settings import Settings, get_settings
+from app.storage_dependencies import get_object_storage
 
 router = APIRouter(prefix="/api/v1", tags=["jobs"])
 
@@ -35,6 +50,7 @@ JOB_EVENT_STREAM_RESPONSE: dict[int | str, dict[str, Any]] = {
 @router.post(
     "/jobs",
     status_code=status.HTTP_202_ACCEPTED,
+    response_model=JobCreatedResponse,
     responses={
         401: {"model": ErrorResponse},
         402: {"model": InsufficientCreditsResponse},
@@ -43,19 +59,84 @@ JOB_EVENT_STREAM_RESPONSE: dict[int | str, dict[str, Any]] = {
     },
 )
 async def create_job(
-    body: JobCreateRequest, user: Annotated[AppUser, Depends(require_current_user)]
-) -> JobCreatedResponse:
-    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented")
+    body: JobCreateRequest,
+    user: Annotated[AppUser, Depends(require_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> JobCreatedResponse | JSONResponse:
+    try:
+        created = await job_creation.create_job(
+            session,
+            user.id,
+            preset_slug=body.preset_slug,
+            input_asset_id=body.input_asset_id,
+            prompt=body.prompt,
+            idempotency_key=body.idempotency_key,
+        )
+    except PresetNotFoundError as error:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Preset not found") from error
+    except InputAssetNotFoundError as error:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Input asset not found") from error
+    except InputAssetNotReadyError as error:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Input asset upload not completed") from error
+    except InsufficientCreditsError as error:
+        return _insufficient_credits_response(error)
+    return JobCreatedResponse(id=created.id, status=created.status, credit_cost=created.credit_cost)
 
 
 @router.get("/jobs/{job_id}", responses=NOT_OWNED_RESPONSE)
-async def read_job(job_id: uuid.UUID, user: Annotated[AppUser, Depends(require_current_user)]) -> JobResponse:
-    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented")
+async def read_job(
+    job_id: uuid.UUID,
+    user: Annotated[AppUser, Depends(require_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[ObjectStorage, Depends(get_object_storage)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> JobResponse:
+    view = await read_owned_job(session, storage, settings, user.id, job_id)
+    if view is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Job not found")
+    return build_job_response(view)
 
 
 @router.get("/jobs/{job_id}/events", response_class=EventStreamResponse, responses=JOB_EVENT_STREAM_RESPONSE)
 async def stream_job_events(
-    job_id: uuid.UUID, user: Annotated[AppUser, Depends(require_current_user)]
+    job_id: uuid.UUID,
+    request: Request,
+    user: Annotated[AppUser, Depends(require_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[ObjectStorage, Depends(get_object_storage)],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> EventStreamResponse:
-    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented")
+    view = await read_owned_job(session, storage, settings, user.id, job_id)
+    if view is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Job not found")
+    # resolved after the ownership check so a non-owner always gets plain JSON 404
+    broker = await get_job_event_broker(request)
+    events = stream_job_status_events(job_id, broker, request.app.state.session_maker)
+    return EventStreamResponse(events, headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+
+def _insufficient_credits_response(error: InsufficientCreditsError) -> JSONResponse:
+    body = InsufficientCreditsResponse(
+        detail="Not enough credits", balance=error.balance, required=error.required
+    )
+    return JSONResponse(status_code=status.HTTP_402_PAYMENT_REQUIRED, content=body.model_dump())
+
+
+def build_job_response(view: JobView) -> JobResponse:
+    job = view.job
+    return JobResponse(
+        id=job.id,
+        status=job.status,
+        preset_slug=job.preset_slug,
+        preset_name=view.preset_name,
+        prompt=job.prompt,
+        credit_cost=job.credit_cost,
+        input_asset_id=job.input_asset_id,
+        input_image_url=view.input_image_url,
+        video_url=view.video_url,
+        poster_url=view.poster_url,
+        error_message=job.error_message,
+        created_at=job.created_at,
+        started_at=job.started_at,
+        finished_at=job.finished_at,
+    )
