@@ -31,7 +31,7 @@ T-007-2 needs T-007-1's public view builder; T-007-4 needs T-007-3's hook and co
   - Files: `apps/web/src/features/share/{SharePage,ShareResult,ShareStates}.tsx`, `docs/tasks/T-007-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-007-3
-- [ ] **T-007-5** · Assembly + public check: route `/v/:jobId` to `SharePage` and prove the no-JS meta tags
+- [x] **T-007-5** · Assembly + public check: route `/v/:jobId` to `SharePage` and prove the no-JS meta tags
   - Files: `apps/web/src/App.tsx`, `docs/tasks/T-007-5/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: reviewer (a different model from the T-007-4 implementer, if one is available) · Depends on: T-007-1, T-007-2, T-007-4

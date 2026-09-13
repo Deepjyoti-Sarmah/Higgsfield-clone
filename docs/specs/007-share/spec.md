@@ -1,6 +1,6 @@
 # Spec 007: Share page (`/v/{id}`)
 
-**Status:** APPROVED (handing off this pack is the user's approval, the convention specs 004/005/006 use)  ·  **Priority:** P0
+**Status:** DONE  ·  **Priority:** P0
 **Research refs:** `docs/research/product-map.md` row 23 ("Community projects / profiles / likes → P2 … Share pages (`/v/{id}`) cover the growth loop") and gap 6 of § "Not yet observed" ("Share / public view of a generation: the page someone opens from a link"); `docs/research/flows/video-create.md` (16, result + History); `docs/specs/003-generation-core/design.md` (job/asset model, presigned URLs); `docs/specs/004-create-video/design.md` (result view)
 
 ## Problem / why

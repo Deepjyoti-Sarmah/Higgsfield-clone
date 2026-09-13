@@ -69,7 +69,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-007-3 | Web data + copy: `api/share.ts` (`usePublicJob`), `features/share/shareCopy.ts` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-3/report.md` |
 | T-007-2 | API: serve `/v/{job_id}` HTML with OG meta tags (no JS) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-2/report.md` |
 | T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-4/report.md` |
-| T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | TODO (wave 3, after T-007-1/2/4) | — | `docs/tasks/T-007-5/brief.md` |
+| T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-5/report.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)

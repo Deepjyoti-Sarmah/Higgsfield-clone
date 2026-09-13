@@ -7,6 +7,7 @@ import { LibraryPage } from "./features/library/LibraryPage"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
 import { useSession } from "./features/session/useSession"
+import { SharePage } from "./features/share/SharePage"
 
 function Placeholder({ title }: { title: string }) {
   return (
@@ -39,15 +40,7 @@ export function App() {
         />
         <Route path="library" element={<LibraryPage />} />
         <Route path="credits" element={<Placeholder title="Credits" />} />
-        <Route
-          path="v/:jobId"
-          element={
-            <EmptyState
-              title="Share page"
-              description="Public share pages are coming soon."
-            />
-          }
-        />
+        <Route path="v/:jobId" element={<SharePage />} />
       </Route>
     </Routes>
   )
