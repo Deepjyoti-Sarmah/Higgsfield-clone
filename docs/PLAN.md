@@ -52,7 +52,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-004-4 | Web: panel components (drop zone, presets, prompt, generate) | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/web/src/features/create-video/{CreateVideoPanel,ImageDropZone,ImageThumbnail,PresetPicker,PresetCategoryChips,PresetCard,PromptField,GenerateSection}.tsx`, `apps/web/src/features/create-video/useClipboardImagePaste.ts`, `docs/tasks/T-004-4/report.md` |
 | T-004-3 | Web: job hooks (idempotent create, SSE watcher + poll fallback) | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/web/src/features/create-video/{useCreateJob,jobStatusWatcher,useJobEvents,useElapsedSeconds,useActiveJob}.ts`, `docs/tasks/T-004-3/report.md` |
 | T-004-5 | Web: page assembly, canvas views, `App.tsx` routes | DONE (deepseek-flash via DSH; browser-level verify-slice still to run) | deepseek-flash | `apps/web/src/features/create-video/*`, `apps/web/src/App.tsx`, `docs/tasks/T-004-5/report.md` |
-| S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | Explore designed as spec 006 (T-006 rows, code-complete); Library designed as spec 005 (T-005 rows); Share/Credits still TODO | — | — |
+| S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | Explore designed as spec 006 (code-complete); Library designed as spec 005 (T-005 rows, T-005-1..4 done); Share designed as spec 007 (T-007 rows); Credits still TODO | — | — |
 | T-006-0 | Design spec 006 Explore: spec + design + tasks + 4 briefs (no contract change) | DONE | deepseek-flash | `docs/specs/006-explore/`, `docs/tasks/T-006-0/report.md` |
 | T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-1/report.md` |
 | T-006-2 | Web: Explore hero + tool cards | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-2/report.md` |
@@ -64,6 +64,12 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-005-3 | Web copy + `formatCreatedAt` helper (+ test) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-3/report.md` |
 | T-005-4 | Web UI: Library page, list, items, states, result panel, `?job=` selection | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-005-4/report.md` |
 | T-005-5 | Assembly: route `/library` to `LibraryPage` + manual check | TODO (after T-005-1 + T-005-4) | — | `docs/tasks/T-005-5/brief.md` |
+| T-007-0 | Design spec 007 Share page + publish `GET /api/v1/public/jobs/{job_id}` (schema + 501 stub + openapi) and the `/v/{job_id}` OG HTML plan | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/007-share/`, `docs/tasks/T-007-0/report.md` |
+| T-007-1 | API: public read `GET /api/v1/public/jobs/{job_id}` (view builder + router + tests) | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-007-1/brief.md` |
+| T-007-3 | Web data + copy: `api/share.ts` (`usePublicJob`), `features/share/shareCopy.ts` | READY FOR HANDOFF (wave 1) | — | `docs/tasks/T-007-3/brief.md` |
+| T-007-2 | API: serve `/v/{job_id}` HTML with OG meta tags (no JS) | TODO (wave 2, after T-007-1) | — | `docs/tasks/T-007-2/brief.md` |
+| T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | TODO (wave 2, after T-007-3) | — | `docs/tasks/T-007-4/brief.md` |
+| T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | TODO (wave 3, after T-007-1/2/4) | — | `docs/tasks/T-007-5/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)

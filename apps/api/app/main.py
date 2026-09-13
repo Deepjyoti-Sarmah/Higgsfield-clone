@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.db import create_database_engine, create_session_maker
-from app.routers import auth, credits, health, jobs, presets, uploads
+from app.routers import auth, credits, health, jobs, presets, share, uploads
 from app.services.job_event_broker import JobEventBroker
 from app.settings import get_settings
 
@@ -49,6 +49,7 @@ def create_app() -> FastAPI:
     app.include_router(uploads.router)
     app.include_router(jobs.router)
     app.include_router(credits.router)
+    app.include_router(share.router)
     mount_single_page_app(app, Path(get_settings().static_dir))
     return app
 
