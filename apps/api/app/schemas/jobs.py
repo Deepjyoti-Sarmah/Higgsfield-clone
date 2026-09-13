@@ -46,3 +46,18 @@ class InsufficientCreditsResponse(BaseModel):
     detail: str
     balance: int
     required: int
+
+
+class LibraryItemResponse(BaseModel):
+    id: uuid.UUID
+    status: JobStatus
+    preset_slug: str
+    preset_name: str
+    thumbnail_url: str | None
+    video_url: str | None
+    created_at: datetime
+    error_message: str | None
+
+
+class LibraryListResponse(BaseModel):
+    items: list[LibraryItemResponse]

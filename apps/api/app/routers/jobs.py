@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +16,7 @@ from app.schemas.jobs import (
     JobCreateRequest,
     JobResponse,
     JobStatusEvent,
+    LibraryListResponse,
 )
 from app.schemas.user import ErrorResponse
 from app.services import job_creation
@@ -81,6 +82,21 @@ async def create_job(
     except InsufficientCreditsError as error:
         return _insufficient_credits_response(error)
     return JobCreatedResponse(id=created.id, status=created.status, credit_cost=created.credit_cost)
+
+
+# T-005-0 stub for the Library contract. T-005-1 replaces the body: keep this handler
+# name, signature and responses map so openapi.json stays byte-identical.
+@router.get(
+    "/jobs",
+    response_model=LibraryListResponse,
+    responses={401: {"model": ErrorResponse}},
+)
+async def list_jobs(
+    user: Annotated[AppUser, Depends(require_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> LibraryListResponse:
+    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented")
 
 
 @router.get("/jobs/{job_id}", responses=NOT_OWNED_RESPONSE)
