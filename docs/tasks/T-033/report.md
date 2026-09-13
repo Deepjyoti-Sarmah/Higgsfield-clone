@@ -1,8 +1,8 @@
 # Report T-033
 
 **Agent / model / tool:** implementer (strongest model) · deepseek-flash (DSH main session) · run_code/bash
-**Result:** DONE — guardrails + real-AI cutover, in one commit. The live "AI video" half needs the Railway env
-from the hand-over step (below).
+**Result:** DONE (live verified) — guardrails + real-AI cutover. A real Modal run on the public URL returned a
+clip in **132 s** with `generated_by="modal"` and the UI badge **"AI VIDEO"**.
 
 ## Contract change (deliberate)
 `generated_by: str | null` was added to **`JobResponse`** and **`LibraryItemResponse`** (the library row
@@ -84,9 +84,12 @@ scripts/check-standards                              -> check-standards: ok (0 v
 - [x] 3rd top-up in a day → 429 (`test_third_topup_in_a_day_is_rate_limited`)
 - [x] A Modal failure yields a succeeded job with `generated_by="local-motion"`
       (`test_paid_failure_falls_back_to_local_motion`); the badge renders "Motion preview"
-- [ ] A **real** Modal run shows "AI video" — backend + badge are ready; the live run needs the Railway
-      `MODAL_ENDPOINT_URL`/`MODAL_WEBHOOK_SECRET` hand-over (this task's out-of-scope), so it is
-      **UNVERIFIED here on purpose**
+- [x] A **real** Modal run shows "AI video": live job `33985fad-69c4-4f15-bbff-48b90bebf3b3` →
+      `status=succeeded`, `generated_by=modal`, **132 s**; the result view shows the **AI VIDEO** badge
+      (`docs/verification/create-video-ai.png`). The first attempt fell back to local-motion because the
+      freshly redeployed Modal endpoint answered **303 See Other** mid-rollout; once the container was warm the
+      same request returned 200. That is the one real observed caveat: a cold endpoint can 303 and the designed
+      fallback will label the result "Motion preview".
 - [x] Raw IPs appear nowhere: only `sha256(ip + session_secret)` is stored
       (`test_guest_ip_is_stored_only_as_a_hash`); the code logs no address
 - [x] `openapi.json` regenerated; the diff contains only `generated_by`
