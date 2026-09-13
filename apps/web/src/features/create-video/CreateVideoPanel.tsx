@@ -61,9 +61,9 @@ export function CreateVideoPanel({
   const previewImageUrl = upload.state.status === "idle" ? null : upload.state.previewUrl
 
   return (
-    <div className="rounded-2xl border border-border bg-surface">
-      <div className="p-4">
-        <h1 className="text-xl">{createVideoCopy.page.title}</h1>
+    <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl shadow-black/60">
+      <div className="border-b border-border bg-white/[0.02] p-5">
+        <h1 className="text-2xl">{createVideoCopy.page.title}</h1>
       </div>
       <div className="border-t border-border p-4">
         <SectionLabel text={createVideoCopy.page.imageSection} />

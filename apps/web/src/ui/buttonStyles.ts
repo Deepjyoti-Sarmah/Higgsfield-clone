@@ -6,7 +6,7 @@ const baseClasses =
   "disabled:cursor-not-allowed disabled:opacity-60"
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-accent-ink hover:bg-accent/90",
+  primary: "bg-accent text-accent-ink shadow-lg shadow-accent/20 hover:bg-accent/90",
   secondary: "bg-surface text-text border border-border hover:border-accent/60",
 }
 

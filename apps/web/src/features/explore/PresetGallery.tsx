@@ -19,10 +19,10 @@ export function PresetGallery({ state }: PresetGalleryProps) {
 
   return (
     <section id="effects" aria-labelledby="effects-title" className="mx-auto max-w-6xl py-12">
-      <p id="effects-title" className="text-2xl">
+      <p id="effects-title" className="font-display text-4xl uppercase leading-none text-accent sm:text-5xl">
         {title}
       </p>
-      <p className="mt-2 text-muted">{subtitle}</p>
+      <p className="mt-3 max-w-xl text-muted">{subtitle}</p>
       {state.status === "loading" && (
         <PresetGalleryStates status="loading" onRetry={state.reloadPresets} />
       )}
@@ -36,9 +36,9 @@ export function PresetGallery({ state }: PresetGalleryProps) {
           aria-labelledby={categoryHeadingId(group.category)}
           className="mt-10"
         >
-          <h2 id={categoryHeadingId(group.category)} className="text-lg">
+          <h2 id={categoryHeadingId(group.category)} className="flex items-center gap-2 text-xl uppercase text-text">
             {categoryLabel(group.category)}
-            <span className="ml-2 text-sm text-muted">{group.presets.length}</span>
+            <span className="rounded-full border border-border px-2 py-0.5 text-xs font-body normal-case text-muted">{group.presets.length}</span>
           </h2>
           <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {group.presets.map((preset) => (

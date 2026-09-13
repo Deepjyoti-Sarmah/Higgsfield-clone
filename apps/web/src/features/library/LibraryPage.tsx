@@ -29,8 +29,8 @@ export function LibraryPage() {
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-8 py-4">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold text-text">{libraryCopy.page.title}</h1>
-        <p className="text-muted">{libraryCopy.page.subtitle}</p>
+        <h1 className="text-4xl leading-none text-text sm:text-5xl">{libraryCopy.page.title}</h1>
+        <p className="max-w-xl text-muted">{libraryCopy.page.subtitle}</p>
       </header>
       {statesStatus !== null && (
         <LibraryStates

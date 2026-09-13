@@ -12,8 +12,8 @@ export function CreditsPage() {
   return (
     <section className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold text-text">{creditsCopy.page.title}</h1>
-        <p className="text-muted">{creditsCopy.page.subtitle}</p>
+        <h1 className="text-4xl leading-none text-text sm:text-5xl">{creditsCopy.page.title}</h1>
+        <p className="max-w-xl text-muted">{creditsCopy.page.subtitle}</p>
       </header>
       <CreditsBalanceCard
         status={state.balanceStatus}

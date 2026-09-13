@@ -35,7 +35,9 @@ export function PresetCard({
   onSelect,
 }: PresetCardProps) {
   const motionClasses = presetMotionClass(preset.slug)
-  const tileClasses = isSelected ? "border-accent" : "border-transparent"
+  const tileClasses = isSelected
+    ? "border-accent shadow-lg shadow-accent/25"
+    : "border-transparent hover:border-accent/50"
   return (
     <label className="group block cursor-pointer">
       <span
