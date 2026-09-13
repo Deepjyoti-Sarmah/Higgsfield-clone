@@ -17,8 +17,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 |---|---|---|---|---|
 | M0 | Scaffolding: docs, playbooks, templates, capture for subagents + other tools, standards check | 1h | DONE (non-Claude canary answer pending, see STATUS) | Claude subagent + non-Claude agent both logged in `.agent-logs/` |
 | M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | DONE: scope approved (D-012); 7 flows still to capture | user approves scope |
-| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | **DEPLOYED**: api + SPA live on Railway against Neon (health ok, presets 12, `/me` 401 signed out). Still pending: R2 storage keys (so uploads/generation are not live) and the Modal LTX spike | public URL opens signed out ✅; one clip in R2 ⬜ |
-| M3 | P0 slices (specs 003+) | 10h | CODE COMPLETE: specs 003–008 all tasks done + committed; live `verify-slice` pending deploy | each verified live via `verify-slice` |
+| M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | **DEPLOYED**: api + worker live on Railway against Neon UNPOOLED + R2 (health ok, presets 12, smoke 9/9 with a real 720p clip in R2). Still pending: the Modal LTX spike (T-012) | public URL opens signed out ✅; one clip in R2 ✅; AI-model clip ⬜ |
+| M3 | P0 slices (specs 003+) | 10h | CODE COMPLETE: specs 003–009 all tasks done + committed; spec 003 verified live 9/9; specs 004–009 live `verify-slice` pending (T-011) | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
 | M5 | Ship: signed-out pass, README, public repo, walkthrough | 2h | TODO | checklist below all ticked |
 
@@ -35,8 +35,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-002-1 | API skeleton (health, guest session, worker heartbeat, openapi) | DONE | Claude Opus 5 | `docs/specs/002-walking-skeleton/tasks.md` |
 | T-002-2 | Web shell (nav, guest button, generated client) | DONE (implemented by Claude Sonnet 5, reviewed by Claude Opus 5) | Claude Sonnet 5 | `apps/web/`, `docs/tasks/T-002-2/report.md` |
 | T-002-3 | Dockerfile + entrypoint + railway.json | DONE (image runs as api and worker locally) | Claude Opus 5 | `Dockerfile`, `apps/api/entrypoint.sh`, `railway.json` |
-| T-002-4 | Deploy Railway + Neon | PLACEHOLDER: the user deploys, following `docs/runbooks/deploy.md` | user | same |
-| T-002-5 | Modal LTX spike | PLACEHOLDER: the user sets Modal + R2 credentials; code in `apps/gpu/ltx_spike.py` | user | same |
+| T-002-4 | Deploy Railway + Neon + R2 | DONE: api + worker live at https://api-production-8afc.up.railway.app (Neon UNPOOLED, R2 `higgsfield-assignment`); smoke 9/9 | orchestrator + deepseek-flash | `railway.json`, `Dockerfile`, `docs/tasks/T-002-4/report.md` |
+| T-002-5 | Modal LTX spike | OPEN (was a user placeholder; R2 is live now): `apps/gpu/ltx_spike.py` written but never run — T-012 owns the paid spike | TBD (T-012) | `apps/gpu/ltx_spike.py` |
 | T-002-7 | Fix `<button>` nested in `<Link>` on HomePage | DONE | deepseek-flash | `apps/web/src/features/home/HomePage.tsx`, `docs/tasks/T-002-7/report.md` |
 | T-003-0 | Design spec 003 + publish contract (writes the T-003-k briefs) | DONE (review by a different model pending) | Claude Opus 5 | `docs/specs/003-generation-core/{design,tasks}.md`, `docs/tasks/T-003-0/report.md` |
 | T-003-1 | Contract + migrations: settings, models, migrations 0002/0003, domain rules, Protocols, S3 adapter, test fixtures | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/api/app/{models,domain,adapters}/`, `apps/api/migrations/versions/000{2,3}_*.py`, `apps/api/tests/conftest.py`, `docs/tasks/T-003-1/report.md` |
@@ -86,6 +86,16 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-009-7 | Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end | DONE (deepseek-flash via DSH; found the image-job SSE 404 bug, see T-009-8) | deepseek-flash | `docs/tasks/T-009-7/report.md` |
 | T-009-8 | Bug fix: SSE route authorises ownership-only so image jobs stream (openapi unchanged) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-8/report.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
+| T-010 | STATUS truth pass: retire the falsified R2/deploy/gh/Neon-hang rows, fix pooled→unpooled, rewrite NOT STARTED for specs 002–009 | DONE | opencode / Muse Spark | `docs/STATUS.md`, `docs/PLAN.md`, `docs/WORKLOG.md`, `docs/tasks/T-010/` |
+| T-011 | Live slice verification per spec (AC walk + `docs/verification/` screenshots; curl substitute if no browser) | TODO | TBD | `docs/verification/`, `docs/specs/00N-*/spec.md` |
+| T-012 | Modal LTX-2.5 spike: run `apps/gpu/ltx_spike.py` until a real clip lands in R2; record cost + function ref | TODO (paid H100, time-boxed) | TBD | `apps/gpu/ltx_spike.py` |
+| T-013 | Real `ModalAdapter` behind the frozen `ModelAdapter` protocol (server-side only, no contract change) | TODO | TBD | `apps/api/app/adapters/modal_adapter.py` |
+| T-014 | Prompt-conditioned generation proof on the live URL (`GENERATION_BACKEND=modal`), `local-motion` stays default | TODO | TBD | `apps/api/app/adapters/`, `scripts/smoke-generation` |
+| T-015 | Library delete + pagination (contract-first: publish the delete route like T-005-0) | TODO | TBD | `docs/specs/005-library/` |
+| T-016 | Live progress in the Library (reuse `jobStatusWatcher`) | TODO | TBD | `apps/web/src/api/jobStatusWatcher.ts` |
+| T-017 | Real text→image behind `ImageModelAdapter` (replace the placeholder PNG; D-014 P2) | TODO | TBD | `apps/api/app/adapters/` |
+| T-018 | Google OAuth sign-in/sign-up (needs human credentials) | TODO (blocked on credentials) | TBD | `docs/research/flows/auth.md` |
+| T-019 | Mobile/responsive pass over the six routed pages | TODO | TBD | `apps/web/src/` |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)
 - **P0, the core loop:**
@@ -101,8 +111,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 - **CUT:** real payments, transcoding pipeline, teams, lipsync, self-managed GPU servers.
 
 ## Pre-hand-in checklist
-- [x] Live link opens in a signed-out browser — https://api-production-8afc.up.railway.app (health 200, `/me` 401 signed out, deep links serve the SPA); storage keys still pending, so generation is not yet live
-- [x] `.agent-logs/` present (35 tracked files) and committed incrementally (`git log -- .agent-logs` → 36 commits); 17 late DSH tasks have no transcript (accepted gap, STATUS § BROKEN)
-- [ ] Repo public — blocked on `gh auth login`
-- [ ] README has labelled links (Live, Repo) — labels and honesty done; both URLs TBD until deploy + `gh auth login`
+- [x] Live link opens in a signed-out browser — https://api-production-8afc.up.railway.app (health 200, `/me` 401 signed out, deep links serve the SPA); generation live via `local-motion` (smoke 9/9, real 720p clip in R2)
+- [x] `.agent-logs/` present and committed incrementally; 17 late DSH tasks have no transcript (accepted gap, STATUS § BROKEN); T-010 exports its own log
+- [x] Repo public — https://github.com/Deepjyoti-Sarmah/Higgsfield-clone (200 signed out, `main` in sync with `origin/main`); only the `gh` CLI token is invalid (cosmetic)
+- [ ] README has labelled links (Live, Repo) — Live labelled; README still says R2-pending/repo-TBD (stale, left for a follow-up; see T-010 report)
 - [ ] Walkthrough ≤ 5 min, camera on
