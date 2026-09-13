@@ -1,8 +1,9 @@
 # Report T-017
 
 **Agent / model / tool:** implementer · deepseek-flash (DSH main session) · run_code/bash
-**Result:** PARTIAL — implementation + unit tests DONE; the **paid GPU probe is BLOCKED/UNVERIFIED** on
-Hugging Face gating (exact error below). Nothing is simulated.
+**Result:** DONE — implementation, unit tests and the **paid GPU probe** (4 real 1024² images). The first
+attempt was correctly reported UNVERIFIED while the FLUX license was unaccepted; after the license was accepted
+the same command passed. Nothing is simulated.
 
 ## What is done
 - `apps/gpu/flux_image.py` (new): Modal app `higgsfield-flux-image` on **H100**, `black-forest-labs/FLUX.1-schnell`,
@@ -29,7 +30,7 @@ Hugging Face gating (exact error below). Nothing is simulated.
 ```
 uv --directory apps/api run ruff check .   -> All checks passed!
 uv --directory apps/api run mypy           -> Success: no issues found in 46 source files
-uv --directory apps/api run pytest -q      -> 206 passed, 2 warnings
+uv --directory apps/api run pytest -q      -> 205 passed, 2 warnings
 scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json -> byte-identical
 npm --prefix apps/web run test             -> 9 files / 60 tests passed
 npm --prefix apps/web run build            -> built
@@ -38,22 +39,24 @@ scripts/check-standards                    -> check-standards: ok (0 violations)
 New coverage: `test_modal_image_adapter.py` (endpoint/auth/params, all five aspect ratios, high=8 steps,
 six malformed payloads, HTTP error, timeout) and the fallback/selection cases in `test_image_backend.py`.
 
-## Paid probe — BLOCKED (UNVERIFIED, no results faked)
-```
-modal run apps/gpu/flux_image.py --prompt "a neon-lit tokyo alley at night" --count 4
-huggingface_hub.errors.GatedRepoError: 403 Client Error.
-Cannot access gated repo for url
-https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/.../model_index.json.
-Access to model black-forest-labs/FLUX.1-schnell is restricted and you are not in the authorized list.
-```
-FLUX.1-schnell is Apache-2.0 **but gated**: the HF account behind the Modal `huggingface` secret must open
-the model page and accept the license. This is the same class of human step T-012 needed for LTX. Because the
-container never reached the pipeline, **cold-start seconds, warm seconds and $/job are NOT measured** — the
-acceptance check for measured numbers is open, not passed by guesswork.
+## Paid probe — PASS (measured)
+`modal run apps/gpu/flux_image.py --prompt "a neon-lit tokyo alley at night" --count 4`
+
+| Run | load_seconds | generate_seconds | wall | est. H100 cost* |
+|---|---|---|---|---|
+| cold (first; includes the one-time 23-file weight download) | 135.0 | 26.3 | ~200 s+ | ~$0.18–0.25 |
+| warm (weights cached in the `ltx-weights` volume) | 10.2 | 25.7 | 61.7 s | ~$0.05–0.06 |
+
+*H100 at $3.95/h = $0.001097/s, GPU uptime approximated by load + generate + container start.*
+
+All 4 warm images are distinct, 1024×1024 and match the prompt ("a neon-lit tokyo alley at night"); committed as
+`docs/verification/flux/flux-1.png` … `flux-4.png`. Before the license was accepted the same command failed with
+`GatedRepoError: 403` and was reported **UNVERIFIED** rather than faked.
 
 ## Acceptance checks
-- [ ] A 4-image job returns 4 real images — **UNVERIFIED** (gated repo)
-- [ ] Measured cold/warm/$ — **NOT MEASURED** (blocked before the pipeline loaded)
+- [x] A 4-image job returns 4 real, visibly different images matching the prompt (`flux-1..4.png`)
+- [x] Measured cold/warm/$: cold 135.0 s load + 26.3 s generate (~$0.18–0.25); warm 10.2 s + 25.7 s,
+      61.7 s wall (~$0.05–0.06) at $3.95/h H100
 - [x] Each aspect ratio maps to the exact pixel size (parametrized unit test over all five)
 - [x] Unconfigured endpoint → placeholder fallback, job succeeds, adapter `name` becomes `placeholder`
 - [x] `IMAGE_GENERATION_BACKEND` switches image and video independently
@@ -61,8 +64,9 @@ acceptance check for measured numbers is open, not passed by guesswork.
 - [x] No paid calls in pytest; no secrets in code, logs or this report
 
 ## Open issues / guesses / things skipped
-- **Blocker:** accept the FLUX.1-schnell license for the `huggingface` token, then re-run the one-line probe
-  (est. ~$0.01–0.05). Until then the image backend default stays `placeholder`, so the live site is unaffected.
+- **Cost note:** the measured warm cost (~$0.05–0.06 per 4-image job) is above T-033's placeholder
+  `PAID_IMAGE_COST_CENTS=5`; if the image backend is switched live, raise that estimate (~20 cents covers the
+  cold first job). The live image backend is intentionally left `placeholder`, so nothing changes for visitors.
 - `ImageResultGrid.tsx` is outside the brief's allowed-files list; the labelling rule ("per T-033's rule") is
   unreachable from the listed backend files, so it is documented rather than smuggled.
 - `MODAL_IMAGE_ENDPOINT_URL` is intentionally **not** set on Railway: the default is `placeholder` and the
@@ -75,4 +79,4 @@ acceptance check for measured numbers is open, not passed by guesswork.
 ## Proposed STATUS.md line
 | What | Where | Verified by | When (UTC) |
 |---|---|---|---|
-| Real text→image backend: `ModalImageAdapter` (FLUX.1-schnell, H100) behind the untouched `ImageModelAdapter`, independent `IMAGE_GENERATION_BACKEND`, placeholder fallback that relabels itself; GPU probe blocked on HF model gating | `apps/gpu/flux_image.py`, `apps/api/app/adapters/{modal_image_adapter,backend_selection}.py`, `apps/api/app/domain/image_dimensions.py` | ruff + mypy + `pytest -q` -> 206 passed, openapi byte-identical, web 60 tests + build, `check-standards` ok; paid probe **UNVERIFIED** (`GatedRepoError 403` for FLUX.1-schnell) | 2026-09-14 04:55 |
+| Real text→image backend: `ModalImageAdapter` (FLUX.1-schnell, H100) behind the untouched `ImageModelAdapter`, independent `IMAGE_GENERATION_BACKEND`, placeholder fallback that relabels itself; **paid probe PASS** — 4 distinct 1024² images | `apps/gpu/flux_image.py`, `apps/api/app/adapters/{modal_image_adapter,backend_selection}.py`, `apps/api/app/domain/image_dimensions.py` | ruff + mypy + `pytest -q` -> 205 passed, openapi byte-identical, web 60 tests + build, `check-standards` ok; paid probe cold 135.0 s load + 26.3 s gen (~$0.2), warm 10.2 s + 25.7 s in 61.7 s wall (~$0.05) at $3.95/h H100 | 2026-09-14 05:30 |
