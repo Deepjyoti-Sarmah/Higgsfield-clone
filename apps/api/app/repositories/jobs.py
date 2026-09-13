@@ -84,6 +84,7 @@ async def transition_job_status(
     *,
     allowed_from: Collection[str],
     error_message: str | None = None,
+    generated_by: str | None = None,
     output_video_asset_id: uuid.UUID | None = None,
     output_poster_asset_id: uuid.UUID | None = None,
     started_at: datetime | None = None,
@@ -92,6 +93,7 @@ async def transition_job_status(
     values: dict[str, Any] = {"status": to_status, "updated_at": func.now()}
     optional: dict[str, Any] = {
         "error_message": error_message,
+        "generated_by": generated_by,
         "output_video_asset_id": output_video_asset_id,
         "output_poster_asset_id": output_poster_asset_id,
         "started_at": started_at,

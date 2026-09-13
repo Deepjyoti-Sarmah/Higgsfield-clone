@@ -12,7 +12,7 @@ from app.repositories.job_steps import insert_job_step
 from app.repositories.jobs import find_job_by_idempotency_key, notify_job_event
 from app.repositories.ledger import insert_ledger_entry, sum_user_balance
 from app.repositories.users import lock_user_row
-from app.services.job_creation import InsufficientCreditsError
+from app.services.job_creation import InsufficientCreditsError, enforce_creation_limits
 
 
 @dataclass(frozen=True)
@@ -47,11 +47,14 @@ async def create_image_job(
     quality: ImageQuality,
     count: int,
     idempotency_key: str,
+    is_paid_backend: bool = False,
+    paid_budget_cents: int = 0,
 ) -> ImageJobCreation:
     await lock_user_row(session, user_id)
     existing = await find_job_by_idempotency_key(session, user_id, idempotency_key)
     if existing is not None:
         return _replayed_creation(existing)
+    await enforce_creation_limits(session, user_id, is_paid_backend, paid_budget_cents)
     required = image_credit_cost(quality, count)
     balance = await sum_user_balance(session, user_id)
     if balance < required:

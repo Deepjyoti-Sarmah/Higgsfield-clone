@@ -15,9 +15,14 @@ from app.schemas.image_jobs import (
     ImageJobResponse,
     ImageOptionsResponse,
 )
-from app.schemas.jobs import InsufficientCreditsResponse
+from app.schemas.jobs import (
+    InsufficientCreditsResponse,
+    LimitExceededResponse,
+    PaidBudgetExceededResponse,
+)
 from app.schemas.user import ErrorResponse
 from app.services import image_job_creation, image_job_views, image_options
+from app.services.guardrails import DailyJobLimitError, PaidBudgetExceededError
 from app.services.image_job_creation import IdempotencyKeyConflictError
 from app.services.job_creation import InsufficientCreditsError
 from app.settings import Settings, get_settings
@@ -44,6 +49,7 @@ async def create_image_job(
     body: ImageJobCreateRequest,
     user: Annotated[AppUser, Depends(require_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> ImageJobCreatedResponse | JSONResponse:
     try:
         created = await image_job_creation.create_image_job(
@@ -54,12 +60,18 @@ async def create_image_job(
             quality=body.quality,
             count=body.count,
             idempotency_key=body.idempotency_key,
+            is_paid_backend=settings.image_generation_backend == "modal",
+            paid_budget_cents=settings.paid_budget_cents,
         )
     except IdempotencyKeyConflictError as error:
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_CONTENT,
             "Idempotency key already belongs to another job type",
         ) from error
+    except DailyJobLimitError as error:
+        return _limit_response("Daily generation limit reached. Try again tomorrow.", error)
+    except PaidBudgetExceededError as error:
+        return _budget_response(error)
     except InsufficientCreditsError as error:
         return _insufficient_credits_response(error)
     return ImageJobCreatedResponse(
@@ -111,3 +123,17 @@ def _insufficient_credits_response(error: InsufficientCreditsError) -> JSONRespo
         detail="Not enough credits", balance=error.balance, required=error.required
     )
     return JSONResponse(status_code=status.HTTP_402_PAYMENT_REQUIRED, content=body.model_dump())
+
+
+def _limit_response(detail: str, error: DailyJobLimitError) -> JSONResponse:
+    body = LimitExceededResponse(detail=detail, limit=error.limit, used=error.used)
+    return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content=body.model_dump())
+
+
+def _budget_response(error: PaidBudgetExceededError) -> JSONResponse:
+    body = PaidBudgetExceededResponse(
+        detail="The AI budget for today is used up; try again later.",
+        spent_cents=error.spent_cents,
+        budget_cents=error.budget_cents,
+    )
+    return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content=body.model_dump())

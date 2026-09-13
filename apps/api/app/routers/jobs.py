@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.adapters.object_storage import ObjectStorage
 from app.auth_dependencies import require_current_user
 from app.db import get_session
+from app.domain.credit_rules import PAID_BACKENDS
 from app.job_event_dependencies import get_job_event_broker
 from app.models.user import AppUser
 from app.repositories.jobs import find_owned_job
@@ -19,9 +20,12 @@ from app.schemas.jobs import (
     JobStatusEvent,
     LibraryItemResponse,
     LibraryListResponse,
+    LimitExceededResponse,
+    PaidBudgetExceededResponse,
 )
 from app.schemas.user import ErrorResponse
 from app.services import job_creation
+from app.services.guardrails import DailyJobLimitError, PaidBudgetExceededError
 from app.services.job_creation import (
     InputAssetNotFoundError,
     InputAssetNotReadyError,
@@ -65,6 +69,7 @@ async def create_job(
     body: JobCreateRequest,
     user: Annotated[AppUser, Depends(require_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> JobCreatedResponse | JSONResponse:
     try:
         created = await job_creation.create_job(
@@ -74,6 +79,8 @@ async def create_job(
             input_asset_id=body.input_asset_id,
             prompt=body.prompt,
             idempotency_key=body.idempotency_key,
+            is_paid_backend=settings.generation_backend in PAID_BACKENDS,
+            paid_budget_cents=settings.paid_budget_cents,
         )
     except PresetNotFoundError as error:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Preset not found") from error
@@ -81,6 +88,10 @@ async def create_job(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Input asset not found") from error
     except InputAssetNotReadyError as error:
         raise HTTPException(status.HTTP_409_CONFLICT, "Input asset upload not completed") from error
+    except DailyJobLimitError as error:
+        return _limit_response("Daily generation limit reached. Try again tomorrow.", error)
+    except PaidBudgetExceededError as error:
+        return _budget_response(error)
     except InsufficientCreditsError as error:
         return _insufficient_credits_response(error)
     return JobCreatedResponse(id=created.id, status=created.status, credit_cost=created.credit_cost)
@@ -108,6 +119,7 @@ async def list_jobs(
                 preset_name=view.preset_name,
                 thumbnail_url=view.thumbnail_url,
                 video_url=view.video_url,
+                generated_by=view.generated_by,
                 created_at=view.job.created_at,
                 error_message=view.job.error_message,
             )
@@ -153,6 +165,20 @@ def _insufficient_credits_response(error: InsufficientCreditsError) -> JSONRespo
     return JSONResponse(status_code=status.HTTP_402_PAYMENT_REQUIRED, content=body.model_dump())
 
 
+def _limit_response(detail: str, error: DailyJobLimitError) -> JSONResponse:
+    body = LimitExceededResponse(detail=detail, limit=error.limit, used=error.used)
+    return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content=body.model_dump())
+
+
+def _budget_response(error: PaidBudgetExceededError) -> JSONResponse:
+    body = PaidBudgetExceededResponse(
+        detail="The AI budget for today is used up; try again later.",
+        spent_cents=error.spent_cents,
+        budget_cents=error.budget_cents,
+    )
+    return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content=body.model_dump())
+
+
 def build_job_response(view: JobView) -> JobResponse:
     job = view.job
     return JobResponse(
@@ -166,6 +192,7 @@ def build_job_response(view: JobView) -> JobResponse:
         input_image_url=view.input_image_url,
         video_url=view.video_url,
         poster_url=view.poster_url,
+        generated_by=job.generated_by,
         error_message=job.error_message,
         created_at=job.created_at,
         started_at=job.started_at,

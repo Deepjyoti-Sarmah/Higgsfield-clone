@@ -7,6 +7,7 @@ os.environ.setdefault("GENERATION_BACKEND", "mock")
 
 import subprocess
 import sys
+import uuid
 from collections.abc import AsyncIterator
 from pathlib import Path
 
@@ -22,6 +23,11 @@ from app.storage_dependencies import get_object_storage
 from tests.fakes.in_memory_object_storage import InMemoryObjectStorage
 
 API_DIR = Path(__file__).resolve().parents[1]
+
+
+def unique_guest_headers() -> dict[str, str]:
+    # A unique forwarded IP keeps the per-IP guest cap out of every other test.
+    return {"X-Forwarded-For": f"test-{uuid.uuid4()}"}
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -68,7 +74,7 @@ async def client(app: FastAPI) -> AsyncIterator[AsyncClient]:
 @pytest.fixture
 async def guest_client(app: FastAPI) -> AsyncIterator[AsyncClient]:
     async with open_client(app) as http_client:
-        signed_in = await http_client.post("/api/v1/auth/guest")
+        signed_in = await http_client.post("/api/v1/auth/guest", headers=unique_guest_headers())
         assert signed_in.status_code == 201
         yield http_client
 
@@ -76,7 +82,7 @@ async def guest_client(app: FastAPI) -> AsyncIterator[AsyncClient]:
 @pytest.fixture
 async def other_guest_client(app: FastAPI) -> AsyncIterator[AsyncClient]:
     async with open_client(app) as http_client:
-        signed_in = await http_client.post("/api/v1/auth/guest")
+        signed_in = await http_client.post("/api/v1/auth/guest", headers=unique_guest_headers())
         assert signed_in.status_code == 201
         yield http_client
 

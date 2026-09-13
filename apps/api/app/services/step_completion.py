@@ -62,6 +62,7 @@ async def complete_step_success(
             job_id,
             "succeeded",
             allowed_from=statuses_allowed_before("succeeded"),
+            generated_by=backend,
             output_video_asset_id=video_asset_id,
             output_poster_asset_id=poster_asset_id,
             finished_at=datetime.now(UTC),

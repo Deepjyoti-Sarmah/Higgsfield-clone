@@ -68,6 +68,7 @@ class Job(Base):
     output_poster_asset_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("asset.id")
     )
+    generated_by: Mapped[str | None] = mapped_column(String(32))
     error_message: Mapped[str | None] = mapped_column(String(300))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

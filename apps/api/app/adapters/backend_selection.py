@@ -11,6 +11,7 @@ from app.adapters.placeholder_image_adapter import (
 from app.settings import Settings
 
 PLACEHOLDER_IMAGE_BACKENDS = ("mock", "local-motion")
+PAID_VIDEO_BACKENDS = ("modal", "openrouter")
 
 
 def select_model_adapter(settings: Settings) -> ModelAdapter:
@@ -21,6 +22,13 @@ def select_model_adapter(settings: Settings) -> ModelAdapter:
     if settings.generation_backend == "openrouter":
         return OpenRouterAdapter(settings)
     return LocalMotionAdapter()
+
+
+def select_fallback_model_adapter(settings: Settings) -> ModelAdapter | None:
+    """A paid backend always has a free local fallback so a visitor still gets a clip."""
+    if settings.generation_backend in PAID_VIDEO_BACKENDS:
+        return LocalMotionAdapter()
+    return None
 
 
 def select_image_adapter(settings: Settings) -> ImageModelAdapter:

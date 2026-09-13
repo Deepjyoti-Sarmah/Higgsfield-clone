@@ -1,3 +1,4 @@
+import { GenerationBadge } from "../../ui/GenerationBadge"
 import { createVideoCopy } from "./createVideoCopy"
 import type { Job } from "./createVideoTypes"
 import { formatElapsed } from "./elapsedTime"
@@ -30,9 +31,10 @@ export function ResultView({ job, elapsedSeconds, onMakeAnother }: ResultViewPro
   const hasReducedMotion = usePrefersReducedMotion()
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <p className="text-xs text-muted">
-        {createVideoCopy.result.meta(job.preset_name, formatElapsed(elapsedSeconds))}
-      </p>
+      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted">
+        <span>{createVideoCopy.result.meta(job.preset_name, formatElapsed(elapsedSeconds))}</span>
+        <GenerationBadge generatedBy={job.generated_by} />
+      </div>
       <ResultVideo job={job} hasReducedMotion={hasReducedMotion} />
       <ResultActions job={job} onMakeAnother={onMakeAnother} />
     </div>

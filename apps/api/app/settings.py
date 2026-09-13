@@ -8,6 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 LOCAL_SESSION_SECRET = "local-dev-secret-not-for-production"
 
 GenerationBackend = Literal["local-motion", "mock", "modal", "openrouter"]
+ImageGenerationBackend = Literal["placeholder", "mock", "modal"]
 
 
 class Settings(BaseSettings):
@@ -21,7 +22,8 @@ class Settings(BaseSettings):
     session_ttl_days: int = 30
     static_dir: str = "../web/dist"
 
-    generation_backend: GenerationBackend = "local-motion"
+    generation_backend: GenerationBackend = "modal"
+    image_generation_backend: ImageGenerationBackend = "placeholder"
     s3_endpoint_url: str = "http://localhost:9000"
     s3_bucket: str = "media"
     s3_access_key_id: str = "minioadmin"

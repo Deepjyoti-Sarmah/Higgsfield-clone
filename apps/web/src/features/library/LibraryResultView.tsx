@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import type { LibraryItem as LibraryItemData } from "../../api/library"
 import { ButtonLink } from "../../ui/ButtonLink"
 import { buttonClasses } from "../../ui/buttonStyles"
+import { GenerationBadge } from "../../ui/GenerationBadge"
 import { libraryCopy } from "./libraryCopy"
 
 type LibraryResultViewProps = {
@@ -45,6 +46,7 @@ function ResultVideo({ videoUrl }: { videoUrl: string }) {
 function ResultActions({ item }: { item: LibraryItemData }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
+      <GenerationBadge generatedBy={item.generated_by} />
       {item.video_url !== null && (
         <a href={item.video_url} download className={buttonClasses("secondary")}>
           {libraryCopy.result.download}

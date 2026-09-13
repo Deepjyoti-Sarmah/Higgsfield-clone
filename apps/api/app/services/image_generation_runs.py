@@ -12,11 +12,8 @@ from app.adapters.model_adapter import GenerationError
 from app.adapters.object_storage import ObjectStorage
 from app.repositories.job_steps import ClaimedStep
 from app.repositories.jobs import find_job
-from app.services.generation_runs import (
-    GENERIC_FAILURE_MESSAGE,
-    RunSettings,
-    renew_lease_until_lost,
-)
+from app.services.adapter_runs import RunSettings, renew_lease_until_lost
+from app.services.generation_runs import GENERIC_FAILURE_MESSAGE
 from app.services.image_step_completion import complete_image_step_success
 from app.services.step_completion import complete_step_failure
 

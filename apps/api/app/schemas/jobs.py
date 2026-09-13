@@ -31,6 +31,7 @@ class JobResponse(BaseModel):
     input_image_url: str | None
     video_url: str | None
     poster_url: str | None
+    generated_by: str | None
     error_message: str | None
     created_at: datetime
     started_at: datetime | None
@@ -48,6 +49,19 @@ class InsufficientCreditsResponse(BaseModel):
     required: int
 
 
+# Returned inside a JSONResponse, never declared on a route, so the contract gains only generated_by.
+class LimitExceededResponse(BaseModel):
+    detail: str
+    limit: int
+    used: int
+
+
+class PaidBudgetExceededResponse(BaseModel):
+    detail: str
+    spent_cents: int
+    budget_cents: int
+
+
 class LibraryItemResponse(BaseModel):
     id: uuid.UUID
     status: JobStatus
@@ -55,6 +69,7 @@ class LibraryItemResponse(BaseModel):
     preset_name: str
     thumbnail_url: str | None
     video_url: str | None
+    generated_by: str | None
     created_at: datetime
     error_message: str | None
 

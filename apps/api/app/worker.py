@@ -7,7 +7,11 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.adapters.backend_selection import select_image_adapter, select_model_adapter
+from app.adapters.backend_selection import (
+    select_fallback_model_adapter,
+    select_image_adapter,
+    select_model_adapter,
+)
 from app.adapters.image_model_adapter import ImageModelAdapter
 from app.adapters.model_adapter import ModelAdapter
 from app.adapters.object_storage import ObjectStorage
@@ -38,6 +42,7 @@ async def run_claimed_step_for_kind(
     claimed: ClaimedStep,
     worker_id: str,
     settings: RunSettings,
+    fallback_adapter: ModelAdapter | None = None,
 ) -> None:
     if claimed.kind == IMAGE_STEP_KIND:
         await run_image_step(
@@ -53,6 +58,7 @@ async def run_claimed_step_for_kind(
         session_maker,
         storage=storage,
         adapter=adapter,
+        fallback_adapter=fallback_adapter,
         claimed=claimed,
         worker_id=worker_id,
         settings=settings,
@@ -65,11 +71,13 @@ async def run_worker_loop() -> None:
     session_maker = create_session_maker(engine)
     storage = get_object_storage()
     adapter = select_model_adapter(settings)
+    fallback_adapter = select_fallback_model_adapter(settings)
     image_adapter = select_image_adapter(settings)
     run_settings = RunSettings(
         lease_seconds=settings.worker_lease_seconds,
         generation_timeout_seconds=settings.generation_timeout_seconds,
         download_url_ttl_seconds=settings.download_url_ttl_seconds,
+        paid_budget_cents=settings.paid_budget_cents,
     )
     worker_id = build_worker_id()
     logger.info(
@@ -102,6 +110,7 @@ async def run_worker_loop() -> None:
                     storage=storage,
                     adapter=adapter,
                     image_adapter=image_adapter,
+                    fallback_adapter=fallback_adapter,
                     claimed=claimed,
                     worker_id=worker_id,
                     settings=run_settings,

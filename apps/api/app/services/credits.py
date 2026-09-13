@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.domain.credit_rules import TOPUP_CREDITS
 from app.repositories.ledger import insert_ledger_entry, sum_user_balance
 from app.repositories.users import lock_user_row
+from app.services import guardrails
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ async def read_balance(session: AsyncSession, user_id: uuid.UUID) -> int:
 
 async def grant_top_up_credits(session: AsyncSession, user_id: uuid.UUID) -> TopUpResult:
     await lock_user_row(session, user_id)
+    await guardrails.enforce_topup_limit(session, user_id)
     await insert_ledger_entry(session, user_id=user_id, kind="TOPUP", amount=TOPUP_CREDITS)
     balance = await read_balance(session, user_id)
     await session.commit()

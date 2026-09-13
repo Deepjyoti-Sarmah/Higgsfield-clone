@@ -49,6 +49,7 @@ async def complete_image_step_success(
             job_id,
             "succeeded",
             allowed_from=statuses_allowed_before("succeeded"),
+            generated_by=backend,
             finished_at=datetime.now(UTC),
         )
         if not succeeded:

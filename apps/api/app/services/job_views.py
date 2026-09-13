@@ -16,6 +16,7 @@ from app.settings import Settings
 class JobView:
     job: Job
     preset_name: str
+    generated_by: str | None
     input_image_url: str | None
     video_url: str | None
     poster_url: str | None
@@ -25,6 +26,7 @@ class JobView:
 class LibraryItemView:
     job: Job
     preset_name: str
+    generated_by: str | None
     thumbnail_url: str | None
     video_url: str | None
 
@@ -47,6 +49,7 @@ async def read_owned_job(
     return JobView(
         job=job,
         preset_name=job.preset_slug if preset is None else preset.name,
+        generated_by=job.generated_by,
         input_image_url=_ready_url(storage, settings, assets.get(job.input_asset_id)),
         video_url=_asset_url(storage, settings, assets, job.output_video_asset_id),
         poster_url=_asset_url(storage, settings, assets, job.output_poster_asset_id),
@@ -99,6 +102,7 @@ def _library_item_view(
     return LibraryItemView(
         job=job,
         preset_name=preset_names.get(preset_slug, preset_slug),
+        generated_by=job.generated_by,
         thumbnail_url=poster_url or input_url,
         video_url=_asset_url(storage, settings, assets, job.output_video_asset_id),
     )

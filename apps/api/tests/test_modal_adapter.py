@@ -18,7 +18,7 @@ from app.adapters.model_adapter import (
 )
 from app.repositories.job_steps import claim_next_queued_step
 from app.repositories.jobs import find_job
-from app.services import generation_runs
+from app.services import adapter_runs
 from app.services.generation_runs import RunSettings, run_claimed_step
 from app.services.step_claiming import claim_step
 from app.settings import Settings
@@ -173,13 +173,13 @@ async def test_slow_call_survives_lease_renewals(guest_client: Any,
     claimed = await claim_step(session_maker, WORKER_ID, LEASE_SECONDS)
     assert claimed is not None and claimed.job_id == job_id
     renewals: list[uuid.UUID] = []
-    real_renew = generation_runs.renew_step_lease
+    real_renew = adapter_runs.renew_step_lease
 
     async def _counting(session: Any, step_id: uuid.UUID, worker_id: str, lease: int) -> bool:
         renewals.append(step_id)
         return await real_renew(session, step_id, worker_id, lease)
 
-    monkeypatch.setattr(generation_runs, "renew_step_lease", _counting)
+    monkeypatch.setattr(adapter_runs, "renew_step_lease", _counting)
     settings = RunSettings(lease_seconds=LEASE_SECONDS, generation_timeout_seconds=30,
                            download_url_ttl_seconds=3600)
     await run_claimed_step(session_maker, storage=object_storage,

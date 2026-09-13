@@ -96,7 +96,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-014 | Prompt-conditioned generation proof on the live URL (`GENERATION_BACKEND=modal`), `local-motion` stays default | TODO | TBD | `apps/api/app/adapters/`, `scripts/smoke-generation` |
 | T-015 | Library delete + pagination (contract-first: publish the delete route like T-005-0) | TODO | TBD | `docs/specs/005-library/` |
 | T-016 | Live progress in the Library (reuse `jobStatusWatcher`) | TODO | TBD | `apps/web/src/api/jobStatusWatcher.ts` |
-| T-033 | Guardrails (per-IP + daily caps, budget enforcement) + real-AI cutover with honest labelling | READY FOR HANDOFF (do first) | — | `docs/tasks/T-033/brief.md` |
+| T-033 | Guardrails (per-IP + daily caps, budget enforcement) + real-AI cutover with honest labelling | DONE (deepseek-flash via DSH): 4 typed caps, modal default + local-motion fallback, `generated_by` + UI badge; contract +24 lines | deepseek-flash | `docs/tasks/T-033/report.md` |
 | T-017 | Real text→image on our GPU: FLUX.1-schnell on Modal behind `ImageModelAdapter` | READY FOR HANDOFF (after T-033) | — | `docs/tasks/T-017/brief.md` |
 | T-018 | Google OAuth sign-in/sign-up (needs human credentials) | TODO (blocked on credentials) | TBD | `docs/research/flows/auth.md` |
 | T-019 | Mobile/responsive pass over the six routed pages | TODO | TBD | `apps/web/src/` |

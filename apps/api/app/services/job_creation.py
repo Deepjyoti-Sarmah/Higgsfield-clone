@@ -11,6 +11,7 @@ from app.repositories.jobs import find_job_by_idempotency_key, insert_job, notif
 from app.repositories.ledger import insert_ledger_entry, sum_user_balance
 from app.repositories.presets import find_active_preset
 from app.repositories.users import lock_user_row
+from app.services import guardrails
 
 
 class PresetNotFoundError(Exception):
@@ -39,6 +40,17 @@ class InsufficientCreditsError(Exception):
         self.required = required
 
 
+async def enforce_creation_limits(
+    session: AsyncSession,
+    user_id: uuid.UUID,
+    is_paid_backend: bool,
+    paid_budget_cents: int,
+) -> None:
+    await guardrails.enforce_daily_job_limit(session, user_id)
+    if is_paid_backend:
+        await guardrails.ensure_paid_budget(session, paid_budget_cents)
+
+
 async def create_job(
     session: AsyncSession,
     user_id: uuid.UUID,
@@ -47,6 +59,8 @@ async def create_job(
     input_asset_id: uuid.UUID,
     prompt: str | None,
     idempotency_key: str,
+    is_paid_backend: bool = False,
+    paid_budget_cents: int = 0,
 ) -> JobCreation:
     await lock_user_row(session, user_id)
     existing = await find_job_by_idempotency_key(session, user_id, idempotency_key)
@@ -60,6 +74,7 @@ async def create_job(
         raise InputAssetNotFoundError(str(input_asset_id))
     if asset.status != "ready":
         raise InputAssetNotReadyError(str(input_asset_id))
+    await enforce_creation_limits(session, user_id, is_paid_backend, paid_budget_cents)
     balance = await sum_user_balance(session, user_id)
     required = preset.credit_cost
     if balance < required:

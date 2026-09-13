@@ -1,45 +1,23 @@
-import asyncio
 import logging
 import tempfile
-import uuid
-from dataclasses import dataclass
 from pathlib import Path
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.adapters.model_adapter import (
-    GenerationError,
-    GenerationRequest,
-    GenerationResult,
-    ModelAdapter,
-)
+from app.adapters.model_adapter import GenerationError, GenerationResult, ModelAdapter
 from app.adapters.object_storage import ObjectStorage
-from app.repositories.assets import find_user_asset
-from app.repositories.job_steps import ClaimedStep, renew_step_lease
-from app.repositories.jobs import find_job
+from app.repositories.job_steps import ClaimedStep
+from app.services.adapter_runs import RunSettings, run_adapter_with_fallback
 from app.services.step_completion import complete_step_failure, complete_step_success
+from app.services.step_inputs import StepInputs, load_step_inputs
+
+__all__ = ["GENERIC_FAILURE_MESSAGE", "RunSettings", "StepInputs", "complete_run", "run_claimed_step"]
 
 logger = logging.getLogger(__name__)
 
 GENERIC_FAILURE_MESSAGE = "Generation failed. Your credits were refunded."
-LEASE_RENEWALS_PER_LEASE = 5
 VIDEO_CONTENT_TYPE = "video/mp4"
 POSTER_CONTENT_TYPE = "image/jpeg"
-
-
-@dataclass(frozen=True)
-class RunSettings:
-    lease_seconds: int
-    generation_timeout_seconds: float
-    download_url_ttl_seconds: int
-
-
-@dataclass(frozen=True)
-class StepInputs:
-    user_id: uuid.UUID
-    preset_slug: str
-    prompt: str | None
-    input_key: str
 
 
 async def run_claimed_step(
@@ -50,6 +28,7 @@ async def run_claimed_step(
     claimed: ClaimedStep,
     worker_id: str,
     settings: RunSettings,
+    fallback_adapter: ModelAdapter | None = None,
 ) -> None:
     inputs = await load_step_inputs(session_maker, claimed)
     if inputs is None:
@@ -57,12 +36,21 @@ async def run_claimed_step(
         return
     with tempfile.TemporaryDirectory(prefix=f"hf-step-{claimed.id.hex[:8]}-") as directory:
         try:
-            result = await run_adapter_with_lease(
-                session_maker, storage, adapter, claimed, inputs, worker_id, Path(directory), settings
+            outcome = await run_adapter_with_fallback(
+                session_maker,
+                storage=storage,
+                primary=adapter,
+                fallback=fallback_adapter,
+                claimed=claimed,
+                inputs=inputs,
+                worker_id=worker_id,
+                work_dir=Path(directory),
+                settings=settings,
             )
-            if result is None:
+            if outcome is None:
                 return
-            await complete_run(session_maker, storage, adapter, claimed, inputs, result, worker_id)
+            result, backend = outcome
+            await complete_run(session_maker, storage, claimed, inputs, result, worker_id, backend)
             return
         except GenerationError as error:
             user_message, last_error = error.user_message, str(error)
@@ -80,71 +68,14 @@ async def run_claimed_step(
         )
 
 
-async def run_adapter_with_lease(
-    session_maker: async_sessionmaker[AsyncSession],
-    storage: ObjectStorage,
-    adapter: ModelAdapter,
-    claimed: ClaimedStep,
-    inputs: StepInputs,
-    worker_id: str,
-    work_dir: Path,
-    settings: RunSettings,
-) -> GenerationResult | None:
-    input_path = work_dir / "input"
-    await storage.download_to_path(inputs.input_key, input_path)
-    request = GenerationRequest(
-        job_id=claimed.job_id,
-        preset_slug=inputs.preset_slug,
-        prompt=inputs.prompt,
-        input_image_path=input_path,
-        input_image_url=storage.create_download_url(
-            inputs.input_key, settings.download_url_ttl_seconds
-        ),
-        work_dir=work_dir,
-    )
-    adapter_task = asyncio.create_task(
-        asyncio.wait_for(adapter.generate_video(request), settings.generation_timeout_seconds)
-    )
-    renewal_task = asyncio.create_task(
-        renew_lease_until_lost(session_maker, claimed.id, worker_id, settings.lease_seconds)
-    )
-    try:
-        done, _ = await asyncio.wait({adapter_task, renewal_task}, return_when=asyncio.FIRST_COMPLETED)
-        if renewal_task in done:
-            logger.warning("lease lost for step %s; discarding the run", claimed.id)
-            return None
-        return adapter_task.result()
-    finally:
-        adapter_task.cancel()
-        renewal_task.cancel()
-        await asyncio.gather(adapter_task, renewal_task, return_exceptions=True)
-
-
-async def renew_lease_until_lost(
-    session_maker: async_sessionmaker[AsyncSession],
-    step_id: uuid.UUID,
-    worker_id: str,
-    lease_seconds: int,
-) -> bool:
-    interval_seconds = lease_seconds / LEASE_RENEWALS_PER_LEASE
-    while True:
-        await asyncio.sleep(interval_seconds)
-        async with session_maker() as session:
-            renewed = await renew_step_lease(session, step_id, worker_id, lease_seconds)
-            if renewed:
-                await session.commit()
-        if not renewed:
-            return True
-
-
 async def complete_run(
     session_maker: async_sessionmaker[AsyncSession],
     storage: ObjectStorage,
-    adapter: ModelAdapter,
     claimed: ClaimedStep,
     inputs: StepInputs,
     result: GenerationResult,
     worker_id: str,
+    backend: str,
 ) -> None:
     video_key = f"users/{inputs.user_id}/jobs/{claimed.job_id}/video.mp4"
     poster_key = f"users/{inputs.user_id}/jobs/{claimed.job_id}/poster.jpg"
@@ -155,28 +86,9 @@ async def complete_run(
         step_id=claimed.id,
         job_id=claimed.job_id,
         worker_id=worker_id,
-        backend=adapter.name,
+        backend=backend,
         video_key=video_key,
         poster_key=poster_key,
         video_size=result.video_path.stat().st_size,
         poster_size=result.poster_path.stat().st_size,
     )
-
-
-async def load_step_inputs(
-    session_maker: async_sessionmaker[AsyncSession], claimed: ClaimedStep
-) -> StepInputs | None:
-    async with session_maker() as session:
-        job = await find_job(session, claimed.job_id)
-        # The video run needs both video-only columns; an image step never reaches here.
-        if job is None or job.input_asset_id is None or job.preset_slug is None:
-            return None
-        asset = await find_user_asset(session, job.user_id, job.input_asset_id)
-        if asset is None:
-            return None
-        return StepInputs(
-            user_id=job.user_id,
-            preset_slug=job.preset_slug,
-            prompt=job.prompt,
-            input_key=asset.storage_key,
-        )

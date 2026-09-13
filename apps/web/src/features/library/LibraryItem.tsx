@@ -1,4 +1,5 @@
 import type { LibraryItem as LibraryItemData } from "../../api/library"
+import { GenerationBadge } from "../../ui/GenerationBadge"
 import { libraryCopy } from "./libraryCopy"
 
 type LibraryItemProps = {
@@ -34,7 +35,10 @@ export function LibraryItem({ item, isSelected, onSelect }: LibraryItemProps) {
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="truncate text-sm font-semibold text-text">{item.preset_name}</span>
         <span className="text-xs text-muted">{libraryCopy.time.label(item.created_at)}</span>
-        <span className="text-xs text-muted">{libraryCopy.item.status[item.status]}</span>
+        <span className="flex items-center gap-2 text-xs text-muted">
+          {libraryCopy.item.status[item.status]}
+          <GenerationBadge generatedBy={item.generated_by} />
+        </span>
       </span>
     </button>
   )
