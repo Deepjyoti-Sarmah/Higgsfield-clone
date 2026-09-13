@@ -18,7 +18,7 @@ import { useGuestSessionRunner } from "./useGuestSessionRunner"
 import { useImageUpload } from "./useImageUpload"
 import { usePrefersReducedMotion } from "./usePrefersReducedMotion"
 import { usePresetSelection } from "./usePresetSelection"
-import { usePresets } from "./usePresets"
+import { usePresets } from "../../api/presets"
 import { useSessionHistory } from "./useSessionHistory"
 
 const phaseMessages: Partial<Record<CanvasPhase, string>> = {

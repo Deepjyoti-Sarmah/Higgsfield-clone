@@ -1,6 +1,8 @@
 import type { components } from "../../api/generated/schema"
+import type { Preset, PresetsState } from "../../api/presets"
 
-export type Preset = components["schemas"]["PresetResponse"]
+export type { Preset, PresetsState }
+
 export type PresetCategory = Preset["category"]
 export type Asset = components["schemas"]["AssetResponse"]
 export type Job = components["schemas"]["JobResponse"]
@@ -9,12 +11,6 @@ export type JobStatusEvent = components["schemas"]["JobStatusEvent"]
 export type InsufficientCredits = components["schemas"]["InsufficientCreditsResponse"]
 
 export type PresetCategoryFilter = "all" | PresetCategory
-
-export type PresetsState = {
-  status: "loading" | "ready" | "error"
-  presets: Preset[]
-  reloadPresets: () => void
-}
 
 export type PresetSelection = {
   selectedSlug: string | null

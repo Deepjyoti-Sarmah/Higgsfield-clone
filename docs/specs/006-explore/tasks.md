@@ -17,7 +17,7 @@ data and pure helpers. T-006-4 is gated on both because `ExplorePage` renders ev
   - Files: `docs/specs/006-explore/**`, `docs/tasks/T-006-*/**`
   - Verify: `python3 -c "import json;print('\n'.join(sorted(json.load(open('packages/contracts/openapi.json'))['paths'])))" && ls docs/tasks | grep T-006 && scripts/check-standards`
   - Suggested role: designer (strongest model) · Depends on: —
-- [ ] **T-006-1** · Shared preset data hook, Explore types/copy/data and the pure helpers (+ unit tests)
+- [x] **T-006-1** · Shared preset data hook, Explore types/copy/data and the pure helpers (+ unit tests)
   - Files:
     - `apps/web/src/api/presets.ts`
     - `apps/web/src/features/create-video/createVideoTypes.ts` (re-export only)

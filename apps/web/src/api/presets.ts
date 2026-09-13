@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { apiClient } from "../../api/client"
-import type { Preset, PresetsState } from "./createVideoTypes"
+import { apiClient } from "./client"
+import type { components } from "./generated/schema"
+
+export type Preset = components["schemas"]["PresetResponse"]
+export type PresetCategory = Preset["category"]
+
+export type PresetsState = {
+  status: "loading" | "ready" | "error"
+  presets: Preset[]
+  reloadPresets: () => void
+}
 
 async function fetchPresets(): Promise<Preset[] | null> {
   try {

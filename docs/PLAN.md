@@ -54,7 +54,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-004-5 | Web: page assembly, canvas views, `App.tsx` routes | DONE (deepseek-flash via DSH; browser-level verify-slice still to run) | deepseek-flash | `apps/web/src/features/create-video/*`, `apps/web/src/App.tsx`, `docs/tasks/T-004-5/report.md` |
 | S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | Explore designed as spec 006 (T-006 rows); Library/Share/Credits still TODO | — | — |
 | T-006-0 | Design spec 006 Explore: spec + design + tasks + 4 briefs (no contract change) | DONE | deepseek-flash | `docs/specs/006-explore/`, `docs/tasks/T-006-0/report.md` |
-| T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | TODO (wave 1) | — | `docs/tasks/T-006-1/brief.md` |
+| T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-1/report.md` |
 | T-006-2 | Web: Explore hero + tool cards | TODO (wave 2, ∥ T-006-3) | — | `docs/tasks/T-006-2/brief.md` |
 | T-006-3 | Web: effect gallery cards, per-category sections, states | TODO (wave 2, ∥ T-006-2) | — | `docs/tasks/T-006-3/brief.md` |
 | T-006-4 | Web: assemble `ExplorePage`, route `/`, retire `HomePage` | TODO (wave 3) | — | `docs/tasks/T-006-4/brief.md` |
