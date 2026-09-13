@@ -1,6 +1,6 @@
 """T-002-5 spike: LTX-2.5 distilled image->video on Modal, uploaded to R2.
 
-Needs `modal token new` plus an `r2` secret (endpoint, key pair, bucket).
+Needs `modal token new` plus `r2` and `huggingface` secrets (the model is gated).
 """
 
 import os
@@ -18,6 +18,7 @@ gpu_image = (
     .apt_install("git", "ffmpeg")
     .pip_install(
         "torch==2.8.0",
+        "torchvision==0.23.0",
         "transformers",
         "accelerate",
         "sentencepiece",
@@ -51,11 +52,11 @@ def upload_clip_to_r2(local_path: str) -> str:
     gpu="A10G",
     timeout=1800,
     volumes={"/weights": weights_volume},
-    secrets=[modal.Secret.from_name("r2")],
+    secrets=[modal.Secret.from_name("r2"), modal.Secret.from_name("huggingface")],
 )
 def generate_clip(image_url: str, prompt: str) -> dict[str, object]:
     import torch
-    from diffusers import LTX2Pipeline
+    from diffusers import LTX2ImageToVideoPipeline
     from diffusers.pipelines.ltx2.utils import (
         DEFAULT_NEGATIVE_PROMPT,
         DISTILLED_SIGMA_VALUES,
@@ -63,7 +64,7 @@ def generate_clip(image_url: str, prompt: str) -> dict[str, object]:
     from diffusers.utils import encode_video, load_image
 
     started = time.monotonic()
-    pipeline = LTX2Pipeline.from_pretrained(MODEL_ID, dtype=torch.bfloat16)
+    pipeline = LTX2ImageToVideoPipeline.from_pretrained(MODEL_ID, dtype=torch.bfloat16)
     pipeline.enable_sequential_cpu_offload()
     weights_volume.commit()
     loaded = time.monotonic()
