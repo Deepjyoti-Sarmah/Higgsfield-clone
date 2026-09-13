@@ -2,7 +2,7 @@
 
 Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities in `docs/PLAN.md`.
 
-**Status:** APPROVED by the user on 2026-09-13 (D-012). Evidence covers 16 screenshots and 3 flows. When the missing flows below are captured, they refine specs within this scope; they don't reopen it.
+**Status:** APPROVED by the user on 2026-09-13 (D-012). Evidence covers 16 screenshots and 3 flows. When the missing flows below are captured, they refine specs within this scope; they don't reopen it. **T-001-3 audit (2026-09-13):** the 16 files in `reference-images/` are byte-identical (md5) duplicates of screenshots `01`–`16` — not new material — so they add no evidence and **all 7 gaps below are still open**.
 
 ## Observed surfaces
 | Surface | Flow doc | Signed out? | Verdict | Reason |
@@ -43,6 +43,8 @@ Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities i
 5. **Assets** page, **Pricing** page, and an out-of-credits state.
 6. **Share / public view** of a generation: the page someone opens from a link.
 7. Explore **signed out** (what a new visitor sees).
+
+> **Audit note (T-001-3, 2026-09-13):** the `reference-images/` set was checked against `docs/research/screenshots/`; all 16 md5s match `01`–`16` exactly (14 Explore sections + Image create empty + Video create empty). It contains **no** sign-up/sign-in screen and **no** generating/result/history/assets/pricing/share capture; every shot is signed in. Nothing was added to the catalogue (adding the duplicates as `17`–`32` would break the "NN = distinct observation" rule). All 7 items above remain open. Full mapping: `docs/tasks/T-001-3/report.md`.
 
 ## "Better than the original" themes (from friction noticed)
 - One clear primary action per screen, instead of stacked promos and countdowns.
