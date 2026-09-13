@@ -82,7 +82,8 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-009-4 | API image surface: create service (one transaction + HOLD), owner read, public options, router bodies + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-4/report.md` |
 | T-009-5 | API worker image step: dispatch in `worker.py`, image run, image success completion (SETTLE + `output_image` + `job_image`) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-5/report.md` |
 | T-009-6 | Web UI: `imageCreateCopy`, settings/cost helpers, page, composer, settings row, stage, result grid, failure view | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-009-6/report.md` |
-| T-009-7 | Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end | TODO | TBD | `docs/tasks/T-009-7/brief.md` |
+| T-009-7 | Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end | DONE (deepseek-flash via DSH; found the image-job SSE 404 bug, see T-009-8) | deepseek-flash | `docs/tasks/T-009-7/report.md` |
+| T-009-8 | Bug fix: SSE route authorises ownership-only so image jobs stream (openapi unchanged) | TODO (found by T-009-7) | — | `docs/tasks/T-009-8/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)

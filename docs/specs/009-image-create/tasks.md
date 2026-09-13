@@ -38,7 +38,11 @@ Wave 1 puts one API-data task, one web task and one API-adapter task side by sid
   - Files: `apps/web/src/features/image-create/**`, `docs/tasks/T-009-6/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-009-2
-- [ ] **T-009-7** · Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end (guest → create → SSE → images → credits)
+- [x] **T-009-7** · Assembly + slice check: route `/create/image` to `CreateImagePage` and prove the flow end to end (guest → create → SSE → images → credits)
   - Files: `apps/web/src/App.tsx`, `docs/tasks/T-009-7/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: reviewer (a different model from the T-009-6 implementer, if one is available) · Depends on: T-009-4, T-009-5, T-009-6
+- [ ] **T-009-8** · Bug fix: the SSE route must authorise on ownership only, so image jobs stream (found live by T-009-7)
+  - Files: `apps/api/app/repositories/jobs.py`, `apps/api/app/routers/jobs.py`, `apps/api/tests/test_job_events_api.py`, `docs/tasks/T-009-8/report.md`
+  - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
+  - Suggested role: implementer · Depends on: T-009-1, T-009-4, T-009-7

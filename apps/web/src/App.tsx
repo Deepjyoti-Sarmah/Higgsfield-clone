@@ -1,23 +1,14 @@
 import { Route, Routes } from "react-router-dom"
 import { AppShell } from "./ui/AppShell"
-import { EmptyState } from "./ui/EmptyState"
 import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
 import { CreditsPage } from "./features/credits/CreditsPage"
 import { ExplorePage } from "./features/explore/ExplorePage"
+import { CreateImagePage } from "./features/image-create/CreateImagePage"
 import { LibraryPage } from "./features/library/LibraryPage"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
 import { useSession } from "./features/session/useSession"
 import { SharePage } from "./features/share/SharePage"
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <EmptyState
-      title={title}
-      description="This part of Higgsfield is coming in a later slice."
-    />
-  )
-}
 
 export function App() {
   const session = useSession()
@@ -35,10 +26,7 @@ export function App() {
       >
         <Route index element={<ExplorePage />} />
         <Route path="create/video" element={<CreateVideoPage />} />
-        <Route
-          path="create/image"
-          element={<Placeholder title="Create image" />}
-        />
+        <Route path="create/image" element={<CreateImagePage />} />
         <Route path="library" element={<LibraryPage />} />
         <Route path="credits" element={<CreditsPage />} />
         <Route path="v/:jobId" element={<SharePage />} />
