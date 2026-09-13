@@ -38,6 +38,7 @@ class Settings(BaseSettings):
     generation_timeout_seconds: int = 600
     mock_generation_fails: bool = False
     modal_endpoint_url: str = ""
+    modal_image_endpoint_url: str = ""
     modal_webhook_secret: str = ""
     openrouter_api_key: str = ""
     paid_budget_cents: int = 500

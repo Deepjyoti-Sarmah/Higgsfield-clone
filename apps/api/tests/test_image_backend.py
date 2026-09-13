@@ -6,11 +6,8 @@ import pytest
 
 from app.adapters.backend_selection import select_image_adapter
 from app.adapters.image_model_adapter import ImageGenerationRequest
-from app.adapters.model_adapter import BackendNotConfiguredError
-from app.adapters.placeholder_image_adapter import (
-    PlaceholderImageAdapter,
-    UnconfiguredImageAdapter,
-)
+from app.adapters.modal_image_adapter import FallbackImageAdapter, ModalImageAdapter
+from app.adapters.placeholder_image_adapter import PlaceholderImageAdapter
 from app.adapters.png_placeholder import write_placeholder_png
 from app.domain.image_rules import IMAGE_PIXEL_SIZES
 from app.settings import Settings
@@ -84,24 +81,43 @@ async def test_the_same_job_id_renders_identical_bytes(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
-    ("backend", "expected"),
-    [
-        ("local-motion", PlaceholderImageAdapter),
-        ("mock", PlaceholderImageAdapter),
-        ("modal", UnconfiguredImageAdapter),
-        ("openrouter", UnconfiguredImageAdapter),
-    ],
+    ("backend", "expected_name"),
+    [("placeholder", "placeholder"), ("mock", "mock")],
 )
-def test_selects_an_image_adapter_per_backend(backend: str, expected: type) -> None:
-    adapter = select_image_adapter(Settings(generation_backend=backend))
+def test_selects_a_placeholder_adapter(backend: str, expected_name: str) -> None:
+    adapter = select_image_adapter(Settings(image_generation_backend=backend))
 
-    assert isinstance(adapter, expected)
-    assert adapter.name == backend
+    assert isinstance(adapter, PlaceholderImageAdapter)
+    assert adapter.name == expected_name
 
 
-@pytest.mark.parametrize("backend", ["modal", "openrouter"])
-async def test_unconfigured_backends_fail_loudly(tmp_path: Path, backend: str) -> None:
-    adapter = select_image_adapter(Settings(generation_backend=backend))
+def test_modal_backend_is_wrapped_in_a_placeholder_fallback() -> None:
+    adapter = select_image_adapter(Settings(image_generation_backend="modal"))
 
-    with pytest.raises(BackendNotConfiguredError, match="not configured"):
-        await adapter.generate_image(_request(tmp_path))
+    assert isinstance(adapter, FallbackImageAdapter)
+
+
+async def test_unconfigured_modal_falls_back_to_the_placeholder(tmp_path: Path) -> None:
+    adapter = select_image_adapter(Settings(image_generation_backend="modal"))
+
+    result = await adapter.generate_image(_request(tmp_path, aspect_ratio="16:9", count=1))
+
+    assert adapter.name == "placeholder"
+    assert _png_size(result.image_paths[0]) == IMAGE_PIXEL_SIZES["16:9"]
+
+
+async def test_the_fallback_wrapper_relabels_itself_after_a_failure(tmp_path: Path) -> None:
+    wrapper = FallbackImageAdapter(
+        ModalImageAdapter(
+            Settings(
+                image_generation_backend="modal",
+                modal_image_endpoint_url="http://127.0.0.1:9/image",
+            )
+        ),
+        PlaceholderImageAdapter("placeholder"),
+    )
+
+    result = await wrapper.generate_image(_request(tmp_path, count=1))
+
+    assert wrapper.name == "placeholder"
+    assert _png_size(result.image_paths[0]) == IMAGE_PIXEL_SIZES["16:9"]

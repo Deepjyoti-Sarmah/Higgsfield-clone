@@ -1,5 +1,6 @@
 import { buttonClasses } from "../../ui/buttonStyles"
 import { Button } from "../../ui/Button"
+import { GenerationBadge } from "../../ui/GenerationBadge"
 import { imageCreateCopy } from "./imageCreateCopy"
 
 type ImageResultGridProps = {
@@ -9,7 +10,7 @@ type ImageResultGridProps = {
   onMakeAnother: () => void
 }
 
-const PLACEHOLDER_BACKENDS = ["mock", "local-motion"]
+const PLACEHOLDER_BACKENDS = ["mock", "local-motion", "placeholder"]
 
 export function ImageResultGrid({
   imageUrls,
@@ -21,6 +22,7 @@ export function ImageResultGrid({
   const isPlaceholder = backend !== null && PLACEHOLDER_BACKENDS.includes(backend)
   return (
     <div className="flex w-full flex-col items-center gap-4">
+      <GenerationBadge generatedBy={backend} kind="image" />
       <ul className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
         {imageUrls.map((url, index) => (
           <li key={url} className="flex flex-col items-stretch gap-2">
