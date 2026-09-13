@@ -18,7 +18,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | M0 | Scaffolding: docs, playbooks, templates, capture for subagents + other tools, standards check | 1h | DONE (non-Claude canary answer pending, see STATUS) | Claude subagent + non-Claude agent both logged in `.agent-logs/` |
 | M1 | Research: screenshots → `docs/research/flows/*` → `product-map.md` | 1.5h | DONE: scope approved (D-012); 7 flows still to capture | user approves scope |
 | M2 | Walking skeleton LIVE (Railway + Neon + R2, guest auth, health) + Modal LTX spike: spec `docs/specs/002-walking-skeleton/` | 3h | CODE DONE locally; deploy + Modal are user placeholders | public URL opens signed out; one clip in R2 |
-| M3 | P0 slices (specs 003+) | 10h | TODO | each verified live via `verify-slice` |
+| M3 | P0 slices (specs 003+) | 10h | CODE COMPLETE: specs 003–008 all tasks done + committed; live `verify-slice` pending deploy | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
 | M5 | Ship: signed-out pass, README, public repo, walkthrough | 2h | TODO | checklist below all ticked |
 
