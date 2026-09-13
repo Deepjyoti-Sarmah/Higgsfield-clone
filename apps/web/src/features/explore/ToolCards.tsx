@@ -3,9 +3,9 @@ import { TOOL_CARDS } from "./toolCards"
 
 export function ToolCards() {
   return (
-    <ul className="mx-auto grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <ul className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-5 gap-y-1">
       {TOOL_CARDS.map((card) => (
-        <li key={card.to} className="h-full">
+        <li key={card.to}>
           <ToolCard label={card.label} description={card.description} to={card.to} tag={card.tag} />
         </li>
       ))}

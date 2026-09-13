@@ -10,7 +10,7 @@
 - **Visual:** Open `https://api-production-8afc.up.railway.app` signed out in clean browser window.
 - **Script:**
   > "Hi! I'm Deepjyoti Sarmah. This is my 24-hour rebuild of Higgsfield.ai, an AI-native image and video generation platform.
-  > Notice the signed-out Explore landing page — top brand header with Higgsfield SVG mark, hero showcase video cards (`MOTION DESIGNER`, `EFFECTS STUDIO`, `CINEMATIC CAMERA`), tool cards, and a gallery of 12 motion presets grouped into Camera, Cinematic, and Dynamic categories.
+  > Notice the signed-out Explore landing page — brand header, a compact hero, and a dense 5-up wall of 12 motion-preset tiles grouped into Camera, Cinematic, and Dynamic.
   > All preset cards feature live autoplaying looping motion previews that we generate ourselves and serve from our own storage."
 
 ---

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import type { Preset } from "../../api/presets"
 import { exploreCopy } from "./exploreCopy"
+import { presetTileStyles } from "./presetTileStyles"
 import { recreateHref } from "./recreateHref"
 
 type PresetGalleryCardProps = {
@@ -9,38 +10,26 @@ type PresetGalleryCardProps = {
 
 function PreviewMedia({ preset }: PresetGalleryCardProps) {
   const mediaUrl = preset.preview_url
-  const isVideo =
-    mediaUrl !== null &&
-    (mediaUrl.endsWith(".mp4") || mediaUrl.endsWith(".webm") || mediaUrl.includes(".mp4"))
-  if (isVideo && mediaUrl !== null) {
-    return (
-      <video
-        src={mediaUrl}
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-hidden="true"
-        onMouseEnter={(e) => void e.currentTarget.play()}
-        onMouseLeave={(e) => e.currentTarget.pause()}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-      />
-    )
-  }
   if (mediaUrl === null) {
     return (
-      <span
-        aria-hidden="true"
-        className="block h-full w-full bg-gradient-to-br from-border to-bg"
-      />
+      <span aria-hidden="true" className={`absolute inset-0 ${presetTileStyles[preset.category]}`} />
     )
   }
+  const isVideo = mediaUrl.endsWith(".mp4") || mediaUrl.endsWith(".webm")
+  const className =
+    "absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+  if (!isVideo) {
+    return <img src={mediaUrl} alt="" loading="lazy" className={className} />
+  }
   return (
-    <img
+    <video
       src={mediaUrl}
-      alt={exploreCopy.gallery.previewAlt(preset.name)}
-      loading="lazy"
-      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      autoPlay
+      loop
+      muted
+      playsInline
+      aria-hidden="true"
+      className={className}
     />
   )
 }
@@ -49,25 +38,28 @@ export function PresetGalleryCard({ preset }: PresetGalleryCardProps) {
   const { cardCta, categoryLabel, creditCost, recreateAriaLabel } = exploreCopy.gallery
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:border-accent/70 hover:shadow-xl hover:shadow-black/50 focus-within:border-accent/70">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border">
-        <PreviewMedia preset={preset} />
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent" />
-        <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-0.5 text-[11px] font-medium text-accent backdrop-blur border border-accent/20">
-          {creditCost(preset.credit_cost)}
+    <Link
+      to={recreateHref(preset.slug)}
+      aria-label={recreateAriaLabel(preset.name)}
+      className="group relative block aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-accent/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      <PreviewMedia preset={preset} />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-scrim to-transparent"
+      />
+      <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-accent backdrop-blur">
+        {creditCost(preset.credit_cost)}
+      </span>
+      <span className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-2">
+        <span className="min-w-0">
+          <span className="block truncate text-sm font-semibold text-text">{preset.name}</span>
+          <span className="block text-[11px] text-muted">{categoryLabel(preset.category)}</span>
         </span>
-      </div>
-      <div className="mt-3 flex flex-col gap-1">
-        <h3 className="text-base text-text">{preset.name}</h3>
-        <p className="text-xs text-muted">{categoryLabel(preset.category)}</p>
-      </div>
-      <Link
-        to={recreateHref(preset.slug)}
-        aria-label={recreateAriaLabel(preset.name)}
-        className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-accent-ink shadow-lg shadow-accent/20 transition-all hover:bg-accent/90 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        <span aria-hidden="true">✦</span> {cardCta}
-      </Link>
-    </article>
+        <span className="hidden shrink-0 rounded-full bg-accent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-accent-ink group-hover:inline group-focus-visible:inline">
+          {cardCta}
+        </span>
+      </span>
+    </Link>
   )
 }

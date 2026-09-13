@@ -18,7 +18,7 @@ export function ExplorePage() {
   useExploreTitle()
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <ExploreHero />
       <ToolCards />
       <PresetGallery state={presets} />

@@ -82,7 +82,7 @@ export function CreateVideoCanvas({
   const isMissingJob = phase === "failed" && canvas.isMissing
   const heading = isMissingJob ? createVideoCopy.failure.missingHeading : headingByPhase[phase]
   return (
-    <section className="flex min-h-[420px] flex-col items-center justify-center gap-6 rounded-2xl border border-border bg-surface p-6 md:min-h-[560px]">
+    <section className="flex min-h-[320px] flex-col items-center justify-center gap-5 rounded-2xl border border-border bg-surface p-5 md:min-h-[420px]">
       <CanvasHeading text={heading} headingRef={headingRef} />
       <CanvasBody
         phase={phase}
