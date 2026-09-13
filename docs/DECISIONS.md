@@ -101,3 +101,12 @@ Never edit an old entry. To change a decision, add a new one that supersedes it.
 - `GRANT` **cannot** be reused for a top-up: `uq_ledger_entry_guest_grant` is a partial unique index on `(user_id) WHERE kind = 'GRANT'`, and every guest already received that one-time welcome grant at account creation (`services/guest_accounts.py`). A second `GRANT` is a unique violation. A top-up is repeatable, job-less and positive — exactly `TOPUP`.
 
 **Rejected:** a `GRANT` top-up (violates the one-time index); a new ledger kind or a migration (the kind already exists); a top-up cap (P1 — `POST /auth/guest` is already an unbounded faucet, so the cap would not close the hole that D-003's `PAID_BUDGET_CENTS` + `GENERATION_BACKEND=mock` already guard).
+
+## D-014 · 2026-09-13 · Image create ships a placeholder backend; the real model is P2
+**Why:**
+- D-012 makes Image create P1 and the product map wants images that can later feed Video create, but **no image model runs in this repo**: `ModelAdapter` has only `generate_video`, and D-002's LLaDA-Image Turbo on Modal is blocked on an unverified licence, no GPU deployment and the R2 blocker (`docs/STATUS.md` BROKEN).
+- A fake "modal image" path would be worse than an honest placeholder: it would spend the D-003 budget guard's credibility and still produce nothing. Spec 009 therefore adds an `ImageModelAdapter` port and a **deterministic PNG placeholder** for `local-motion`/`mock` — a real PNG file, so the whole upload/serve/view path is exercised — the API returns the `backend` name, and the page captions a placeholder result.
+- `modal`/`openrouter` keep failing with `BackendNotConfiguredError` and refund, exactly as they do for video.
+
+**Rejected:** faking a Modal/OpenRouter image adapter; blocking the whole slice until the model exists (the page, job shape, ledger, worker branch and SSE are the reusable majority); shipping a page that cannot generate at all.
+

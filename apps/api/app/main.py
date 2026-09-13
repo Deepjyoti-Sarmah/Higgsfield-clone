@@ -7,7 +7,17 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.db import create_database_engine, create_session_maker
-from app.routers import auth, credits, health, jobs, presets, share, share_page, uploads
+from app.routers import (
+    auth,
+    credits,
+    health,
+    image_jobs,
+    jobs,
+    presets,
+    share,
+    share_page,
+    uploads,
+)
 from app.services.job_event_broker import JobEventBroker
 from app.settings import get_settings
 
@@ -49,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(uploads.router)
     app.include_router(jobs.router)
     app.include_router(credits.router)
+    app.include_router(image_jobs.router)
     app.include_router(share.router)
     # Before the SPA catch-all: Starlette matches in registration order, so /v/{job_id}
     # must be registered first or the catch-all would serve the bare shell without meta tags.
