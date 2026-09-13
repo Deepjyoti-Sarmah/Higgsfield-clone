@@ -1,0 +1,197 @@
+#!/usr/bin/env python3
+"""End-to-end smoke of the generation core on the local stack (brief T-003-7, 9 steps)."""
+
+import argparse, http.cookiejar, json, subprocess, time, urllib.error, urllib.request, uuid
+DEFAULT_BASE_URL, API, UA = "http://localhost:8000", "/api/v1", "smoke-generation/1.0"
+PRESETS, UPLOADS, JOBS, CREDITS = f"{API}/presets", f"{API}/uploads", f"{API}/jobs", f"{API}/credits"
+GUEST_GRANT, PRESET_COST, MIN_PRESETS = 60, 20, 12
+IMAGE_SIZE, VIDEO_SIZE, VIDEO_FRAMES = (1600, 1000), (1280, 720), 120
+VIDEO_SECONDS, DURATION_TOLERANCE, STATUS_TIMEOUT = 5.0, 0.15, 90.0
+
+class SmokeError(Exception):
+    """A step failed; the message is the whole diagnosis."""
+def raw(url, method, payload=None, cookie_jar=None, headers=None, timeout=30):
+    body = None if payload is None else json.dumps(payload).encode(); merged = {"User-Agent": UA, "Accept": "application/json"}
+    if body is not None:
+        merged["Content-Type"] = "application/json"
+    merged.update(headers or {})
+    request = urllib.request.Request(url, data=body, headers=merged, method=method)
+    try:
+        with urllib.request.build_opener(
+                urllib.request.HTTPCookieProcessor(cookie_jar)).open(request, timeout=timeout) as response:
+            return response.status, response.read(), response.headers
+    except urllib.error.HTTPError as error:
+        return error.code, error.read(), error.headers
+def api(base_url, method, path, payload=None, cookie_jar=None, expect=200):
+    status, body, _ = raw(base_url + path, method, payload, cookie_jar)
+    if status != expect: raise SmokeError(f"{method} {path} -> {status} (expected {expect}): {body[:200]!r}")
+    return None if not body else json.loads(body)
+def fetch(url, cookie_jar):
+    status, body, headers = raw(url, "GET", None, cookie_jar, timeout=60)
+    if status != 200 or not body: raise SmokeError(f"GET {url} -> {status} ({len(body)} bytes)")
+    return headers.get("Content-Type", ""), body
+def number(payload, key):
+    if key not in payload: raise SmokeError(f"response is missing {key!r}: {payload!r}")
+    return int(payload[key])
+def run_tool(label, command):
+    done = subprocess.run(command, capture_output=True)
+    if done.returncode != 0: raise SmokeError(f"{label} failed: {done.stderr.decode(errors='replace')[-400:]}")
+    return done.stdout
+
+def smoke_key():
+    return f"smoke-{uuid.uuid4()}"
+
+def create_job(base_url, state, key):
+    payload = {"preset_slug": "dolly-in", "input_asset_id": state["asset_id"], "idempotency_key": key}; return api(base_url, "POST", JOBS, payload, state["cookie_jar"], expect=202)
+def wait_for_succeeded(base_url, state, timeout=STATUS_TIMEOUT):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        job = api(base_url, "GET", f"{JOBS}/{state['job_id']}", None, state["cookie_jar"])
+        if job["status"] == "succeeded": return job
+        if job["status"] == "failed": raise SmokeError(f"job {state['job_id']} failed: {job.get('error_message')!r}")
+        time.sleep(0.25)
+    raise SmokeError(f"job {state['job_id']} never succeeded within {timeout:.0f}s")
+
+def read_event_stream(base_url, state, timeout=STATUS_TIMEOUT):
+    request = urllib.request.Request(f"{base_url}{JOBS}/{state['job_id']}/events",
+                                     headers={"User-Agent": UA, "Accept": "text/event-stream"})
+    statuses, deadline = [], time.monotonic() + timeout
+    try:
+        response = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(state["cookie_jar"])).open(request, timeout=timeout)
+    except urllib.error.HTTPError as error:
+        raise SmokeError(f"SSE -> {error.code}: {error.read()[:300]!r}") from error
+    with response:
+        if response.status != 200 or not response.headers.get("Content-Type", "").startswith("text/event-stream"): raise SmokeError(f"SSE stream -> {response.status}")
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0: raise SmokeError(f"SSE did not close within {timeout:.0f}s; got {statuses}")
+            response.fp.raw._sock.settimeout(min(remaining, 25.0))
+            line = response.readline()
+            if not line: return statuses
+            text = line.decode(errors="replace").strip()
+            if text.startswith("data:"):
+                statuses.append(json.loads(text[5:].strip())["status"])
+
+def check_video(path):
+    output = run_tool("ffprobe", ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                                  "stream=codec_name,width,height,nb_frames,duration", "-of", "json", path])
+    streams = json.loads(output).get("streams") or []
+    if not streams: raise SmokeError(f"ffprobe found no video stream in {path}")
+    stream = streams[0]
+    width, height = number(stream, "width"), number(stream, "height")
+    if stream.get("codec_name") != "h264": raise SmokeError(f"video codec is {stream.get('codec_name')!r}, expected 'h264'")
+    if (width, height) != VIDEO_SIZE: raise SmokeError(f"video is {width}x{height}, expected {VIDEO_SIZE[0]}x{VIDEO_SIZE[1]}")
+    if number(stream, "nb_frames") != VIDEO_FRAMES: raise SmokeError(f"video has {stream.get('nb_frames')!r} frames, expected {VIDEO_FRAMES}")
+    try:
+        seconds = float(stream["duration"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise SmokeError(f"video duration is not a number: {stream.get('duration')!r}") from error
+    if abs(seconds - VIDEO_SECONDS) > DURATION_TOLERANCE: raise SmokeError(f"video is {seconds:.3f}s, expected ~{VIDEO_SECONDS}s")
+    return f"{width}x{height} {VIDEO_FRAMES}f {seconds:.3f}s h264"
+
+def step_presets(base_url, state):
+    presets = api(base_url, "GET", PRESETS)["presets"]
+    if len(presets) < MIN_PRESETS: raise SmokeError(f"GET /presets returned {len(presets)}, expected >= {MIN_PRESETS}")
+    wrong = [preset["slug"] for preset in presets if preset["credit_cost"] != PRESET_COST]
+    if wrong: raise SmokeError(f"presets with credit_cost != {PRESET_COST}: {wrong}")
+    return f"{len(presets)} presets, every credit_cost={PRESET_COST}"
+def step_guest(base_url, state):
+    cookie_jar = http.cookiejar.CookieJar(); user = api(base_url, "POST", f"{API}/auth/guest", None, cookie_jar, expect=201)
+    state["cookie_jar"] = cookie_jar
+    balance = number(api(base_url, "GET", CREDITS, None, cookie_jar), "balance")
+    if balance != GUEST_GRANT: raise SmokeError(f"new guest balance is {balance}, expected {GUEST_GRANT}")
+    return f"guest {user['id']} balance={balance}"
+def step_image(base_url, state):
+    path = f"{state['work_dir']}/smoke-input.jpg"
+    run_tool("ffmpeg", ["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                        f"testsrc2=size={IMAGE_SIZE[0]}x{IMAGE_SIZE[1]}:rate=1", "-frames:v", "1", path])
+    return f"{IMAGE_SIZE[0]}x{IMAGE_SIZE[1]} jpg at {path}"
+
+def step_upload(base_url, state):
+    image_path = f"{state['work_dir']}/smoke-input.jpg"
+    with open(image_path, "rb") as handle:
+        data = handle.read()
+    created = api(base_url, "POST", UPLOADS, {"content_type": "image/jpeg", "byte_size": len(data)},
+                  state["cookie_jar"], expect=201)
+    headers = {"User-Agent": UA, "Content-Length": str(len(data))}; headers.update(created.get("upload_headers") or {})
+    request = urllib.request.Request(created["upload_url"], data=data, headers=headers, method="PUT")
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            if response.status not in (200, 201, 204): raise SmokeError(f"PUT upload_url -> {response.status}")
+    except urllib.error.HTTPError as error:
+        raise SmokeError(f"PUT upload_url -> {error.code}: {error.read()[:200]!r}") from error
+    asset = api(base_url, "POST", f"{UPLOADS}/{created['asset_id']}/complete", None, state["cookie_jar"])
+    if asset["status"] != "ready": raise SmokeError(f"asset {created['asset_id']} is {asset['status']!r}, expected 'ready'")
+    state["asset_id"] = created["asset_id"]
+    return f"asset {created['asset_id']} ready ({len(data)}B)"
+def step_create(base_url, state):
+    key = state["key"] = smoke_key(); first = create_job(base_url, state, key)
+    if (first["status"], first["credit_cost"]) != ("queued", PRESET_COST): raise SmokeError(f"unexpected create body: {first!r}")
+    state["job_id"] = first["id"]
+    if create_job(base_url, state, key)["id"] != first["id"]: raise SmokeError(f"same idempotency_key gave two jobs for {key}")
+    balance = number(api(base_url, "GET", CREDITS, None, state["cookie_jar"]), "balance")
+    if balance != GUEST_GRANT - PRESET_COST: raise SmokeError(f"balance after create is {balance}, expected {GUEST_GRANT - PRESET_COST}")
+    return f"job {first['id']} queued, repeat idempotent, balance={balance}"
+def step_events(base_url, state):
+    statuses = read_event_stream(base_url, state)
+    if statuses[:1] != ["queued"] or statuses[-1:] != ["succeeded"] or "running" not in statuses: raise SmokeError(f"SSE sequence {statuses}, expected queued -> running -> succeeded")
+    return f"statuses {' -> '.join(statuses)}"
+def step_outputs(base_url, state):
+    job = wait_for_succeeded(base_url, state)
+    if not job.get("video_url") or not job.get("poster_url"): raise SmokeError(f"job {state['job_id']} succeeded without video_url/poster_url: {job!r}")
+    poster_type, poster = fetch(job["poster_url"], state["cookie_jar"])
+    video_type, video = fetch(job["video_url"], state["cookie_jar"])
+    if not video_type.startswith("video/mp4") or not poster_type.startswith("image/"): raise SmokeError(f"output types are {video_type!r} and {poster_type!r}")
+    video_path = f"{state['work_dir']}/smoke-output.mp4"
+    with open(video_path, "wb") as handle:
+        handle.write(video)
+    return f"mp4 {len(video)}B {check_video(video_path)}; poster {len(poster)}B"
+
+def step_credits(base_url, state):
+    for _ in range(2):
+        state["job_id"] = create_job(base_url, state, smoke_key())["id"]
+        wait_for_succeeded(base_url, state)
+    balance = number(api(base_url, "GET", CREDITS, None, state["cookie_jar"]), "balance")
+    if balance != 0: raise SmokeError(f"balance after 3 videos is {balance}, expected 0")
+    payload = {"preset_slug": "dolly-in", "input_asset_id": state["asset_id"], "idempotency_key": smoke_key()}
+    status, body, _ = raw(base_url + JOBS, "POST", payload, state["cookie_jar"])
+    if status != 402: raise SmokeError(f"4th job -> {status}, expected 402: {body[:200]!r}")
+    returned = json.loads(body)
+    if (number(returned, "balance"), number(returned, "required")) != (0, PRESET_COST): raise SmokeError(f"402 body is {returned!r}, expected balance=0 required={PRESET_COST}")
+    return f"balance=0, 4th job 402 required={PRESET_COST}"
+def step_owner_only(base_url, state):
+    cookie_jar = http.cookiejar.CookieJar(); user = api(base_url, "POST", f"{API}/auth/guest", None, cookie_jar, expect=201)
+    for suffix in ("", "/events"):
+        status, body, _ = raw(f"{base_url}{JOBS}/{state['job_id']}{suffix}", "GET", None, cookie_jar)
+        if status != 404: raise SmokeError(f"second guest {JOBS}/{state['job_id']}{suffix} -> {status}: {body[:200]!r}")
+    return f"guest {user['id']} got 404 on the job and its events"
+
+STEPS = (("presets", step_presets), ("guest", step_guest), ("test image", step_image),
+         ("upload", step_upload), ("create job + idempotency", step_create),
+         ("sse statuses", step_events), ("outputs", step_outputs),
+         ("credits", step_credits), ("owner only", step_owner_only))
+
+def run_steps(base_url, work_dir):
+    print(f"smoke-generation: base_url={base_url}")
+    state = {"work_dir": work_dir}
+    for position, (label, step) in enumerate(STEPS, start=1):
+        try:
+            print(f"ok {position} {label}: " + step(base_url, state))
+        except SmokeError as error:
+            raise SmokeError(f"step {position} ({label}): {error}") from error
+    print("smoke-generation: PASS (9/9 steps)")
+def main():
+    parser = argparse.ArgumentParser(description="End-to-end smoke of the generation core."); parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    parser.add_argument("--work-dir", default="/tmp")
+    arguments = parser.parse_args()
+    try:
+        run_steps(arguments.base_url.rstrip("/"), arguments.work_dir)
+    except SmokeError as error:
+        print(f"smoke-generation: FAIL {error}")
+        raise SystemExit(1) from error
+    except urllib.error.URLError as error:
+        print(f"smoke-generation: FAIL cannot reach {arguments.base_url}: {error}")
+        raise SystemExit(1) from error
+if __name__ == "__main__":
+    main()
