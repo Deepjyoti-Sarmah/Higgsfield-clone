@@ -92,7 +92,13 @@ scripts/check-standards                              -> check-standards: ok (0 v
 - [x] `openapi.json` regenerated; the diff contains only `generated_by`
 
 ## Open issues / guesses / things skipped
-- **Three files outside the brief's literal allowed list were required and are called out rather than
+- **Deploy finding (fixed in the follow-up commit):** the first T-033 worker deploy **crashed** with
+  `ModuleNotFoundError: No module named 'httpx'`. `backend_selection` → `modal_adapter` (T-013) imports
+  `httpx`, but `httpx` was a **dev-only** dependency and the Dockerfile installs `uv sync --frozen --no-dev`.
+  T-013 never deployed, so this was latent until T-033 shipped the adapter to Railway. Fixed by promoting
+  `httpx>=0.27` to the main dependencies (`apps/api/pyproject.toml`, `uv.lock`) and redeploying both services.
+  This is outside the brief's allowed list but is required for the adapter to import in production.
+- **Four files outside the brief's literal allowed list were required and are called out rather than
   hidden:** `worker.py` and `adapters/backend_selection.py` (the brief's "Must reuse `select_model_adapter`"
   for the fallback cannot be wired without them), and the generated
   `apps/web/src/api/generated/schema.d.ts` (mechanical output of the intended contract change).
