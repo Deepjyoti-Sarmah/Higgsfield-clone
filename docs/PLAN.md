@@ -71,10 +71,10 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-007-4 | Web UI: `SharePage`, `ShareResult`, `ShareStates` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-4/report.md` |
 | T-007-5 | Assembly + no-JS public check: route `/v/:jobId` to `SharePage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-007-5/report.md` |
 | T-008-0 | Design spec 008 Credits + publish `POST /api/v1/credits/topup` (`TopUpResponse` + 501 stub + openapi; D-013: P0, writes `TOPUP`) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/specs/008-credits/`, `docs/tasks/T-008-0/report.md` |
-| T-008-1 | API: implement `POST /api/v1/credits/topup` (`TOPUP_CREDITS`, service lock→insert→sum, router body, tests) | TODO | TBD | `docs/tasks/T-008-1/brief.md` |
-| T-008-2 | Web data: `api/credits.ts` (`useCreditsPage`) + regenerate the typed client | TODO | TBD | `docs/tasks/T-008-2/brief.md` |
-| T-008-3 | Web UI: `creditsCopy`, `CreditsBalanceCard`, `CreditsTopUpCard`, `CreditsPage` | TODO | TBD | `docs/tasks/T-008-3/brief.md` |
-| T-008-4 | Assembly + manual check: route `/credits` to `CreditsPage` and prove the signed-out top-up | TODO | TBD | `docs/tasks/T-008-4/brief.md` |
+| T-008-1 | API: implement `POST /api/v1/credits/topup` (`TOPUP_CREDITS`, service lock→insert→sum, router body, tests) | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-1/report.md` |
+| T-008-2 | Web data: `api/credits.ts` (`useCreditsPage`) + regenerate the typed client | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-2/report.md` |
+| T-008-3 | Web UI: `creditsCopy`, `CreditsBalanceCard`, `CreditsTopUpCard`, `CreditsPage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-3/report.md` |
+| T-008-4 | Assembly + manual check: route `/credits` to `CreditsPage` and prove the signed-out top-up | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-008-4/report.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)

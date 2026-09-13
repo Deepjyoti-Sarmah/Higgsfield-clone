@@ -1,6 +1,6 @@
 # Spec 008: Credits + fake top-up
 
-**Status:** APPROVED (handing off this pack is the user's approval, the convention specs 004–007 use)  ·  **Priority:** P0
+**Status:** DONE  ·  **Priority:** P0
 **Research refs:** `docs/research/product-map.md` row 17 ("Generate button shows the credit cost up front", done in spec 004) and row 21 ("Pricing page → Credits with a fake top-up covers the money flow", D-007); `docs/DECISIONS.md` D-007 (fake top-up), D-003 (hard $5 paid budget), D-002 (paid fallback); `docs/specs/003-generation-core/design.md` § Credit rules and job states (the ledger: one-time guest `GRANT` 60, `HOLD`/`SETTLE`/`RELEASE`)
 
 ## Problem / why

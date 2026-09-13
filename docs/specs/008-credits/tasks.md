@@ -14,19 +14,19 @@ T-008-1 (API) and T-008-2 (web data) touch different trees and are parallel-safe
   - Files: `docs/specs/008-credits/**`, `docs/tasks/T-008-*/**`, `apps/api/app/schemas/credits.py`, `apps/api/app/routers/credits.py`, `packages/contracts/openapi.json`, `docs/PLAN.md`, `docs/STATUS.md`, `docs/WORKLOG.md`, `docs/DECISIONS.md`, `.agent-logs/**`
   - Verify: `python3 -c "import json;print('\n'.join(sorted(json.load(open('packages/contracts/openapi.json'))['paths'])))" && ls docs/tasks | grep T-008 && scripts/check-standards`
   - Suggested role: orchestrator/designer · Depends on: —
-- [ ] **T-008-1** · API: implement `POST /api/v1/credits/topup` — `TOPUP_CREDITS`, the service, the router body, tests
+- [x] **T-008-1** · API: implement `POST /api/v1/credits/topup` — `TOPUP_CREDITS`, the service, the router body, tests
   - Files: `apps/api/app/routers/credits.py`, `apps/api/app/services/credits.py`, `apps/api/app/domain/credit_rules.py`, `apps/api/tests/test_credits_topup_api.py`, `docs/tasks/T-008-1/report.md`
   - Verify: `docker compose up -d --wait db && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && git diff --exit-code packages/contracts/openapi.json && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-008-0
-- [ ] **T-008-2** · Web data: `api/credits.ts` (`useCreditsPage`) + regenerate the typed client
+- [x] **T-008-2** · Web data: `api/credits.ts` (`useCreditsPage`) + regenerate the typed client
   - Files: `apps/web/src/api/credits.ts`, `apps/web/src/api/generated/schema.d.ts`, `docs/tasks/T-008-2/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer (a small model is fine) · Depends on: T-008-0
-- [ ] **T-008-3** · Web UI: `creditsCopy`, `CreditsBalanceCard`, `CreditsTopUpCard`, `CreditsPage`
+- [x] **T-008-3** · Web UI: `creditsCopy`, `CreditsBalanceCard`, `CreditsTopUpCard`, `CreditsPage`
   - Files: `apps/web/src/features/credits/{creditsCopy,CreditsBalanceCard,CreditsTopUpCard,CreditsPage}.ts(x)`, `docs/tasks/T-008-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-008-2
-- [ ] **T-008-4** · Assembly + manual check: route `/credits` to `CreditsPage` and prove the signed-out top-up
+- [x] **T-008-4** · Assembly + manual check: route `/credits` to `CreditsPage` and prove the signed-out top-up
   - Files: `apps/web/src/App.tsx`, `docs/tasks/T-008-4/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: reviewer (a different model from the T-008-3 implementer, if one is available) · Depends on: T-008-1, T-008-3

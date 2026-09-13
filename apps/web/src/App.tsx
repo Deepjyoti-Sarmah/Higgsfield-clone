@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import { AppShell } from "./ui/AppShell"
 import { EmptyState } from "./ui/EmptyState"
 import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
+import { CreditsPage } from "./features/credits/CreditsPage"
 import { ExplorePage } from "./features/explore/ExplorePage"
 import { LibraryPage } from "./features/library/LibraryPage"
 import { GuestButton } from "./features/session/GuestButton"
@@ -39,7 +40,7 @@ export function App() {
           element={<Placeholder title="Create image" />}
         />
         <Route path="library" element={<LibraryPage />} />
-        <Route path="credits" element={<Placeholder title="Credits" />} />
+        <Route path="credits" element={<CreditsPage />} />
         <Route path="v/:jobId" element={<SharePage />} />
       </Route>
     </Routes>
