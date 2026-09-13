@@ -1,7 +1,7 @@
 # Report T-030
 
 **Agent / model / tool:** implementer · deepseek-flash (DSH main session) · run_code/bash
-**Result:** DONE (live API re-check pending the deploy in the last section)
+**Result:** DONE (live verified after the deploy)
 
 ## Files changed
 - `scripts/build-preset-previews` (new): renders all 12 previews with the existing `LocalMotionAdapter`
@@ -70,6 +70,14 @@ sample: https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/previews/dolly-in.mp
 all own domain: True
 curl -o /dev/null https://pub-...r2.dev/previews/orbit-push.mp4 -> 200 video/mp4 117598 bytes
 
+LIVE (after railway up /tmp/t030-clean --path-as-root --service api --environment production):
+curl https://api-production-8afc.up.railway.app/api/health -> 200 {"status":"ok","database":"ok"}
+curl .../api/v1/presets ->
+count: 12
+nulls: []
+all own domain: True
+sample: dolly-in https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/previews/dolly-in.mp4
+
 Migration cycle: alembic downgrade -1 && alembic upgrade head -> 0005 (head), no error
 ```
 
@@ -79,10 +87,12 @@ check-standards: ok (0 violations)
 ```
 
 ## Open issues / guesses / things skipped
-- **The live API is checked after the deploy.** The running Railway image is commit `9db9597`, whose
-  `read_presets` does not hydrate anything and whose ORM selects `preview_url`. Migration `0005` renames that
-  column, so the migration must ship in the same deploy as this code; it is idempotent and runs on container boot
-  (`alembic upgrade head`). The live `preview_url` re-probe is recorded in the STATUS line once that deploy lands.
+- **Deploy note (resolved).** The running Railway image was commit `9db9597`, whose ORM selects
+  `preview_url`; migration `0005` renames that column, so the migration had to ship in the same deploy as this
+  code. It was deployed from a clean `git worktree` at `c0640b7` with
+  `railway up <worktree> --path-as-root --service api --environment production --ci`, which runs
+  `alembic upgrade head` on container boot. The first attempt without `--path-as-root` silently produced no
+  deployment ("prefix not found"), so the live re-probe was repeated after the corrected deploy.
 - **The brief's hotlink grep has two expected self-matches**: `apps/api/tests/test_presets_api.py:34-35` are the
   assertions `"higgsfield.ai" not in preview_url` / `"cloudfront.net" not in preview_url`. Nothing else under
   `apps/`, `packages/` or `scripts/` matches; `.venv` (a botocore example) is not tracked.
