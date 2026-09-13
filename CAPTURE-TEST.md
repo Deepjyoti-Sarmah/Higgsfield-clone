@@ -53,3 +53,7 @@ canary 2 received.
   - **Checked** by replaying that session's real transcript cut off before the closing row, with the row added 1s after the hook started. The full closing summary was captured. A synthetic turn that really ends on a tool call still falls back to its last text block.
   - **Trade-off:** such a turn now waits for the full retry window (~5s, within the 15s hook timeout) before it's logged.
 - I dry-ran the script against a real transcript with `AGENT_LOG_DIR` pointed at a scratch directory, and it worked first time. The dry run couldn't catch the race above, because by then the transcript had finished writing.
+
+## Disclosure of early subagent capture gap
+- **Accepted Gap (17 Tasks):** Tasks `T-000-6`, `T-005-1` through `T-005-5`, `T-006-2`, `T-006-3`, `T-007-1` through `T-007-5`, and `T-008-1` through `T-008-4` were delegated to background DSH subagent sessions without passing through `scripts/agent-run`. Because transcripts cannot be reconstructed retroactively without fabrication, we state this gap plainly. All subsequent task runs export their own execution logs directly.
+

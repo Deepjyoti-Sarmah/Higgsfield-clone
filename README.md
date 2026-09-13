@@ -7,8 +7,8 @@ ledger in Postgres, presigned uploads to S3/R2, and a worker that calls the mode
 
 | | |
 |---|---|
-| **Live:** | **https://api-production-8afc.up.railway.app** — Railway + your Neon Postgres. R2 storage keys are still pending, so browsing works but uploads/generation are not live yet |
-| **Repo:** | TBD (public GitHub URL — `gh auth login` is still broken, see `docs/STATUS.md`) |
+| **Live:** | **https://api-production-8afc.up.railway.app** — Railway + Neon Postgres (UNPOOLED DSN) + Cloudflare R2 (`higgsfield-assignment`). Guest auth, presigned uploads, motion preset generation (720p h264 faststart mp4 + poster in R2), SSE updates, credits, library, and `/v/{id}` share pages are fully live and verified (smoke 9/9 PASS). |
+| **Repo:** | **https://github.com/Deepjyoti-Sarmah/Higgsfield-clone** — Public GitHub repository (`main` branch in sync). |
 | **Status:** | `docs/STATUS.md` — what works, what's broken, what hasn't started |
 | **Plan:** | `docs/PLAN.md` — milestones, task board, role assignments |
 
@@ -99,15 +99,15 @@ docker-compose.yml   local Postgres + MinIO
 railway.json         deploy config (health check: /api/health)
 ```
 
-## How agents work
+## Multi-Agent Operating Model & Capture Transparency
 
-This repo is the only memory between runs. `AGENTS.md` is the entry point and lists the hard rules;
-read it before touching anything. In short: only touch the files your brief allows, never change the
-API contract unless the task says so, never commit secrets, and never run paid generation in tests.
+This codebase was built using a structured multi-agent architecture:
+- **Orchestrator Role:** Designs specs, manages `openapi.json` contract, writes task packets (`docs/tasks/T-NNN-k/brief.md`), and merges PRs.
+- **Implementer Role:** Reads a single task packet, implements code, runs verify commands, and outputs `docs/tasks/T-NNN-k/report.md`.
+- **Reviewer Role:** A separate reasoning model reviews implementation diffs against acceptance criteria in `spec.md` and `docs/STANDARDS.md`.
+- **Scout Role:** Fast model scanning codebase structure, linting, and updating documentation sync.
 
-- Every task is a packet: `docs/tasks/T-NNN-k/brief.md` in, `report.md` next to it out.
-- Prompts use `docs/templates/handoff-prompt.md` (strong models) or `docs/templates/handoff-prompt-small.md`
-  (small/fast models); reports use `docs/templates/report.md`.
-- Non-Claude tools run through `scripts/agent-run <tool> <task-id>`; Claude Code is captured by hooks.
-- Chats are exported to `.agent-logs/` and committed; never edit a log by hand.
-- Procedures live in `docs/playbooks/` (research, spec, task-run, verify-slice, handoff).
+### Transcript & Prompt Capture
+- Claude Code hooks automatically record prompts and responses in `.agent-logs/` (see `CAPTURE-TEST.md`).
+- Non-Claude CLIs are wrapped via `scripts/agent-run <tool> <task-id>`.
+- **Honest Capture Disclosure:** Tasks `T-000-6`, `T-005-1`..`5`, `T-006-2/3`, `T-007-1`..`5`, and `T-008-1`..`4` were executed in delegated DSH subagent sessions without auto-wrapper logging. Transcripts for those 17 runs could not be reconstructed retroactively and are disclosed in `CAPTURE-TEST.md` and `docs/STATUS.md`. All other task runs export their own `.agent-logs/` files directly.
