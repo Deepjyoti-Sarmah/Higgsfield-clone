@@ -2,7 +2,7 @@
 
 Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities in `docs/PLAN.md`.
 
-**Status:** APPROVED by the user on 2026-09-13 (D-012). Evidence covers 16 screenshots and 3 flows. When the missing flows below are captured, they refine specs within this scope; they don't reopen it. **T-001-3 audit (2026-09-13):** the 16 files in `reference-images/` are byte-identical (md5) duplicates of screenshots `01`–`16` — not new material — so they add no evidence and **all 7 gaps below are still open**.
+**Status:** APPROVED by the user on 2026-09-13 (D-012). Evidence covers 18 screenshots and 4 flows. When the missing flows below are captured, they refine specs within this scope; they don't reopen it. **T-001-3 (2026-09-13):** the first `reference-images/` batch (16 files) was byte-identical to screenshots `01`–`16`; a second batch added the sign-up dialog (`17`–`18`), which **partially** covers gap 1 — sign-in and the first-run state are still missing.
 
 ## Observed surfaces
 | Surface | Flow doc | Signed out? | Verdict | Reason |
@@ -15,6 +15,7 @@ Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities i
 | Video create: model picker | `flows/video-create.md` (16) | no | **P2** | One default model (LTX-2.5 on Modal) keeps the budget and the UI simple |
 | Video create: History panel | `flows/video-create.md` (16) | no | **P0** | Needed to see progress and results; becomes the "My generations" library |
 | Generate button shows the credit cost up front | `flows/image-create.md`, `flows/video-create.md` | no | **P0** | Cheap to build, builds trust, and ties into the credit ledger. No fake strikethrough discounts |
+| Auth: sign-up dialog ("Welcome to Higgsfield") | `flows/auth.md` (17, 18) | yes | **TBD** (orchestrator) | Observed 2026-09-13: sign-up only — Google / Apple / Microsoft / Email provider choice, no visible input field, discount-first copy. Sign-in not captured. Our demo is guest-first (D-012), so this may stay out of scope |
 | Assets (top nav) | — (not captured) | no | **P0** (merged with History) | One library for every output |
 | Image create: prompt + aspect/quality/count → images | `flows/image-create.md` (15) | no | **P1** | Second creation mode. Images can also be generated and fed into Video create |
 | Pricing page | — (not captured) | yes | **P1** | Credits with a fake top-up covers the money flow (D-007) |
@@ -31,7 +32,7 @@ Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities i
 | Upscale, Inpaint, Edit Image | footer, 13 | — | **P2** | Nice follow-ups once images exist |
 
 ## Not yet observed (needed before specs; please capture)
-1. **Sign-up / sign-in** screens and the first-run experience (free credits?).
+1. **Auth — PARTIAL.** ✅ Captured: the **sign-up** dialog (`17`, `18`; see `flows/auth.md`) — provider choice (Google / Apple / Microsoft) + `Continue with Email`, discount CTA, and one capture showing the terms/age consent line. ❌ Still missing: the **sign-in** form (the nav `Login` button was never captured), the email/password (or OTP) fields behind `Continue with Email`, a provider redirect/return, and the **first-run experience / free-credits grant** (no credit amount appears anywhere yet).
 2. **Video create in action:**
    - the preset picker after clicking "Change"
    - upload done
@@ -44,7 +45,7 @@ Filled in by `docs/playbooks/research-flow.md`. Verdicts follow the priorities i
 6. **Share / public view** of a generation: the page someone opens from a link.
 7. Explore **signed out** (what a new visitor sees).
 
-> **Audit note (T-001-3, 2026-09-13):** the `reference-images/` set was checked against `docs/research/screenshots/`; all 16 md5s match `01`–`16` exactly (14 Explore sections + Image create empty + Video create empty). It contains **no** sign-up/sign-in screen and **no** generating/result/history/assets/pricing/share capture; every shot is signed in. Nothing was added to the catalogue (adding the duplicates as `17`–`32` would break the "NN = distinct observation" rule). All 7 items above remain open. Full mapping: `docs/tasks/T-001-3/report.md`.
+> **Audit note (T-001-3, 2026-09-13):** the first `reference-images/` batch was checked against `docs/research/screenshots/`; all 16 md5s match `01`–`16` exactly (14 Explore sections + Image create empty + Video create empty), so nothing was added from it. A later batch (`18-28-33`, `18-28-56`) is **genuinely new** and was saved as `17-signup-welcome-modal.png` and `18-signup-terms-consent.png` (gap 1, partial). Nothing else was added: re-numbering the duplicates as `17`–`32` would have broken the "NN = distinct observation" rule. Full mapping: `docs/tasks/T-001-3/report.md`.
 
 ## "Better than the original" themes (from friction noticed)
 - One clear primary action per screen, instead of stacked promos and countdowns.

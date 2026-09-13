@@ -11,3 +11,4 @@ dist/
 
 # Unrelated local project; never part of this repo (D-011)
 pixovid/
+.neon

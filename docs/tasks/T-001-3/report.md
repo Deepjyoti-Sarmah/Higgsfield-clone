@@ -125,3 +125,65 @@ check-standards: ok (0 violations)
 | What | Where | Verified by | When (UTC) |
 |---|---|---|---|
 | T-001-3 audit: the `reference-images/` set (16 PNGs) is byte-identical to screenshots `01`–`16`; 0 of 7 missing flows covered | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed | `ls docs/research/screenshots \| wc -l` → 16; md5 mapping 16/16 matched; `scripts/check-standards` → 0 violations | 2026-09-13 |
+
+---
+
+# T-001-3 (part 2): sign-up screenshot capture — 2026-09-13
+
+**Agent / model / tool:** scout · deepseek-flash · DeepSeek Harness (DSH); images read directly with `read_image` (this model **can** read images)
+**Result:** DONE — gap 1 partially covered
+
+## Material
+Two new files in `reference-images/` (genuinely new: their sizes differ from every file in `01`–`16`):
+- `Screenshot from 2026-09-13 18-28-33.png` (744 797 B)
+- `Screenshot from 2026-09-13 18-28-56.png` (666 416 B)
+
+## Filename → page mapping
+
+| Saved as | Source reference file | md5 | What it shows | Sign-in or sign-up? |
+|---|---|---|---|---|
+| `17-signup-welcome-modal.png` | `Screenshot from 2026-09-13 18-28-33.png` | `f3b5509e` | "Welcome to Higgsfield" auth dialog over a signed-out Explore page; promo carousel on **Nano Banana Pro 4K**; **no** consent line | **Sign-up** |
+| `18-signup-terms-consent.png` | `Screenshot from 2026-09-13 18-28-56.png` | `88438ddc` | The **same** dialog; promo carousel on **Higgsfield Soul**; **terms/age consent line visible** (unchecked) | **Sign-up** (same dialog) |
+
+**Neither screenshot is a sign-in screen.** Both show one modal — "Welcome to Higgsfield / Sign up and generate for free"; the only differences are the auto-rotating promo slide and the presence of the consent line. Full copy and states: `docs/research/flows/auth.md`.
+
+## The dialog's fields and CTAs (both shots)
+- Heading `Welcome to Higgsfield`; subline `Sign up and generate for free`.
+- Primary CTA `Sign up and get an additional discount` (marketing copy rather than "create account").
+- `OR`, then `Continue with Google` · `Continue with Apple` · `Continue with Microsoft`.
+- `Continue with Email` — **no email, password or code field is visible in either capture**.
+- Only in `18`: `I agree to the Terms of Use, acknowledge the Privacy Policy, and confirm I'm at least 18 years old.` — checkbox shown **unchecked**.
+- Footer `SSO available on Scale and Enterprise plans`; dismiss `×`.
+- Page-wide banner behind the modal: `Get an additional discount on premium plans after signing up` + `Get your discount`.
+
+## First-run / free credits
+**No first-run or free-credits state is visible in either screenshot.** The dialog claims "generate for free" but shows no credit amount, balance or grant; the only quantified incentives are discounts (the banner, the primary CTA, and the promo card on the page behind). No post-sign-up screen was captured.
+
+## Gap coverage
+- **Gap 1 (sign-up / sign-in) → PARTIAL.** The sign-up dialog is now catalogued (`17`, `18`; `flows/auth.md`).
+- Still missing inside gap 1: the **sign-in** form, the email/password (or OTP) step behind `Continue with Email`, a provider redirect/return, and the **first-run / free-credits** state.
+- Gaps 2–7: unchanged — still no screenshot.
+
+## Verify output (full paste)
+```
+$ ls docs/research/screenshots | tail -n 4
+15-image-create-empty.png
+16-video-create-empty.png
+17-signup-welcome-modal.png
+18-signup-terms-consent.png
+$ scripts/check-standards
+check-standards: ok (0 violations)
+```
+
+## Files changed (this pass)
+- `docs/research/screenshots/17-signup-welcome-modal.png`, `docs/research/screenshots/18-signup-terms-consent.png` — new; md5-identical to their sources; `01`–`16` untouched, originals in `reference-images/` untouched
+- `docs/research/flows/auth.md` — new sign-up/sign-in flow notes
+- `docs/research/product-map.md` — gap 1 → PARTIAL, an auth row added to Observed surfaces, audit note updated
+- `docs/tasks/T-001-3/report.md` — this section
+- `docs/WORKLOG.md` — one line appended
+
+## Open issues
+- **No sign-in capture.** The nav's `Login` button was never clicked, so whether it opens this same dialog or a different screen is unknown.
+- **Consent line is inconsistent** between the two captures (present in `18`, absent in `17`). Cause not confirmed (revealed after interaction, a scroll position, or an A/B variant). Where present it sits *below* every provider button, so a visitor can continue without the terms entering view.
+- **`free` is never quantified** in either shot; the discount is stated three times instead.
+- **Not committed**, per the kickoff prompt. `.agent-logs/` for this pass is the orchestrator's to add — that path was outside my allowed files. (Note: my tool cannot be wrapped by `scripts/agent-run`, so AGENTS.md's "export the transcript" rule applies.)
