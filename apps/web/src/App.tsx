@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import { AppShell } from "./ui/AppShell"
 import { EmptyState } from "./ui/EmptyState"
 import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
-import { HomePage } from "./features/home/HomePage"
+import { ExplorePage } from "./features/explore/ExplorePage"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
 import { useSession } from "./features/session/useSession"
@@ -30,7 +30,7 @@ export function App() {
       <Route
         element={<AppShell rightSlot={rightSlot} outletContext={session} />}
       >
-        <Route index element={<HomePage />} />
+        <Route index element={<ExplorePage />} />
         <Route path="create/video" element={<CreateVideoPage />} />
         <Route
           path="create/image"

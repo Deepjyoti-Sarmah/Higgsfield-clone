@@ -57,7 +57,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-1/report.md` |
 | T-006-2 | Web: Explore hero + tool cards | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-2/report.md` |
 | T-006-3 | Web: effect gallery cards, per-category sections, states | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-3/report.md` |
-| T-006-4 | Web: assemble `ExplorePage`, route `/`, retire `HomePage` | TODO (wave 3) | — | `docs/tasks/T-006-4/brief.md` |
+| T-006-4 | Web: assemble `ExplorePage`, route `/`, retire `HomePage` | DONE (deepseek-flash via DSH) | deepseek-flash | `docs/tasks/T-006-4/report.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)

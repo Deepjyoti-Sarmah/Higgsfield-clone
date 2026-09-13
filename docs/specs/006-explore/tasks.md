@@ -39,7 +39,7 @@ data and pure helpers. T-006-4 is gated on both because `ExplorePage` renders ev
     - `docs/tasks/T-006-3/report.md`
   - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards`
   - Suggested role: implementer · Depends on: T-006-1
-- [ ] **T-006-4** · Assemble `ExplorePage`, route `/` to it and retire `HomePage`
+- [x] **T-006-4** · Assemble `ExplorePage`, route `/` to it and retire `HomePage`
   - Files:
     - `apps/web/src/features/explore/ExplorePage.tsx`
     - `apps/web/src/App.tsx`
