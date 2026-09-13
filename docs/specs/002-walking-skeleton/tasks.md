@@ -6,11 +6,11 @@ Rules: one task = one agent run; parallel tasks don't share files; every task ha
   - Files: `apps/api/**`, `docker-compose.yml`, `.env.example`, `scripts/export-openapi`, `packages/contracts/openapi.json`
   - Verify: `docker compose up -d db && cd apps/api && uv run ruff check . && uv run pytest -q && cd ../.. && scripts/export-openapi && scripts/check-standards`
   - Role: orchestrator (sets the patterns) · Depends on: —
-- [ ] **T-002-2** · Web shell: Vite React TS, dark theme tokens, AppShell nav, guest button with all 4 states, generated client, eslint rules from STANDARDS
+- [x] **T-002-2** · Web shell: Vite React TS, dark theme tokens, AppShell nav, guest button with all 4 states, generated client, eslint rules from STANDARDS
   - Files: `apps/web/**`
   - Verify: `cd apps/web && npm run gen:api && npm run lint && npm run typecheck && npm run build && cd ../.. && scripts/check-standards`
   - Role: implementer (any coding model) · Depends on: T-002-1 (openapi.json)
-- [ ] **T-002-3** · Container: Dockerfile (web build → python), `APP_ROLE` entrypoint, `railway.json`
+- [x] **T-002-3** · Container: Dockerfile (web build → python), `APP_ROLE` entrypoint, `railway.json`
   - Files: `Dockerfile`, `.dockerignore`, `railway.json`, `apps/api/entrypoint.sh`
   - Verify: `docker build -t hf-clone . && docker run --rm --network host --env-file .env.local hf-clone` then `curl localhost:8000/api/health` and `curl localhost:8000/` (HTML)
   - Role: orchestrator · Depends on: T-002-1, T-002-2

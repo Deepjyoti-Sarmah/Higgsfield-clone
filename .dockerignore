@@ -1,0 +1,16 @@
+.git
+.agent-logs
+.claude
+docs
+reference-images
+pixovid
+**/node_modules
+**/.venv
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+.env
+.env.*
+!.env.example

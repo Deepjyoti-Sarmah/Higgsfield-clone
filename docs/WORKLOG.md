@@ -13,3 +13,7 @@
 - 2026-09-13 01:45 · Claude Opus 5 · M1 close + spec 002 · `docs/research/product-map.md`, `docs/DECISIONS.md` (D-012), `docs/specs/002-walking-skeleton/` · scope locked; skeleton spec/design/tasks written · see `git log`
 - 2026-09-13 02:05 · Claude Opus 5 · T-002-1 API skeleton · `apps/api/**`, `docker-compose.yml`, `.env.example`, `scripts/export-openapi`, `packages/contracts/openapi.json` · 7 tests pass, ruff/mypy clean, contract exported · see `git log`
 - 2026-09-13 02:05 · Claude Opus 5 · T-002-5 spike code (unverified, blocked on Modal/R2 credentials) · `apps/gpu/ltx_spike.py` · written from the LTX-2.5-Diffusers model card · see `git log`
+- 2026-09-13 02:35 · Claude Sonnet 5 (subagent) · T-002-2 web shell · `apps/web/**`, `docs/tasks/T-002-2/report.md` · DONE per report
+- 2026-09-13 02:40 · Claude Opus 5 · T-002-2 review · re-ran lint/typecheck/build/standards, read the code · accepted; 1 minor a11y issue logged in STATUS · see `git log`
+- 2026-09-13 02:40 · Claude Opus 5 · handoff kit · `docs/templates/handoff-prompt.md`, `docs/tasks/T-003-0/brief.md`, `docs/tasks/T-004-0/brief.md` · ready for other agents · see `git log`
+- 2026-09-13 01:50 · Claude Opus 5 · T-002-3 container · `Dockerfile`, `apps/api/entrypoint.sh`, `.dockerignore`, `railway.json` · image built; api + worker verified locally · see `git log`
