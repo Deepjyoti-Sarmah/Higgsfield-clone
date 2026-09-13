@@ -52,7 +52,12 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-004-4 | Web: panel components (drop zone, presets, prompt, generate) | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/web/src/features/create-video/{CreateVideoPanel,ImageDropZone,ImageThumbnail,PresetPicker,PresetCategoryChips,PresetCard,PromptField,GenerateSection}.tsx`, `apps/web/src/features/create-video/useClipboardImagePaste.ts`, `docs/tasks/T-004-4/report.md` |
 | T-004-3 | Web: job hooks (idempotent create, SSE watcher + poll fallback) | DONE (deepseek-flash via DSH) | deepseek-flash | `apps/web/src/features/create-video/{useCreateJob,jobStatusWatcher,useJobEvents,useElapsedSeconds,useActiveJob}.ts`, `docs/tasks/T-004-3/report.md` |
 | T-004-5 | Web: page assembly, canvas views, `App.tsx` routes | DONE (deepseek-flash via DSH; browser-level verify-slice still to run) | deepseek-flash | `apps/web/src/features/create-video/*`, `apps/web/src/App.tsx`, `docs/tasks/T-004-5/report.md` |
-| S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | TODO (after 004) | — | — |
+| S-005..008 | Library · Explore · Share page `/v/{id}` · Credits + fake top-up | Explore designed as spec 006 (T-006 rows); Library/Share/Credits still TODO | — | — |
+| T-006-0 | Design spec 006 Explore: spec + design + tasks + 4 briefs (no contract change) | DONE | deepseek-flash | `docs/specs/006-explore/`, `docs/tasks/T-006-0/report.md` |
+| T-006-1 | Web: shared preset hook (`api/presets.ts`), Explore copy/data, pure helpers + tests | TODO (wave 1) | — | `docs/tasks/T-006-1/brief.md` |
+| T-006-2 | Web: Explore hero + tool cards | TODO (wave 2, ∥ T-006-3) | — | `docs/tasks/T-006-2/brief.md` |
+| T-006-3 | Web: effect gallery cards, per-category sections, states | TODO (wave 2, ∥ T-006-2) | — | `docs/tasks/T-006-3/brief.md` |
+| T-006-4 | Web: assemble `ExplorePage`, route `/`, retire `HomePage` | TODO (wave 3) | — | `docs/tasks/T-006-4/brief.md` |
 | T-001-3 | Capture the missing flows (sign-up, generating/result, history, assets, pricing, share, signed-out explore) | PARTIAL (deepseek-flash via DSH): the supplied `reference-images/` set is a byte-identical duplicate of screenshots `01`–`16`, so 0/7 gaps are covered; still WAITING on real screenshots | deepseek-flash | `docs/tasks/T-001-3/report.md`, `docs/research/product-map.md` § Not yet observed |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)
