@@ -14,6 +14,7 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | Web shell: dark AppShell with 5-item nav, guest button (idle/loading/error), typed client from openapi.json | `apps/web/` | `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build` all pass (re-run by the reviewer) | 2026-09-13 02:40 (local) |
 | Container image: web build → Python; `APP_ROLE=api` runs migrations + uvicorn and serves the SPA with deep links; `APP_ROLE=worker` logs a heartbeat | `Dockerfile`, `apps/api/entrypoint.sh`, `.dockerignore`, `railway.json` | `docker build -t hf-clone .`; `docker run --network host -e DATABASE_URL=postgresql://…localhost:5432/higgsfield hf-clone` → health 200, `/` + `/create/video` 200, guest 201, me 200; worker run → 2 heartbeats in 12s | 2026-09-13 01:50 (local) |
 | Standards check (file ≤200 lines, comment block ≤3 lines) | `scripts/check-standards` | passes on the repo; a planted 205-line file with a 4-line comment fails with exit 1 | 2026-09-13 01:18 |
+| Home "Create video" button uses `navigate("/create/video")` instead of nesting a `<button>` in a `<Link>` (valid HTML, one focus stop) | `apps/web/src/features/home/HomePage.tsx` | `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards` all pass; `grep -n "<Link"` on the file prints nothing | 2026-09-13 01:55 |
 
 ## BROKEN / KNOWN ISSUES
 | What | Where | Impact | Next step |
@@ -23,7 +24,6 @@ Keep it short: replace lines as things change instead of piling new ones up. His
 | First Codex run hung for 180s (stdin left open), so only its PROMPT was logged | same log file, entry 1 | cosmetic | fixed: stdin closed, `AGENT_RUN_TIMEOUT` logs timeouts as a response |
 | `gemini`, `aider` not installed; `OPENROUTER_API_KEY` not set | — | only Claude Code and Codex are usable as agents right now | install/set when needed |
 | Deploy + Modal are PLACEHOLDERS (user's decision 2026-09-13: the user sets up Railway/Neon/R2/Modal personally) | `docs/runbooks/deploy.md`, `railway.json`, `apps/gpu/ltx_spike.py` | no live URL yet; all features are built and verified locally until then | user follows the runbook, then tells the agent "credentials are set" |
-| `HomePage` nests a `<button>` inside a `<Link>` (invalid HTML, a11y) | `apps/web/src/features/home/HomePage.tsx` | minor | fix when spec 006 (Explore) replaces the home page |
 | `gh` CLI login broken (keyring) | — | can't create the public GitHub repo from here | user: `gh auth login` |
 
 ## NOT STARTED

@@ -26,3 +26,7 @@ Rules: one task = one agent run; parallel tasks don't share files; every task ha
   - Files: `docs/verification/**`, `docs/STATUS.md`
   - Verify: the playbook checklist
   - Role: reviewer (a different model from the implementers) · Depends on: T-002-4
+- [x] **T-002-7** · Fix `<button>` nested in `<Link>` on the home page (small-agent task)
+  - Files: `apps/web/src/features/home/HomePage.tsx`, `docs/tasks/T-002-7/report.md`
+  - Verify: `npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build && scripts/check-standards && (grep -n "<Link" apps/web/src/features/home/HomePage.tsx || true)`
+  - Role: implementer (small model) · Depends on: T-002-2

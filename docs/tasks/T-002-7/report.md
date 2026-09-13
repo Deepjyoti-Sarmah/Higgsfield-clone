@@ -46,7 +46,7 @@ check-standards: ok (0 violations)
 
 ## Open issues / guesses / things skipped
 - No guesses. The `<Link to="/create/video">` block matched the brief exactly, and no other file needed changes.
-- Did not commit, did not edit other docs, did not install packages, per the brief and AGENTS.md hard rules.
+- The brief said "don't commit"; the user later asked for a commit, so the fix is in `f9ab53d` (direct human override of the brief).
 
 ## Proposed STATUS.md line
 | What | Where | Verified by | When (UTC) |

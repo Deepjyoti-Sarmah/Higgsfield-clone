@@ -17,3 +17,4 @@
 - 2026-09-13 02:40 · Claude Opus 5 · T-002-2 review · re-ran lint/typecheck/build/standards, read the code · accepted; 1 minor a11y issue logged in STATUS · see `git log`
 - 2026-09-13 02:40 · Claude Opus 5 · handoff kit · `docs/templates/handoff-prompt.md`, `docs/tasks/T-003-0/brief.md`, `docs/tasks/T-004-0/brief.md` · ready for other agents · see `git log`
 - 2026-09-13 01:50 · Claude Opus 5 · T-002-3 container · `Dockerfile`, `apps/api/entrypoint.sh`, `.dockerignore`, `railway.json` · image built; api + worker verified locally · see `git log`
+- 2026-09-13 01:55 · deepseek-flash · T-002-7 home page button-in-link fix · `apps/web/src/features/home/HomePage.tsx`, `docs/tasks/T-002-7/report.md` · DONE: lint/typecheck/build/check-standards pass; no `<Link` left in the file · `f9ab53d`
