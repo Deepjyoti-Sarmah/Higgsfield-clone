@@ -1,0 +1,75 @@
+# DECISIONS: append-only
+
+Format: `D-NNN · date · decision`. Then **Why**, and **Rejected** where it applies.
+Never edit an old entry. To change a decision, add a new one that supersedes it.
+
+## D-001 · 2026-09-13 · Postgres is the queue and the pub/sub
+**Why:**
+- `job` + `job_step` claimed with `FOR UPDATE SKIP LOCKED`, and enqueueing, the credit HOLD and NOTIFY happen in one transaction, so jobs can't get out of sync with credits.
+- One stateful service.
+
+**Rejected:** Redis/BullMQ (a second source of truth, and one more service to deploy).
+
+## D-002 · 2026-09-13 · Generation: self-hosted open weights on Modal, OpenRouter as paid fallback
+**Why:** low budget. Modal gives $30/month of free credits, scales to zero, H100 ≈ $3.95/h.
+- **Video:** LTX-2.5 distilled fp8 (open weights, free under $10M ARR).
+- **Images:** LLaDA-Image Turbo (6B, 4 steps). **Its licence isn't stated in the repo; verify before shipping.**
+- **Fallback:**
+  - Video: OpenRouter Seedance 2.0 Mini ($0.034/s).
+  - Images: Seedream 4.5 ($0.04).
+
+**Rejected:**
+- fal.ai: the user prefers not to use it.
+- InternLumina-U2: weights and licence "coming soon".
+- OpenVDN: needs 8×B200.
+- Viggle-Animate: 33B, 96GB, MiniMax community licence.
+- InsightFace inswapper: non-commercial weights.
+- HF ZeroGPU: 5 min/day of quota, long cold starts.
+
+## D-003 · 2026-09-13 · Paid generation budget is a hard $5
+**Why:** the public link means strangers spend real money.
+
+**Guards:**
+- A credit limit on the OpenRouter key.
+- A server-side `PAID_BUDGET_CENTS=500` counter.
+- Guests get 1 video + 3 images.
+- A global daily cap.
+- Pre-generated gallery previews.
+- `GENERATION_BACKEND=mock` as a kill switch.
+
+## D-004 · 2026-09-13 · Face swap is P1 and image-only
+**Why:** a reference-image edit model (OpenRouter Nano Banana 2 Lite) costs ~$0.04 and needs no GPU. It requires a consent checkbox ("this is my face").
+
+**Rejected:** video face swap (Viggle-Animate) for this window.
+
+## D-005 · 2026-09-13 · Deploy on Railway + Neon + R2, one origin
+**Why:**
+- FastAPI serves the built SPA, `/api/*` and `/v/{id}` OG pages, so there's no CORS and no cross-site cookies, and no domain is needed.
+- The worker is the same image with a different entrypoint.
+- R2 has free egress.
+
+**Rejected:** Cloudflare single origin (needs an owned domain), Fly.io (more setup).
+
+## D-006 · 2026-09-13 · Cut from the MVP diagram: split worker pools and media workers (ffmpeg)
+**Why:** provider outputs are already web-playable mp4s, so one worker pool is enough for demo load.
+
+**Kept:** HOLD/SETTLE/RELEASE ledger, lease + reaper, idempotency key, separate worker process, ModelAdapter, `job_step` table, OG share page, one LISTEN connection per replica.
+
+## D-007 · 2026-09-13 · Payments: credits with a fake top-up
+**Why:** real checkout doesn't show product judgement in 24h. The ledger is real, only the money isn't.
+
+## D-008 · 2026-09-13 · Agents are model- and tool-agnostic
+**Why:** the user wants to use any model.
+- Roles are defined by capability tier.
+- The task packet (`brief.md` / `report.md`) is the whole interface.
+- Every tool is captured via hooks or `scripts/agent-run`.
+
+## D-009 · 2026-09-13 · Code standards are enforced by tooling
+**Why:** rules nobody checks get broken by agents. See `docs/STANDARDS.md`.
+- ≤200 lines per file.
+- ≤3-line comments.
+- Names that say what the code does.
+- Layered API, ports only at real boundaries, rule of two for reuse.
+
+## D-010 · 2026-09-13 · Commits carry no attribution trailers
+**Why:** the user's instruction. No `Co-Authored-By` or session lines in commit messages.

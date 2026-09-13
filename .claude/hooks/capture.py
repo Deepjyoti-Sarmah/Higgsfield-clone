@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """8x agent capture hook for Claude Code.
 
-Wired to UserPromptSubmit (event=prompt) and Stop (event=response) in
-.claude/settings.json. Appends the verbatim prompt and the final response text
-of each turn to .agent-logs/YYYY-MM-DD_HH-MM-SS_<session-id>.md.
-Never blocks the agent: every failure is swallowed and logged to stderr.
+Events: prompt (UserPromptSubmit), response (Stop), delegate (PreToolUse on Agent),
+subagent (SubagentStop). Appends to .agent-logs/YYYY-MM-DD_HH-MM-SS_<session-id>.md.
 """
-import glob, json, os, re, subprocess, sys, time
+import glob, json, os, re, sys, time
 from datetime import datetime, timezone
 
 AUTHOR = "Deepjyoti-Sarmah"
@@ -52,14 +50,15 @@ def last_model(rows):
     return DEFAULT_MODEL
 
 
-def final_response(rows):
+def final_response(rows, include_sidechain=False):
     """Text the model emitted after its last tool call in the latest turn."""
     start = 0
     for i in range(len(rows) - 1, -1, -1):
         if is_human_prompt(rows[i]):
             start = i + 1
             break
-    turn = [r for r in rows[start:] if r.get("type") == "assistant" and not r.get("isSidechain")]
+    turn = [r for r in rows[start:] if r.get("type") == "assistant"
+            and (include_sidechain or not r.get("isSidechain"))]
     tail, all_text = [], []
     for r in turn:
         for b in (r.get("message") or {}).get("content") or []:
@@ -76,6 +75,16 @@ def final_response(rows):
     return "\n\n".join(tail), "\n\n".join(all_text[-1:]), last_model(turn or rows)
 
 
+def poll_final_response(transcript, include_sidechain=False):
+    text, fallback, model = "", "", DEFAULT_MODEL
+    for _ in range(20):
+        text, fallback, model = final_response(read_transcript(transcript), include_sidechain)
+        if text:
+            break
+        time.sleep(0.25)
+    return text, fallback, model
+
+
 def log_path(log_dir, session_id):
     existing = sorted(glob.glob(os.path.join(log_dir, f"*_{session_id}.md")))
     if existing:
@@ -84,7 +93,7 @@ def log_path(log_dir, session_id):
     return os.path.join(log_dir, f"{stamp}_{session_id}.md")
 
 
-def write_entry(path, session_id, kind, body, model):
+def write_entry(path, session_id, kind, body, model, tool=TOOL):
     short = session_id[:8]
     ts = now_iso()
     content = ""
@@ -98,8 +107,7 @@ def write_entry(path, session_id, kind, body, model):
                 f"Session: `{short}` | Project: `{PROJECT}` | Author: `{AUTHOR}`\n\n---\n")
 
     prompts = re.findall(r"\[LOG_ENTRY type=PROMPT num=(\d+) ", rest)
-    num = len(prompts) + (1 if kind == "PROMPT" else 0)
-    num = max(num, 1)
+    num = max(len(prompts) + (1 if kind == "PROMPT" else 0), 1)
     rest += (f"\n[LOG_ENTRY type={kind} num={num} session={short}]\n"
              f"timestamp: {ts}\nmodel: {model}\n\n{body.rstrip()}\n\n")
 
@@ -110,7 +118,7 @@ def write_entry(path, session_id, kind, body, model):
               f"date: {(prompt_times[0] if prompt_times else ts)[:10]}\n"
               f"author: {AUTHOR}\n"
               f"model: {', '.join(models) or model}\n"
-              f"tool: {TOOL}\n"
+              f"tool: {tool}\n"
               f"project: {PROJECT}\n"
               f"total_exchanges: {len(prompt_times)}\n"
               f"first_prompt_time: {prompt_times[0] if prompt_times else ''}\n"
@@ -122,6 +130,35 @@ def write_entry(path, session_id, kind, body, model):
     os.replace(tmp, path)
 
 
+def capture_delegation(path, session_id, data):
+    tool_input = data.get("tool_input") or {}
+    body = (f"agent_type: {tool_input.get('subagent_type', 'general-purpose')}\n"
+            f"description: {tool_input.get('description', '')}\n\n{tool_input.get('prompt', '')}")
+    model = tool_input.get("model") or last_model(read_transcript(data.get("transcript_path", "")))
+    write_entry(path, session_id, "DELEGATE", body, model)
+
+
+def capture_subagent_output(path, session_id, data):
+    text, fallback = "", ""
+    agent_transcript = data.get("agent_transcript_path", "")
+    model = last_model(read_transcript(agent_transcript)) if agent_transcript else DEFAULT_MODEL
+    msg = data.get("last_assistant_message")
+    if isinstance(msg, str) and msg.strip():
+        text = msg
+    elif agent_transcript:
+        text, fallback, model = poll_final_response(agent_transcript, include_sidechain=True)
+    body = f"agent_type: {data.get('agent_type', 'unknown')}\n\n{text or fallback or '(no text captured)'}"
+    write_entry(path, session_id, "SUBAGENT_RESPONSE", body, model)
+
+
+def capture_response(path, session_id, data):
+    text, fallback, model = poll_final_response(data.get("transcript_path", ""))
+    msg = data.get("last_assistant_message")
+    if not text and isinstance(msg, str):
+        text = msg
+    write_entry(path, session_id, "RESPONSE", text or fallback or "(no text response captured)", model)
+
+
 def main():
     event = sys.argv[1] if len(sys.argv) > 1 else ""
     data = json.load(sys.stdin)
@@ -130,24 +167,16 @@ def main():
     log_dir = os.environ.get("AGENT_LOG_DIR") or os.path.join(root, ".agent-logs")
     os.makedirs(log_dir, exist_ok=True)
     path = log_path(log_dir, session_id)
-    transcript = data.get("transcript_path", "")
 
     if event == "prompt":
-        rows = read_transcript(transcript)
-        write_entry(path, session_id, "PROMPT", data.get("prompt", ""), last_model(rows))
+        model = last_model(read_transcript(data.get("transcript_path", "")))
+        write_entry(path, session_id, "PROMPT", data.get("prompt", ""), model)
     elif event == "response":
-        text, fallback, model = "", "", DEFAULT_MODEL
-        # The transcript may lag the Stop event by a moment; poll briefly.
-        for _ in range(20):
-            text, fallback, model = final_response(read_transcript(transcript))
-            if text:
-                break
-            time.sleep(0.25)
-        msg = data.get("last_assistant_message")
-        if not text and isinstance(msg, str):
-            text = msg
-        text = text or fallback
-        write_entry(path, session_id, "RESPONSE", text or "(no text response captured)", model)
+        capture_response(path, session_id, data)
+    elif event == "delegate":
+        capture_delegation(path, session_id, data)
+    elif event == "subagent":
+        capture_subagent_output(path, session_id, data)
 
 
 if __name__ == "__main__":

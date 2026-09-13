@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Run a non-Claude agent on a task brief and capture prompt + response in .agent-logs/.
+
+Claude Code is not wrapped: its own hooks already capture it.
+"""
+import json, os, subprocess, sys, urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / ".claude" / "hooks"))
+from capture import log_path, write_entry  # noqa: E402
+
+CLI_COMMANDS = {
+    "codex": ["codex", "exec"],
+    "gemini": ["gemini", "-p"],
+    "aider": ["aider", "--yes", "--message"],
+}
+USAGE = "usage: scripts/agent-run <codex|gemini|aider|openrouter:<model>> <task-id>"
+TIMEOUT_SECONDS = int(os.environ.get("AGENT_RUN_TIMEOUT", "1800"))
+
+
+def read_brief(task_id):
+    brief = ROOT / "docs" / "tasks" / task_id / "brief.md"
+    if not brief.exists():
+        sys.exit(f"no brief at {brief}")
+    return brief.read_text(encoding="utf-8")
+
+
+def run_cli(tool, prompt):
+    # stdin is closed because codex exec otherwise waits for extra instructions on it.
+    try:
+        result = subprocess.run(CLI_COMMANDS[tool] + [prompt], cwd=ROOT, capture_output=True,
+                                text=True, stdin=subprocess.DEVNULL, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as expired:
+        return f"(timed out after {TIMEOUT_SECONDS}s)\n{expired.stdout or ''}"
+    stderr = f"\n\n[stderr, exit {result.returncode}]\n{result.stderr}" if result.returncode else ""
+    return result.stdout + stderr
+
+
+def run_openrouter(model, prompt):
+    key = os.environ.get("OPENROUTER_API_KEY")
+    if not key:
+        sys.exit("OPENROUTER_API_KEY is not set")
+    body = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}]}).encode()
+    request = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions", data=body,
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(request, timeout=600) as response:
+        return json.load(response)["choices"][0]["message"]["content"]
+
+
+def run_agent(tool, prompt):
+    if tool.startswith("openrouter:"):
+        return run_openrouter(tool.split(":", 1)[1], prompt)
+    return run_cli(tool, prompt)
+
+
+def main():
+    if len(sys.argv) != 3:
+        sys.exit(USAGE)
+    tool, task_id = sys.argv[1], sys.argv[2]
+    if tool not in CLI_COMMANDS and not tool.startswith("openrouter:"):
+        sys.exit(f"unknown tool '{tool}'\n{USAGE}")
+    prompt = read_brief(task_id)
+    session_id = f"{tool.replace(':', '-').replace('/', '-')}_{task_id}"
+    path = log_path(str(ROOT / ".agent-logs"), session_id)
+    write_entry(path, session_id, "PROMPT", prompt, tool, tool=tool.split(":")[0])
+    output = run_agent(tool, prompt)
+    write_entry(path, session_id, "RESPONSE", output or "(no output)", tool, tool=tool.split(":")[0])
+    print(output)
+    print(f"\n[logged to {os.path.relpath(path, ROOT)}]", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()
