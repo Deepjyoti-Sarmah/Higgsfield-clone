@@ -19,9 +19,10 @@ export const SHOWCASE_MEDIA = {
   kenBurns: { title: "KEN BURNS", tag: "DOCUMENTARY", slug: "ken-burns" },
 } as const
 
+// Real FLUX.1-schnell generations (apps/gpu/flux_image.py); see docs/research/preview-sources.md.
 export const SHOWCASE_STILLS = [
-  { title: "MOTION PREVIEW 01", url: "/showcase/sample-01.jpg", aspect: "STILL" },
-  { title: "MOTION PREVIEW 02", url: "/showcase/sample-02.jpg", aspect: "STILL" },
-  { title: "MOTION PREVIEW 03", url: "/showcase/sample-03.jpg", aspect: "STILL" },
-  { title: "MOTION PREVIEW 04", url: "/showcase/sample-04.jpg", aspect: "STILL" },
+  { title: "NEON ALLEY", url: "/showcase/sample-01.jpg", aspect: "IMAGE" },
+  { title: "DESERT CANYON", url: "/showcase/sample-02.jpg", aspect: "IMAGE" },
+  { title: "PORTRAIT", url: "/showcase/sample-03.jpg", aspect: "IMAGE" },
+  { title: "FOREST PATH", url: "/showcase/sample-04.jpg", aspect: "IMAGE" },
 ] as const

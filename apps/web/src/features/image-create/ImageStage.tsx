@@ -86,7 +86,7 @@ function ImageIdleShowcase() {
         <h2 className="font-display text-xs uppercase tracking-wider text-muted">
           ✦ Sample Image Generations
         </h2>
-        <span className="text-xs font-semibold text-accent">GPT IMAGE 2 · 4K</span>
+        <span className="text-xs font-semibold text-accent">FLUX.1-SCHNELL · OUR GPU</span>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {SHOWCASE_STILLS.map((img) => (
