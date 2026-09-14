@@ -50,7 +50,7 @@ type AppShellProps = {
 
 export function AppShell({ rightSlot, outletContext }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div className="flex min-h-screen flex-col bg-bg text-text">
       <header className="sticky top-0 z-10 border-b border-border bg-bg/95 backdrop-blur">
         <div className="flex items-center gap-4 overflow-x-auto px-4 py-2 sm:px-6">
           <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Higgsfield home">
@@ -67,7 +67,7 @@ export function AppShell({ rightSlot, outletContext }: AppShellProps) {
           <div className="ml-auto flex items-center gap-3">{rightSlot}</div>
         </div>
       </header>
-      <main className="px-4 py-10 sm:px-6">
+      <main className="flex-1 px-4 py-10 sm:px-6">
         <Outlet context={outletContext} />
       </main>
       <AppFooter />

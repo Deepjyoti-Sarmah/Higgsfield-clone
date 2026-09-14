@@ -26,11 +26,13 @@ export function ImageResultGrid({
       <ul className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
         {imageUrls.map((url, index) => (
           <li key={url} className="flex flex-col items-stretch gap-2">
-            <img
-              src={url}
-              alt={copy.result.imageAlt(index + 1, prompt)}
-              className="w-full rounded-xl border border-border"
-            />
+            <div className="aspect-square w-full overflow-hidden rounded-xl border border-border">
+              <img
+                src={url}
+                alt={copy.result.imageAlt(index + 1, prompt)}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <a href={url} download className={`${buttonClasses("secondary")} self-start`}>
               {copy.result.download}
             </a>

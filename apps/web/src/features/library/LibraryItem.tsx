@@ -30,7 +30,7 @@ export function LibraryItem({ item, isSelected, onSelect }: LibraryItemProps) {
       aria-label={libraryCopy.item.openLabel(label)}
       className={`flex w-full items-center gap-4 rounded-2xl border bg-surface p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${rowClasses}`}
     >
-      <span className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-xl border border-border">
+      <span className="relative aspect-square w-36 shrink-0 overflow-hidden rounded-xl border border-border">
         <ItemThumbnail item={item} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1">
