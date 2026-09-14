@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.db import create_database_engine, create_session_maker
+from app.logging_setup import configure_logging
 from app.routers import (
     auth,
     credits,
@@ -52,6 +53,7 @@ def mount_single_page_app(app: FastAPI, static_dir: Path) -> None:
 
 
 def create_app() -> FastAPI:
+    configure_logging(get_settings().effective_log_format)
     app = FastAPI(title="Higgsfield Clone API", version="0.1.0", lifespan=open_database)
     app.include_router(health.router)
     app.include_router(auth.router)

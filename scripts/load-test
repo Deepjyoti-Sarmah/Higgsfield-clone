@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+"""Concurrent generation load test (brief T-034). Free backends only.
+
+Each worker runs guest -> upload -> create job -> SSE to terminal, then reports
+its wall time. Refuses to run when the live video backend is not the expected
+free one, so a paid GPU fleet can never be hammered by accident.
+"""
+
+import argparse, concurrent.futures, http.cookiejar, json, socket, subprocess, sys, tempfile, threading, time, urllib.error, urllib.request, uuid
+API, UA = "/api/v1", "load-test/1.0"
+UPLOADS, JOBS = f"{API}/uploads", f"{API}/jobs"
+IMAGE_SIZE = (320, 200)
+
+class LoadError(Exception):
+    """One job failed; the message is the diagnosis."""
+
+def api(base_url, method, path, payload, cookie_jar, expect=200, timeout=30):
+    body = None if payload is None else json.dumps(payload).encode()
+    headers = {"User-Agent": UA, "Accept": "application/json"}
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(base_url + path, data=body, headers=headers, method=method)
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
+    try:
+        with opener.open(request, timeout=timeout) as response:
+            content = response.read()
+            if response.status != expect:
+                raise LoadError(f"{method} {path} -> {response.status}: {content[:200]!r}")
+            return None if not content else json.loads(content)
+    except urllib.error.HTTPError as error:
+        raise LoadError(f"{method} {path} -> {error.code}: {error.read()[:200]!r}") from error
+
+def watch_to_terminal(base_url, job_id, cookie_jar, timeout):
+    request = urllib.request.Request(f"{base_url}{JOBS}/{job_id}/events",
+                                     headers={"User-Agent": UA, "Accept": "text/event-stream"})
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
+    deadline, terminal = time.monotonic() + timeout, None
+    try:
+        response = opener.open(request, timeout=timeout)
+    except urllib.error.HTTPError as error:
+        raise LoadError(f"SSE -> {error.code}") from error
+    with response:
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise LoadError(f"SSE timed out after {timeout:.0f}s")
+            response.fp.raw._sock.settimeout(min(max(remaining, 0.5), 25.0))
+            try:
+                line = response.readline()
+            except (TimeoutError, socket.timeout):
+                continue
+            if not line:
+                break
+            text = line.decode(errors="replace").strip()
+            if text.startswith("data:"):
+                terminal = json.loads(text[5:].strip())["status"]
+    if terminal != "succeeded":
+        raise LoadError(f"job {job_id} ended {terminal!r}, expected 'succeeded'")
+
+def run_one_job(base_url, index, image_path, timeout):
+    started = time.monotonic()
+    jar = http.cookiejar.CookieJar()
+    api(base_url, "POST", f"{API}/auth/guest", None, jar, expect=201)
+    with open(image_path, "rb") as handle:
+        data = handle.read()
+    created = api(base_url, "POST", UPLOADS, {"content_type": "image/jpeg", "byte_size": len(data)}, jar, expect=201)
+    headers = {"User-Agent": UA, "Content-Length": str(len(data))}
+    headers.update(created.get("upload_headers") or {})
+    put = urllib.request.Request(created["upload_url"], data=data, headers=headers, method="PUT")
+    with urllib.request.urlopen(put, timeout=60) as response:
+        if response.status not in (200, 201, 204):
+            raise LoadError(f"PUT upload_url -> {response.status}")
+    asset = api(base_url, "POST", f"{UPLOADS}/{created['asset_id']}/complete", None, jar)
+    if asset["status"] != "ready":
+        raise LoadError(f"asset is {asset['status']!r}")
+    job = api(base_url, "POST", JOBS, {"preset_slug": "dolly-in", "input_asset_id": created["asset_id"],
+                                       "idempotency_key": f"load-{uuid.uuid4()}"}, jar, expect=202)
+    watch_to_terminal(base_url, job["id"], jar, timeout)
+    return time.monotonic() - started
+
+def sample_queue_depths(base_url, stop, depths):
+    while not stop.is_set():
+        try:
+            with urllib.request.urlopen(base_url + "/api/health/deep", timeout=15) as response:
+                depths.append(json.load(response)["checks"]["queue"]["detail"]["depth"])
+        except Exception:
+            depths.append(-1)
+        stop.wait(5)
+
+def percentile(sorted_values, rank):
+    if not sorted_values:
+        return 0.0
+    index = min(len(sorted_values) - 1, int(rank / 100 * len(sorted_values)))
+    return sorted_values[index]
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base-url", default="http://localhost:8000")
+    parser.add_argument("--jobs", type=int, default=5)
+    parser.add_argument("--backend", default="local-motion")
+    parser.add_argument("--job-timeout", type=float, default=300.0)
+    args = parser.parse_args()
+    with urllib.request.urlopen(args.base_url + "/api/health/deep", timeout=30) as response:
+        deep = json.load(response)
+    live_backend = deep["checks"]["video_backend"]["detail"]
+    if live_backend != args.backend:
+        sys.exit(f"refusing: live video backend is {live_backend!r}, expected {args.backend!r}")
+    print(f"live backend is {live_backend!r}; running {args.jobs} concurrent jobs")
+    with tempfile.TemporaryDirectory(prefix="load-test-") as work_dir:
+        image_path = f"{work_dir}/input.jpg"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                        f"testsrc2=size={IMAGE_SIZE[0]}x{IMAGE_SIZE[1]}:rate=1",
+                        "-frames:v", "1", image_path], check=True)
+        stop, depths = threading.Event(), []
+        sampler = threading.Thread(target=sample_queue_depths, args=(args.base_url, stop, depths))
+        sampler.start()
+        walls, failures = [], []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
+            pending = {pool.submit(run_one_job, args.base_url, i, image_path, args.job_timeout): i
+                       for i in range(args.jobs)}
+            for future in concurrent.futures.as_completed(pending):
+                try:
+                    wall = future.result()
+                    walls.append(wall)
+                    print(f"job {pending[future]}: ok in {wall:.1f}s")
+                except LoadError as error:
+                    failures.append(f"job {pending[future]}: {error}")
+                    print(failures[-1])
+        stop.set()
+        sampler.join()
+    ordered = sorted(walls)
+    print(f"ok={len(walls)} failed={len(failures)} "
+          f"p50={percentile(ordered, 50):.1f}s p95={percentile(ordered, 95):.1f}s "
+          f"queue_depths={depths}")
+    for failure in failures:
+        print(failure)
+    sys.exit(1 if failures else 0)
+
+if __name__ == "__main__":
+    main()

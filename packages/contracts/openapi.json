@@ -36,6 +36,37 @@
         }
       }
     },
+    "/api/health/deep": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Read Deep Health",
+        "operationId": "read_deep_health_api_health_deep_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepHealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepHealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/guest": {
       "post": {
         "tags": [
@@ -1050,6 +1081,37 @@
         ],
         "title": "CreditsResponse"
       },
+      "DeepHealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded",
+              "down"
+            ],
+            "title": "Status"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "title": "Duration Ms"
+          },
+          "checks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthCheckResponse"
+            },
+            "type": "object",
+            "title": "Checks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "duration_ms",
+          "checks"
+        ],
+        "title": "DeepHealthResponse"
+      },
       "ErrorResponse": {
         "properties": {
           "detail": {
@@ -1075,6 +1137,44 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HealthCheckResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded",
+              "down"
+            ],
+            "title": "Status"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "title": "Duration Ms"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "duration_ms"
+        ],
+        "title": "HealthCheckResponse"
       },
       "HealthResponse": {
         "properties": {

@@ -16,6 +16,7 @@ from app.adapters.image_model_adapter import ImageModelAdapter
 from app.adapters.model_adapter import ModelAdapter
 from app.adapters.object_storage import ObjectStorage
 from app.db import create_database_engine, create_session_maker
+from app.logging_setup import configure_logging
 from app.repositories.job_steps import ClaimedStep
 from app.services.generation_runs import RunSettings, run_claimed_step
 from app.services.image_generation_runs import run_image_step
@@ -125,7 +126,7 @@ async def run_worker_loop() -> None:
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
+    configure_logging(get_settings().effective_log_format)
     asyncio.run(run_worker_loop())
 
 

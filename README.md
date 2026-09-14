@@ -11,6 +11,7 @@ ledger in Postgres, presigned uploads to S3/R2, and a worker that calls the mode
 | **Repo:** | **https://github.com/Deepjyoti-Sarmah/Higgsfield-clone** — Public GitHub repository (`main` branch in sync). |
 | **Status:** | `docs/STATUS.md` — what works, what's broken, what hasn't started |
 | **Plan:** | `docs/PLAN.md` — milestones, task board, role assignments |
+| **Runbook:** | `docs/RUNBOOK.md` — operating costs, guardrails, and procedures |
 
 ## What it does
 

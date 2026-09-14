@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import tempfile
+import time
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.adapters.image_model_adapter import ImageGenerationRequest, ImageModelAdapter
 from app.adapters.model_adapter import GenerationError
 from app.adapters.object_storage import ObjectStorage
+from app.logging_setup import clear_job_context, set_job_context, truncate_prompt
 from app.repositories.job_steps import ClaimedStep
 from app.repositories.jobs import find_job
 from app.services.adapter_runs import RunSettings, renew_lease_until_lost
@@ -44,12 +46,16 @@ async def run_image_step(
     if inputs is None:
         logger.error("step %s has no image job or params; skipping", claimed.id)
         return
+    set_job_context(job_id=str(claimed.job_id), step_id=str(claimed.id),
+                    user_id=str(inputs.user_id), backend=adapter.name, attempt=claimed.attempt)
+    started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix=f"hf-image-{claimed.id.hex[:8]}-") as directory:
         try:
             paths = await generate_with_lease(
                 session_maker, adapter, claimed, inputs, worker_id, Path(directory), settings
             )
             if paths is None:
+                clear_job_context()
                 return
             images = await upload_images(storage, inputs, claimed.job_id, paths)
             await complete_image_step_success(
@@ -60,12 +66,21 @@ async def run_image_step(
                 backend=adapter.name,
                 images=images,
             )
+            logger.info("image generation succeeded", extra={
+                "outcome": "succeeded", "generated_by": adapter.name,
+                "duration_ms": int((time.monotonic() - started) * 1000),
+                "prompt": truncate_prompt(inputs.prompt)})
+            clear_job_context()
             return
         except GenerationError as error:
             user_message, last_error = error.user_message, str(error)
         except Exception as error:
             logger.exception("image generation failed for step %s", claimed.id)
             user_message, last_error = GENERIC_FAILURE_MESSAGE, repr(error)
+        logger.info("image generation failed", extra={
+            "outcome": "failed", "generated_by": adapter.name,
+            "duration_ms": int((time.monotonic() - started) * 1000),
+            "prompt": truncate_prompt(inputs.prompt)})
         await complete_step_failure(
             session_maker,
             step_id=claimed.id,
@@ -75,6 +90,7 @@ async def run_image_step(
             last_error=last_error,
             user_message=user_message,
         )
+        clear_job_context()
 
 
 async def load_image_step_input(

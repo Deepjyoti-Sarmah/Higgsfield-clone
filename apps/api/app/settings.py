@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     generation_backend: GenerationBackend = "modal"
     image_generation_backend: ImageGenerationBackend = "placeholder"
+    log_format: Literal["json", "text"] | None = None
     s3_endpoint_url: str = "http://localhost:9000"
     s3_bucket: str = "media"
     s3_access_key_id: str = "minioadmin"
@@ -46,6 +47,12 @@ class Settings(BaseSettings):
     @property
     def is_local(self) -> bool:
         return self.env == "local"
+
+    @property
+    def effective_log_format(self) -> str:
+        if self.log_format is not None:
+            return self.log_format
+        return "json" if not self.is_local else "text"
 
     @property
     def async_database_url(self) -> str:

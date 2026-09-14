@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.domain.job_states import TERMINAL_STATUSES, statuses_allowed_before
+from app.logging_setup import clear_job_context, set_job_context
 from app.repositories.job_steps import ClaimedStep, claim_next_queued_step, fail_step
 from app.repositories.jobs import notify_job_event, read_job_status, transition_job_status
 
@@ -36,11 +37,14 @@ async def claim_step(
         )
         await notify_job_event(session, claimed.job_id)
         await session.commit()
+        set_job_context(job_id=str(claimed.job_id), step_id=str(claimed.id), attempt=claimed.attempt)
         return claimed
 
 
 async def abandon_step(session_maker: async_sessionmaker[AsyncSession], step_id: uuid.UUID) -> None:
+    set_job_context(step_id=str(step_id))
     logger.warning("abandoning step %s: its job is already terminal", step_id)
+    clear_job_context()
     async with session_maker() as session:
         await fail_step(session, step_id, TERMINAL_JOB_ERROR)
         await session.commit()
