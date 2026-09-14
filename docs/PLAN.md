@@ -96,6 +96,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-014 | Prompt-conditioned generation proof on the live URL (`GENERATION_BACKEND=modal`), `local-motion` stays default | TODO | TBD | `apps/api/app/adapters/`, `scripts/smoke-generation` |
 | T-015 | Library delete + pagination (contract-first: publish the delete route like T-005-0) | TODO | TBD | `docs/specs/005-library/` |
 | T-016 | Live progress in the Library (reuse `jobStatusWatcher`) | TODO | TBD | `apps/web/src/api/jobStatusWatcher.ts` |
+| T-040 | Library: selected row indistinguishable from hover; result opens off-screen with no feedback | READY FOR HANDOFF (small model) | — | `docs/tasks/T-040/brief.md` |
 | T-039 | Footer floats mid-page (AppShell flex) + thumbnail aspect consistency | DONE (Claude Opus 5): flex layout fix + square thumbnails everywhere; local + live screenshots confirm | Claude Opus 5 | `docs/tasks/T-039/report.md` |
 | T-038 | Image jobs: live progress + result render + Library inclusion (contract: LibraryItem gains kind/image_urls) | DONE (Claude Opus 5): Library kind-agnostic + contract change; real root cause was `onStatus` no-op (page frozen on "Queued" the whole wait, not literally unwatched); live deploy + one real paid job pending | Claude Opus 5 | `docs/tasks/T-038/report.md` |
 | T-036 | Explore gallery: masonry, bare tiles, hover-reveal overlay, header CTA (match reference 03) | READY FOR HANDOFF | — | `docs/tasks/T-036/brief.md` |
