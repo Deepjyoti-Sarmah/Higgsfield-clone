@@ -99,12 +99,21 @@ def main():
     parser.add_argument("--jobs", type=int, default=5)
     parser.add_argument("--backend", default="local-motion")
     parser.add_argument("--job-timeout", type=float, default=300.0)
+    parser.add_argument("--allow-unchecked-backend", action="store_true",
+                        help="run even when /api/health/deep is missing (old build); "
+                             "use only after verifying the backend out of band")
     args = parser.parse_args()
-    with urllib.request.urlopen(args.base_url + "/api/health/deep", timeout=30) as response:
-        deep = json.load(response)
-    live_backend = deep["checks"]["video_backend"]["detail"]
-    if live_backend != args.backend:
-        sys.exit(f"refusing: live video backend is {live_backend!r}, expected {args.backend!r}")
+    try:
+        with urllib.request.urlopen(args.base_url + "/api/health/deep", timeout=30) as response:
+            deep = json.load(response)
+        live_backend = deep["checks"]["video_backend"]["detail"]
+        if live_backend != args.backend:
+            sys.exit(f"refusing: live video backend is {live_backend!r}, expected {args.backend!r}")
+    except urllib.error.HTTPError as error:
+        if not args.allow_unchecked_backend or error.code != 404:
+            sys.exit(f"refusing: {args.base_url} has no /api/health/deep "
+                     f"(HTTP {error.code}; old build without T-034) so the live backend is unverifiable")
+        live_backend = f"{args.backend} (unverified: no /deep on this build)"
     print(f"live backend is {live_backend!r}; running {args.jobs} concurrent jobs")
     with tempfile.TemporaryDirectory(prefix="load-test-") as work_dir:
         image_path = f"{work_dir}/input.jpg"
