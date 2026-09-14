@@ -96,6 +96,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-014 | Prompt-conditioned generation proof on the live URL (`GENERATION_BACKEND=modal`), `local-motion` stays default | TODO | TBD | `apps/api/app/adapters/`, `scripts/smoke-generation` |
 | T-015 | Library delete + pagination (contract-first: publish the delete route like T-005-0) | TODO | TBD | `docs/specs/005-library/` |
 | T-016 | Live progress in the Library (reuse `jobStatusWatcher`) | TODO | TBD | `apps/web/src/api/jobStatusWatcher.ts` |
+| T-039 | Footer floats mid-page (AppShell flex) + thumbnail aspect consistency | QUEUED behind T-038 (shares library/image-create files) | — | `docs/tasks/T-039/brief.md` |
 | T-038 | Image jobs: live progress + result render + Library inclusion (contract: LibraryItem gains kind/image_urls) | READY FOR HANDOFF (blocks walkthrough) | — | `docs/tasks/T-038/brief.md` |
 | T-036 | Explore gallery: masonry, bare tiles, hover-reveal overlay, header CTA (match reference 03) | READY FOR HANDOFF | — | `docs/tasks/T-036/brief.md` |
 | T-034 | Observability (`/api/health/deep`, JSON logs), load test, `docs/RUNBOOK.md` with measured unit economics | DONE: deep 5 checks + 503s, JSON logs with job_id e2e, live load 5/5 free (p50 41.0 s/p95 58.1 s, $0), RUNBOOK linked | opencode / Muse Spark | `docs/tasks/T-034/report.md` |
