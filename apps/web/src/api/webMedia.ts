@@ -5,6 +5,11 @@ export function previewClipUrl(slug: string): string {
   return `${R2_PUBLIC_BASE}/previews/${slug}.mp4`
 }
 
+// scripts/build-preset-previews uploads a poster JPG next to every preview mp4, same key stem.
+export function previewPosterUrl(mediaUrl: string): string | null {
+  return mediaUrl.endsWith(".mp4") ? `${mediaUrl.slice(0, -4)}.jpg` : null
+}
+
 export const SHOWCASE_MEDIA = {
   dollyIn: { title: "DOLLY IN", tag: "CAMERA MOVE", slug: "dolly-in" },
   dollyOutSlug: "dolly-out",

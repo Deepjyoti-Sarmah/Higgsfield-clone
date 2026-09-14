@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import type { Preset } from "../../api/presets"
+import { previewPosterUrl } from "../../api/webMedia"
 import { exploreCopy } from "./exploreCopy"
 import { presetTileStyles } from "./presetTileStyles"
 import { recreateHref } from "./recreateHref"
@@ -24,6 +25,8 @@ function PreviewMedia({ preset }: PresetGalleryCardProps) {
   return (
     <video
       src={mediaUrl}
+      poster={previewPosterUrl(mediaUrl) ?? undefined}
+      preload="metadata"
       autoPlay
       loop
       muted

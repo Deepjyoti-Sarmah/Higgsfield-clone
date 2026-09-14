@@ -1,3 +1,4 @@
+import { previewPosterUrl } from "../../api/webMedia"
 import type { Preset } from "./createVideoTypes"
 import { presetMotionClass } from "./presetMotionHints"
 
@@ -28,6 +29,8 @@ function PreviewMedia({
     return (
       <video
         src={src}
+        poster={previewPosterUrl(src) ?? undefined}
+        preload="metadata"
         autoPlay
         loop
         muted
