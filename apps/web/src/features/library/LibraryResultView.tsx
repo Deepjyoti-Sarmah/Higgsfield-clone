@@ -13,17 +13,18 @@ function makeAnotherHref(presetSlug: string): string {
   return `/create/video?preset=${encodeURIComponent(presetSlug)}`
 }
 
-function ResultPanel({ children }: { children: ReactNode }) {
+function ResultPanel({ heading, children }: { heading: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">{heading}</h2>
       {children}
     </section>
   )
 }
 
-function ResultMessage({ message }: { message: string }) {
+function ResultMessage({ heading, message }: { heading: string; message: string }) {
   return (
-    <ResultPanel>
+    <ResultPanel heading={heading}>
       <p className="text-sm text-muted">{message}</p>
     </ResultPanel>
   )
@@ -79,16 +80,23 @@ function ResultActions({ item }: { item: LibraryItemData }) {
   )
 }
 
+function resultHeading(item: LibraryItemData | null): string {
+  return item === null ? libraryCopy.result.fallbackHeading : libraryCopy.item.label(item)
+}
+
 export function LibraryResultView({ item }: LibraryResultViewProps) {
-  if (item === null) return <ResultMessage message={libraryCopy.item.missing} />
+  const heading = resultHeading(item)
+  if (item === null) return <ResultMessage heading={heading} message={libraryCopy.item.missing} />
   if (item.status === "failed") {
-    return <ResultMessage message={item.error_message ?? libraryCopy.item.failedFallback} />
+    return (
+      <ResultMessage heading={heading} message={item.error_message ?? libraryCopy.item.failedFallback} />
+    )
   }
   if (item.status !== "succeeded") {
-    return <ResultMessage message={libraryCopy.item.status[item.status]} />
+    return <ResultMessage heading={heading} message={libraryCopy.item.status[item.status]} />
   }
   return (
-    <ResultPanel>
+    <ResultPanel heading={heading}>
       {item.kind === "image" ? (
         <ResultImages imageUrls={item.image_urls} label={libraryCopy.item.label(item)} />
       ) : (

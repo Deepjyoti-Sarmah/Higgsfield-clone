@@ -45,11 +45,13 @@ export const libraryCopy = {
     missing: "This generation is no longer available.",
     openLabel,
     label: itemLabel,
+    viewing: "Viewing",
   },
   result: {
     download: "Download",
     makeAnother: "Make another",
     close: "Close",
+    fallbackHeading: "Generation",
   },
   time: {
     label: formatCreatedAt,
