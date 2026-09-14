@@ -22,6 +22,19 @@ const dotClasses: Record<JobStatus, string> = {
   failed: "bg-red-400",
 }
 
+function PlayGlyph() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute bottom-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/60"
+    >
+      <svg viewBox="0 0 12 12" className="ml-px h-2 w-2 fill-white">
+        <path d="M2 1.5v9l8-4.5-8-4.5z" />
+      </svg>
+    </span>
+  )
+}
+
 function HistoryTile({
   entry,
   isActive,
@@ -32,7 +45,10 @@ function HistoryTile({
   onOpen: (jobId: string) => void
 }) {
   const [hasImageError, setHasImageError] = useState(false)
-  const border = isActive ? "border-accent" : "border-transparent"
+  const frameClasses = isActive
+    ? "border-accent ring-2 ring-accent/40"
+    : "border-transparent transition-[filter,border-color] hover:border-border hover:brightness-125"
+  const captionClasses = isActive ? "text-text font-medium" : "text-muted"
   const showImage = entry.thumbnailUrl !== null && !hasImageError
   return (
     <button
@@ -42,17 +58,19 @@ function HistoryTile({
       onClick={() => onOpen(entry.jobId)}
       className="flex w-24 shrink-0 flex-col gap-1 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
-      <span className={`relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border-2 bg-bg ${border}`}>
+      <span className={`relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border-2 bg-bg ${frameClasses}`}>
         {showImage && entry.thumbnailUrl !== null ? (
           <img src={entry.thumbnailUrl} alt="" onError={() => setHasImageError(true)} className="h-full w-full object-cover" />
         ) : (
           <span className="text-lg font-semibold text-muted">{entry.presetName.charAt(0)}</span>
         )}
-        {entry.status !== "succeeded" && (
+        {entry.status === "succeeded" ? (
+          <PlayGlyph />
+        ) : (
           <span aria-hidden="true" className={`absolute right-1 top-1 h-2 w-2 rounded-full ${dotClasses[entry.status]}`} />
         )}
       </span>
-      <span className="truncate text-xs text-muted">{entry.presetName}</span>
+      <span className={`truncate text-xs ${captionClasses}`}>{entry.presetName}</span>
     </button>
   )
 }

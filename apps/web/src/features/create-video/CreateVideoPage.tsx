@@ -51,20 +51,20 @@ function usePageTitle(): void {
     return () => { document.title = createVideoCopy.page.appTitle }
   }, [])
 }
-
-// Focus follows the canvas heading on Generate; on mobile the canvas scrolls into view too.
+function isFullyVisible(node: HTMLElement): boolean {
+  const r = node.getBoundingClientRect()
+  return r.top >= 0 && r.bottom <= window.innerHeight
+}
+// Focus follows the canvas heading on any active-job change; scrolls into view if not visible.
 function useCanvasFocus(focusSignal: string, headingRef: RefObject<HTMLHeadingElement | null>): void {
-  const hasReducedMotion = usePrefersReducedMotion()
-  const previousRef = useRef<string | null>(null)
+  const hasReducedMotion = usePrefersReducedMotion(), previousRef = useRef<string | null>(null)
   useEffect(() => {
     const previous = previousRef.current
     const heading = headingRef.current
     previousRef.current = focusSignal
     if (previous === null || previous === focusSignal || focusSignal === "" || !heading) return
-    heading.focus()
-    if (window.matchMedia("(max-width: 767px)").matches) {
-      heading.scrollIntoView({ block: "start", behavior: hasReducedMotion ? "auto" : "smooth" })
-    }
+    heading.focus({ preventScroll: true })
+    if (!isFullyVisible(heading)) heading.scrollIntoView({ block: "start", behavior: hasReducedMotion ? "auto" : "smooth" })
   }, [focusSignal, headingRef, hasReducedMotion])
 }
 
