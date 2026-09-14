@@ -98,7 +98,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-016 | Live progress in the Library (reuse `jobStatusWatcher`) | TODO | TBD | `apps/web/src/api/jobStatusWatcher.ts` |
 | T-034 | Observability (`/api/health/deep`, JSON logs), load test, `docs/RUNBOOK.md` with measured unit economics | DONE: deep 5 checks + 503s, JSON logs with job_id e2e, live load 5/5 free (p50 41.0 s/p95 58.1 s, $0), RUNBOOK linked | opencode / Muse Spark | `docs/tasks/T-034/report.md` |
 | T-033 | Guardrails (per-IP + daily caps, budget enforcement) + real-AI cutover with honest labelling | DONE (deepseek-flash via DSH): 4 typed caps, modal default + local-motion fallback, `generated_by` + UI badge; contract +24 lines | deepseek-flash | `docs/tasks/T-033/report.md` |
-| T-017 | Real text→image on our GPU: FLUX.1-schnell on Modal behind `ImageModelAdapter` | DONE (deepseek-flash via DSH): paid probe PASS — 4 real 1024² images; warm 10.2 s load + 25.7 s gen (~$0.05) on H100; live backend stays placeholder | deepseek-flash | `docs/tasks/T-017/report.md` |
+| T-017 | Real text→image on our GPU: FLUX.1-schnell on Modal behind `ImageModelAdapter` | DONE + LIVE: paid probe PASS — 4 real 1024² images; warm 10.2 s load + 25.7 s gen (~$0.05) on H100; deployed as a persistent Modal endpoint, Railway `api`+`worker` flipped to `IMAGE_GENERATION_BACKEND=modal`, `GET /api/health/deep` -> `image_backend: "modal"` | deepseek-flash + Claude Opus 5 (ops) | `docs/tasks/T-017/report.md`, `docs/STATUS.md`, `docs/WORKLOG.md` |
 | T-018 | Google OAuth sign-in/sign-up (needs human credentials) | TODO (blocked on credentials) | TBD | `docs/research/flows/auth.md` |
 | T-019 | Mobile/responsive pass over the six routed pages | TODO | TBD | `apps/web/src/` |
 
