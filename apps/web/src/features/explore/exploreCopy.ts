@@ -35,6 +35,8 @@ export const exploreCopy = {
   gallery: {
     title: "Effects",
     subtitle: "Every effect is a camera move you can apply to your own photo.",
+    headerCta: "Try for free",
+    headerCtaHref: "/create/video",
     cardCta: "Recreate",
     categoryLabels,
     categoryLabel,

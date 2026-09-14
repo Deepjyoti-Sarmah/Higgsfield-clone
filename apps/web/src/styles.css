@@ -102,3 +102,12 @@ h3 {
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
+
+@layer base {
+  /* Touch screens have no hover: keep gallery names always visible. */
+  @media (hover: none) {
+    .preset-overlay {
+      opacity: 1;
+    }
+  }
+}

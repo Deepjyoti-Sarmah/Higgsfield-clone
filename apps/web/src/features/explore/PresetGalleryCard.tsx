@@ -7,25 +7,35 @@ import { recreateHref } from "./recreateHref"
 
 type PresetGalleryCardProps = {
   preset: Preset
+  aspect: string
 }
 
-function PreviewMedia({ preset }: PresetGalleryCardProps) {
+function stemEndsWithVideo(mediaUrl: string): boolean {
+  // Presigned URLs carry a query string, so detect the type from the path stem.
+  const stem = mediaUrl.split("?")[0]
+  return stem.endsWith(".mp4") || stem.endsWith(".webm")
+}
+
+function PreviewMedia({ preset }: { preset: Preset }) {
   const mediaUrl = preset.preview_url
   if (mediaUrl === null) {
     return (
       <span aria-hidden="true" className={`absolute inset-0 ${presetTileStyles[preset.category]}`} />
     )
   }
-  const isVideo = mediaUrl.endsWith(".mp4") || mediaUrl.endsWith(".webm")
-  const className =
-    "absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+  const isVideo = stemEndsWithVideo(mediaUrl)
+  const className = "absolute inset-0 h-full w-full object-cover"
   if (!isVideo) {
     return <img src={mediaUrl} alt="" loading="lazy" className={className} />
   }
+  // A presigned query signs one key only, so it cannot be reused for the poster.
+  const poster = mediaUrl.includes("?")
+    ? undefined
+    : (previewPosterUrl(mediaUrl) ?? undefined)
   return (
     <video
       src={mediaUrl}
-      poster={previewPosterUrl(mediaUrl) ?? undefined}
+      poster={poster}
       preload="metadata"
       autoPlay
       loop
@@ -37,31 +47,27 @@ function PreviewMedia({ preset }: PresetGalleryCardProps) {
   )
 }
 
-export function PresetGalleryCard({ preset }: PresetGalleryCardProps) {
-  const { cardCta, categoryLabel, creditCost, recreateAriaLabel } = exploreCopy.gallery
+export function PresetGalleryCard({ preset, aspect }: PresetGalleryCardProps) {
+  const { cardCta, creditCost, recreateAriaLabel } = exploreCopy.gallery
 
   return (
     <Link
       to={recreateHref(preset.slug)}
       aria-label={recreateAriaLabel(preset.name)}
-      className="group relative block aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-accent/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      className={`group relative block overflow-hidden rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${aspect}`}
     >
       <PreviewMedia preset={preset} />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-scrim to-transparent"
-      />
-      <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-accent backdrop-blur">
-        {creditCost(preset.credit_cost)}
-      </span>
-      <span className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-2">
-        <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold text-text">{preset.name}</span>
-          <span className="block text-[11px] text-muted">{categoryLabel(preset.category)}</span>
+        className="preset-overlay absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/55 p-3 text-center opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+      >
+        <span className="font-display text-xl uppercase leading-tight text-white">
+          {preset.name}
         </span>
-        <span className="hidden shrink-0 rounded-full bg-accent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-accent-ink group-hover:inline group-focus-visible:inline">
-          {cardCta}
+        <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-ink">
+          <span aria-hidden="true">✦</span> {cardCta}
         </span>
+        <span className="text-xs text-white/70">{creditCost(preset.credit_cost)}</span>
       </span>
     </Link>
   )
