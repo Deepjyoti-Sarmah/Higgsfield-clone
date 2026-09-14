@@ -90,9 +90,12 @@ async def test_a_video_job_still_round_trips_through_the_api(
     assert read.json()["preset_slug"] == PRESET_SLUG
 
 
-async def test_an_image_job_is_hidden_from_the_library_and_the_video_read(
+async def test_an_image_job_appears_in_the_library_but_not_the_video_read(
     guest_client: AsyncClient, session_maker: SessionMaker
 ) -> None:
+    # T-038: the Library is kind-agnostic (this test used to assert the opposite —
+    # that was root cause #2 of the image-generation-invisible bug). The video-only
+    # single-job read at GET /jobs/{id} is unchanged: it still 404s for an image job.
     user_id = await current_user_id(guest_client)
     job = await _create_image_job(session_maker, user_id, "t009-image-01")
 
@@ -100,7 +103,9 @@ async def test_an_image_job_is_hidden_from_the_library_and_the_video_read(
     read = await guest_client.get(f"/api/v1/jobs/{job.id}")
 
     assert listing.status_code == 200
-    assert listing.json()["items"] == []
+    item = listing.json()["items"][0]
+    assert item["id"] == str(job.id)
+    assert item["kind"] == "image"
     assert read.status_code == 404
 
 

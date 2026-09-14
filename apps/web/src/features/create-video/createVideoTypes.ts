@@ -1,5 +1,6 @@
 import type { components } from "../../api/generated/schema"
 import type { Preset, PresetsState } from "../../api/presets"
+import type { JobWatch as GenericJobWatch } from "../../api/useJobEvents"
 
 export type { Preset, PresetsState }
 export type { GuestSessionOutcome, RunWithGuestSession } from "../../api/guestSession"
@@ -87,13 +88,7 @@ export type CanvasPhase =
   | "succeeded"
   | "failed"
 
-export type JobWatch = {
-  job: Job | null
-  status: JobStatus | null
-  connection: "idle" | "live" | "polling"
-  isMissing: boolean
-  wasRequeued: boolean
-}
+export type JobWatch = GenericJobWatch<Job>
 
 export type CanvasView = {
   presetCount: number

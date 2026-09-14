@@ -23,6 +23,10 @@ export function imageAlt(index: number, prompt: string): string {
   return `Generated image ${index}: ${prompt}`
 }
 
+export function elapsedLabel(formatted: string): string {
+  return `${formatted} elapsed`
+}
+
 export const imageCreateCopy = {
   page: {
     title: "Create image",
@@ -75,8 +79,14 @@ export const imageCreateCopy = {
   },
   progress: {
     queued: "Queued",
+    queuedSub: "Waiting for a free worker...",
+    requeuedSub: "Retrying on another worker...",
     running: "Generating your image...",
+    generatingSub: "This usually takes under a minute, longer on a cold start.",
     succeeded: "Your images are ready.",
+    barLabel: "Generating image",
+    elapsed: elapsedLabel,
+    polling: "Live updates paused. Checking every 5 seconds.",
   },
   result: {
     imageAlt,

@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 JobStatus = Literal["queued", "running", "succeeded", "failed"]
+JobKind = Literal["video", "image"]
 
 
 class JobCreateRequest(BaseModel):
@@ -64,11 +65,14 @@ class PaidBudgetExceededResponse(BaseModel):
 
 class LibraryItemResponse(BaseModel):
     id: uuid.UUID
+    kind: JobKind
     status: JobStatus
-    preset_slug: str
-    preset_name: str
+    preset_slug: str | None
+    preset_name: str | None
+    prompt: str | None
     thumbnail_url: str | None
     video_url: str | None
+    image_urls: list[str]
     generated_by: str | None
     created_at: datetime
     error_message: str | None

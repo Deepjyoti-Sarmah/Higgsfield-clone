@@ -43,18 +43,38 @@ function ResultVideo({ videoUrl }: { videoUrl: string }) {
   )
 }
 
+function ResultImages({ imageUrls, label }: { imageUrls: string[]; label: string }) {
+  return (
+    <ul className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+      {imageUrls.map((url, index) => (
+        <li key={url}>
+          <img
+            src={url}
+            alt={`${label} ${index + 1}`}
+            className="w-full rounded-xl border border-border"
+          />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function makeAnotherHrefForItem(item: LibraryItemData): string {
+  if (item.kind === "image") return "/create/image"
+  return makeAnotherHref(item.preset_slug ?? "")
+}
+
 function ResultActions({ item }: { item: LibraryItemData }) {
+  const downloadUrl = item.kind === "image" ? (item.image_urls[0] ?? null) : item.video_url
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <GenerationBadge generatedBy={item.generated_by} />
-      {item.video_url !== null && (
-        <a href={item.video_url} download className={buttonClasses("secondary")}>
+      <GenerationBadge generatedBy={item.generated_by} kind={item.kind} />
+      {downloadUrl !== null && item.kind === "video" && (
+        <a href={downloadUrl} download className={buttonClasses("secondary")}>
           {libraryCopy.result.download}
         </a>
       )}
-      <ButtonLink to={makeAnotherHref(item.preset_slug)}>
-        {libraryCopy.result.makeAnother}
-      </ButtonLink>
+      <ButtonLink to={makeAnotherHrefForItem(item)}>{libraryCopy.result.makeAnother}</ButtonLink>
     </div>
   )
 }
@@ -69,7 +89,11 @@ export function LibraryResultView({ item }: LibraryResultViewProps) {
   }
   return (
     <ResultPanel>
-      {item.video_url !== null && <ResultVideo videoUrl={item.video_url} />}
+      {item.kind === "image" ? (
+        <ResultImages imageUrls={item.image_urls} label={libraryCopy.item.label(item)} />
+      ) : (
+        item.video_url !== null && <ResultVideo videoUrl={item.video_url} />
+      )}
       <ResultActions item={item} />
     </ResultPanel>
   )

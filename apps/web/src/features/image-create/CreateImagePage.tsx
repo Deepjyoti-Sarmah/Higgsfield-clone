@@ -1,13 +1,15 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { useCreditBalance } from "../../api/credits"
 import { useImageJob } from "../../api/imageJobs"
 import type { ImageJobControls } from "../../api/imageJobs"
 import { useImageOptions } from "../../api/imageOptions"
 import type { ImageOptions } from "../../api/imageOptions"
+import { useElapsedSeconds } from "../../api/useElapsedSeconds"
 import type { SessionContextValue } from "../session/useSession"
 import { ImageComposer } from "./ImageComposer"
 import { ImageStage } from "./ImageStage"
+import type { ImageStageProgress } from "./ImageStage"
 import { imageCreateCopy } from "./imageCreateCopy"
 import type {
   ImageBalance,
@@ -16,6 +18,7 @@ import type {
   ImageSettingsControls,
 } from "./imageCreateTypes"
 import { DEFAULT_IMAGE_SETTINGS, blockedReason, deriveImagePhase, imageCost } from "./imageSettings"
+import { useImageJobProgress } from "./useImageJobProgress"
 
 function useSettingsControls(): ImageSettingsControls {
   const [settings, setSettings] = useState<ImageSettings>(DEFAULT_IMAGE_SETTINGS)
@@ -54,8 +57,35 @@ function buildGenerateProps(input: {
   }
 }
 
-export function CreateImagePage() {
-  const session = useOutletContext<SessionContextValue>()
+function useSubmittedAtIso(jobPhase: ImageJobControls["phase"]): string | null {
+  const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null)
+  const wasIdleRef = useRef(true)
+  useEffect(() => {
+    if (jobPhase === "idle") {
+      wasIdleRef.current = true
+      setSubmittedAtIso(null)
+      return
+    }
+    if (jobPhase === "submitting" && wasIdleRef.current) {
+      wasIdleRef.current = false
+      setSubmittedAtIso(new Date().toISOString())
+    }
+  }, [jobPhase])
+  return submittedAtIso
+}
+
+function useImageProgress(job: ImageJobControls): ImageStageProgress {
+  const submittedAtIso = useSubmittedAtIso(job.phase)
+  const progressWatch = useImageJobProgress(job.job?.id ?? null)
+  const elapsedSeconds = useElapsedSeconds(submittedAtIso, job.job?.finished_at ?? null)
+  return {
+    elapsedSeconds,
+    wasRequeued: progressWatch.wasRequeued,
+    connection: progressWatch.connection,
+  }
+}
+
+function useComposerState(session: SessionContextValue) {
   const optionsState = useImageOptions()
   const balance = useCreditBalance(session)
   const job = useImageJob(session)
@@ -68,7 +98,14 @@ export function CreateImagePage() {
     balance: { status: balance.status, balance: balance.balance },
     job,
   })
+  return { optionsState, job, prompt, setPrompt, settings, generate }
+}
+
+export function CreateImagePage() {
+  const session = useOutletContext<SessionContextValue>()
+  const { optionsState, job, prompt, setPrompt, settings, generate } = useComposerState(session)
   const phase = deriveImagePhase({ optionsStatus: optionsState.status, jobPhase: job.phase })
+  const progress = useImageProgress(job)
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 py-4">
@@ -86,6 +123,8 @@ export function CreateImagePage() {
       <ImageStage
         phase={phase}
         watch={{ job: job.job }}
+        prompt={prompt}
+        progress={progress}
         onRetry={job.retryRead}
         onMakeAnother={job.resetSubmit}
       />

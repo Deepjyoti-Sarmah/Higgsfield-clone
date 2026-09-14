@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { isTerminalJobStatus } from "../../api/jobStatus"
+import { useJobEvents } from "../../api/useJobEvents"
 import type {
   ImageUploadControls,
   InsufficientCredits,
+  Job,
   JobDraft,
   JobWatch,
   PresetSelection,
   RunWithGuestSession,
 } from "./createVideoTypes"
+import { fetchVideoJob } from "./fetchVideoJob"
 import { useCreateJob } from "./useCreateJob"
 import type { CreateJobControls } from "./useCreateJob"
 import type { CreditsControls } from "./useCredits"
-import { useJobEvents } from "./useJobEvents"
 import type { SessionHistory } from "./useSessionHistory"
 
 export type ActiveJob = {
@@ -153,7 +155,7 @@ export function useActiveJob(deps: ActiveJobDeps): ActiveJobControls {
     onAccepted: acceptHandlers.handleJobAccepted,
     onInsufficient: acceptHandlers.handleInsufficient,
   })
-  const watch = useJobEvents(activeJobId)
+  const watch = useJobEvents<Job>(activeJobId, fetchVideoJob)
   useWatchSync(watch, history, credits, activeJobId)
   const actions = useJobActions({
     watch,

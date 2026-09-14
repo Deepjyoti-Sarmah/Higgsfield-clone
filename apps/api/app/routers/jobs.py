@@ -18,7 +18,6 @@ from app.schemas.jobs import (
     JobCreateRequest,
     JobResponse,
     JobStatusEvent,
-    LibraryItemResponse,
     LibraryListResponse,
     LimitExceededResponse,
     PaidBudgetExceededResponse,
@@ -33,7 +32,12 @@ from app.services.job_creation import (
     PresetNotFoundError,
 )
 from app.services.job_event_stream import stream_job_status_events
-from app.services.job_views import JobView, list_owned_jobs_view, read_owned_job
+from app.services.job_views import (
+    JobView,
+    list_owned_jobs_view,
+    read_owned_job,
+    to_library_item_response,
+)
 from app.settings import Settings, get_settings
 from app.storage_dependencies import get_object_storage
 
@@ -111,20 +115,7 @@ async def list_jobs(
 ) -> LibraryListResponse:
     views = await list_owned_jobs_view(session, storage, settings, user.id, limit)
     return LibraryListResponse(
-        items=[
-            LibraryItemResponse(
-                id=view.job.id,
-                status=view.job.status,
-                preset_slug=view.job.preset_slug,
-                preset_name=view.preset_name,
-                thumbnail_url=view.thumbnail_url,
-                video_url=view.video_url,
-                generated_by=view.generated_by,
-                created_at=view.job.created_at,
-                error_message=view.job.error_message,
-            )
-            for view in views
-        ]
+        items=[to_library_item_response(view) for view in views]
     )
 
 

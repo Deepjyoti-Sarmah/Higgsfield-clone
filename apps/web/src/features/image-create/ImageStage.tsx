@@ -2,13 +2,23 @@ import { SHOWCASE_STILLS } from "../../api/webMedia"
 import { Button } from "../../ui/Button"
 import { EmptyState } from "../../ui/EmptyState"
 import { ImageFailureView } from "./ImageFailureView"
+import { ImageProgressView } from "./ImageProgressView"
 import { imageCreateCopy } from "./imageCreateCopy"
 import type { ImageJobWatch, ImageStagePhase } from "./imageCreateTypes"
 import { ImageResultGrid } from "./ImageResultGrid"
+import { isImageProgressPhase } from "./imageSettings"
+
+export type ImageStageProgress = {
+  elapsedSeconds: number
+  wasRequeued: boolean
+  connection: "idle" | "live" | "polling"
+}
 
 type ImageStageProps = {
   phase: ImageStagePhase
   watch: ImageJobWatch
+  prompt: string
+  progress: ImageStageProgress
   onRetry: () => void
   onMakeAnother: () => void
 }
@@ -30,24 +40,6 @@ function OptionsError({ onRetry }: { onRetry: () => void }) {
       description={copy.body}
       action={<Button onClick={onRetry}>{copy.action}</Button>}
     />
-  )
-}
-
-function JobProgress({ phase }: { phase: ImageStagePhase }) {
-  const copy = imageCreateCopy
-  const message =
-    phase === "submitting"
-      ? copy.generate.submitting
-      : phase === "queued"
-        ? copy.progress.queued
-        : phase === "running"
-          ? copy.progress.running
-          : null
-  if (message === null) return null
-  return (
-    <p role="status" className="text-sm text-muted">
-      {message}
-    </p>
   )
 }
 
@@ -111,7 +103,7 @@ function ImageIdleShowcase() {
   )
 }
 
-export function ImageStage({ phase, watch, onRetry, onMakeAnother }: ImageStageProps) {
+export function ImageStage({ phase, watch, prompt, progress, onRetry, onMakeAnother }: ImageStageProps) {
   if (phase === "options-loading") return <OptionsLoading />
   if (phase === "options-error") return <OptionsError onRetry={onRetry} />
   if (phase === "succeeded") {
@@ -129,5 +121,16 @@ export function ImageStage({ phase, watch, onRetry, onMakeAnother }: ImageStageP
   if (phase === "idle") {
     return <ImageIdleShowcase />
   }
-  return <JobProgress phase={phase} />
+  if (isImageProgressPhase(phase)) {
+    return (
+      <ImageProgressView
+        phase={phase}
+        prompt={prompt}
+        elapsedSeconds={progress.elapsedSeconds}
+        wasRequeued={progress.wasRequeued}
+        connection={progress.connection}
+      />
+    )
+  }
+  return null
 }

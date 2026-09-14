@@ -1749,6 +1749,14 @@
             "format": "uuid",
             "title": "Id"
           },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "video",
+              "image"
+            ],
+            "title": "Kind"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -1760,12 +1768,37 @@
             "title": "Status"
           },
           "preset_slug": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Preset Slug"
           },
           "preset_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Preset Name"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt"
           },
           "thumbnail_url": {
             "anyOf": [
@@ -1788,6 +1821,13 @@
               }
             ],
             "title": "Video Url"
+          },
+          "image_urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Image Urls"
           },
           "generated_by": {
             "anyOf": [
@@ -1820,11 +1860,14 @@
         "type": "object",
         "required": [
           "id",
+          "kind",
           "status",
           "preset_slug",
           "preset_name",
+          "prompt",
           "thumbnail_url",
           "video_url",
+          "image_urls",
           "generated_by",
           "created_at",
           "error_message"

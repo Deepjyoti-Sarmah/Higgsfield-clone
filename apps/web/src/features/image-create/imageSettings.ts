@@ -29,3 +29,9 @@ export function deriveImagePhase(input: {
   if (input.optionsStatus === "error") return "options-error"
   return input.jobPhase
 }
+
+export type ImageProgressPhase = "submitting" | "queued" | "running"
+
+export function isImageProgressPhase(phase: ImageStagePhase): phase is ImageProgressPhase {
+  return phase === "submitting" || phase === "queued" || phase === "running"
+}

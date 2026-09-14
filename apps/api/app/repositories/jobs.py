@@ -64,9 +64,10 @@ async def find_job(session: AsyncSession, job_id: uuid.UUID) -> Job | None:
 
 
 async def list_owned_jobs(session: AsyncSession, user_id: uuid.UUID, limit: int) -> list[Job]:
+    """Kind-agnostic: the Library lists both video and image jobs, newest first."""
     result = await session.execute(
         select(Job)
-        .where(Job.user_id == user_id, Job.kind == "video")
+        .where(Job.user_id == user_id)
         .order_by(Job.created_at.desc(), Job.id.desc())
         .limit(limit)
     )
