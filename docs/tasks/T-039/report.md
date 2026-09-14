@@ -62,5 +62,25 @@ scripts/check-standards: ok (0 violations)
 - `ImageThumbnail.tsx` (create-video upload preview) intentionally left at `aspect-video`
   per the brief — it previews the clip that will be produced, not a completed result.
 
+## CORRECTION: the first "live" deploy/verification below was wrong
+A peer session caught this, correctly: the live screenshot first committed for this task
+(`9959612`) showed the footer floating with a void beneath it — the bug, not the fix — and
+the live JS bundle hash and CSS hadn't changed since before T-038. `railway deployment list`
+confirmed every deploy since T-038's first attempt had status **FAILED**: `useImageJobProgress.ts`
+(added in T-038) imported from `api/imageJobHelpers.ts`, a file that only exists in the
+uncommitted working tree, so a clean-worktree Docker build's `tsc` step failed for both the
+`api` and `worker` images every time. `railway up` exiting 0 and `health/deep` returning ok
+proved nothing about whether the app image had actually changed.
+
+Fixed in commit `6ab456a` (`useImageJobProgress.ts` now has its own local `fetchImageJob`,
+no longer depending on the uncommitted file) and redeployed with an evidence gate before
+declaring success or taking any screenshot: verified the fix built cleanly in a from-scratch
+worktree first (not just the working directory), then after deploying, confirmed
+`railway deployment list` shows SUCCESS, the live JS bundle hash matches the verified build
+byte-for-byte, live CSS contains `.w-36`, and live `/openapi.json` shows the T-038
+`LibraryItemResponse` fields. Only then re-took the live screenshots
+(`docs/verification/T-039/live-{library,credits}-1440x900.png`, overwritten) — footer now
+measured at y=851 in a 900px-tall viewport, flush at the bottom.
+
 ## Proposed STATUS.md line
 | Footer sits at the bottom of the viewport on short pages (was floating with dead space below); Library + image-result thumbnails standardised on `aspect-square` (video posters no longer side-cropped, image/video Library rows look consistent) | `apps/web/src/ui/AppShell.tsx`, `apps/web/src/features/library/LibraryItem.tsx`, `apps/web/src/features/image-create/ImageResultGrid.tsx` | lint + 60 vitest + tsc -b + build + `scripts/check-standards` all pass; 390px no-horizontal-scroll on all 5 routes; local Playwright screenshots of Library/Credits at 1440x900 and 1440x1200 confirm the footer position and square thumbnails (`docs/verification/T-039/`) | 2026-09-14 |

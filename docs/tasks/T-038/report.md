@@ -143,5 +143,21 @@ sleeps 55 s then 500s) standing in for FLUX's real ~50-200 s timing, driven by P
   report — see the commit for the deploy + screenshot, since it needed the actual deploy step
   to happen first.
 
+## CORRECTION (added after T-039, 2026-09-14 ~10:55)
+**The deploy claimed in this report's follow-up commit (`b8b04aa`) never actually shipped.**
+`useImageJobProgress.ts` imported `fetchImageJob`/`ImageJob` from `api/imageJobHelpers.ts` —
+a file that exists only in the uncommitted working tree (another agent's in-flight work).
+A clean `git worktree` used for every deploy has no such file, so the Docker build's `tsc`
+step failed with `Cannot find module`, and it failed identically for **both** the `api` and
+`worker` images (same Dockerfile, same web build stage) — meaning this task's backend Library
+fix was never live either, only the earlier T-037-era build kept serving. `railway up` exiting
+0 and `GET /api/health/deep` returning ok both looked fine because neither actually checks
+whether the app image changed; only `railway deployment list` (status: FAILED on every
+attempt from this task onward) and the live JS bundle hash (unchanged) revealed it. Full
+account and fix in the T-039 report and the WORKLOG entry timestamped ~10:55. The fix itself
+(`useImageJobProgress.ts` gets its own local `fetchImageJob`, no longer importing from the
+uncommitted file) shipped in commit `6ab456a`, verified live via bundle-hash match, live CSS,
+and live `/openapi.json` showing the `kind`/`image_urls`/`prompt` fields.
+
 ## Proposed STATUS.md line
 | Image generation has real progress + Library entries: fixed the `onStatus` no-op that left the page stuck on a static "Queued" for the whole ~50-200s FLUX wait (root cause of "never showed up"), made the Library kind-agnostic (`LibraryItemResponse` +kind/+prompt/+image_urls, contract change), image items render their own grid | `apps/web/src/features/image-create/*`, `apps/web/src/features/library/*`, `apps/api/app/{repositories/jobs,services/job_views,schemas/jobs,routers/jobs}.py` | 220 pytest / ruff / mypy / 60 vitest / lint / build / check-standards all pass; local repro against a fake slow backend confirms live elapsed-timer progress + eventual result + Library entry; live deploy + one real paid image job pending in the same commit series | 2026-09-14 |
