@@ -14,8 +14,9 @@ CLI_COMMANDS = {
     "codex": ["codex", "exec"],
     "gemini": ["gemini", "-p"],
     "aider": ["aider", "--yes", "--message"],
+    "opencode": ["opencode", "run"],
 }
-USAGE = "usage: scripts/agent-run <codex|gemini|aider|openrouter:<model>> <task-id>"
+USAGE = "usage: scripts/agent-run <codex|gemini|aider|opencode|openrouter:<model>> <task-id>"
 TIMEOUT_SECONDS = int(os.environ.get("AGENT_RUN_TIMEOUT", "1800"))
 
 
