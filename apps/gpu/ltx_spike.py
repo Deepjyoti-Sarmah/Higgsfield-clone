@@ -119,7 +119,10 @@ ENDPOINT_HEIGHT = 544
     gpu="H100",
     timeout=1800,
     volumes={"/weights": weights_volume},
-    secrets=[modal.Secret.from_name("huggingface"), modal.Secret.from_name("modal-auth")],
+    secrets=[
+        modal.Secret.from_name("huggingface"),
+        modal.Secret.from_name("modal-auth"),
+    ],
 )
 @modal.fastapi_endpoint(method="POST")
 async def generate_clip_endpoint(request: Request) -> dict[str, object]:

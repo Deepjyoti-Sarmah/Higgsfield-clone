@@ -83,7 +83,9 @@ def generate_images(
     steps: int = DEFAULT_STEPS,
     count: int = 1,
 ) -> dict[str, object]:
-    images, load_seconds, generate_seconds = render_images(prompt, width, height, steps, count)
+    images, load_seconds, generate_seconds = render_images(
+        prompt, width, height, steps, count
+    )
     return {
         "images_base64": [encode_png(image) for image in images],
         "width": width,
@@ -97,11 +99,17 @@ def generate_images(
     gpu="H100",
     timeout=1800,
     volumes={"/weights": weights_volume},
-    secrets=[modal.Secret.from_name("huggingface"), modal.Secret.from_name("modal-auth")],
+    secrets=[
+        modal.Secret.from_name("huggingface"),
+        modal.Secret.from_name("modal-auth"),
+    ],
 )
 @modal.fastapi_endpoint(method="POST")
 async def generate_images_endpoint(request: Request) -> dict[str, object]:
-    if request.headers.get("authorization") != f"Bearer {os.environ['MODAL_WEBHOOK_SECRET']}":
+    if (
+        request.headers.get("authorization")
+        != f"Bearer {os.environ['MODAL_WEBHOOK_SECRET']}"
+    ):
         raise HTTPException(status_code=401, detail="unauthorized")
     body = await request.json()
     prompt = body.get("prompt")
@@ -113,7 +121,9 @@ async def generate_images_endpoint(request: Request) -> dict[str, object]:
     width = _positive_int(body, "width", DEFAULT_WIDTH)
     height = _positive_int(body, "height", DEFAULT_HEIGHT)
     steps = _positive_int(body, "steps", DEFAULT_STEPS)
-    images, load_seconds, generate_seconds = render_images(prompt, width, height, steps, count)
+    images, load_seconds, generate_seconds = render_images(
+        prompt, width, height, steps, count
+    )
     return {
         "images_base64": [encode_png(image) for image in images],
         "width": width,
@@ -139,5 +149,8 @@ def main(
     for index, encoded in enumerate(images, start=1):
         assert isinstance(encoded, str)
         (out_dir / f"image-{index}.png").write_bytes(base64.b64decode(encoded))
-    timings = {key: result[key] for key in ("width", "height", "load_seconds", "generate_seconds")}
+    timings = {
+        key: result[key]
+        for key in ("width", "height", "load_seconds", "generate_seconds")
+    }
     print(f"timings={timings} images={len(images)} dir={out_dir}")
