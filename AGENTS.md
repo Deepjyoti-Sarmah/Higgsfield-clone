@@ -5,26 +5,31 @@ The repo is the only memory we have. Chat history doesn't carry over between run
 
 ## Read order
 1. `docs/STATUS.md`: what works, what's broken, what hasn't started
-2. `docs/PLAN.md`: milestones, task board, role assignments
-3. Your task packet: `docs/tasks/T-NNN-k/brief.md` (if you were given one)
-4. The spec + design it links to: `docs/specs/NNN-slug/`
-5. `docs/STANDARDS.md`: code rules, which are enforced
-6. `docs/DECISIONS.md` and `docs/architecture/architecture.md`: before changing anything structural
-7. `docs/BUILD-PLAN.md`: the full approved plan (frozen; for context, not for status)
+2. `docs/tasks/BOARD.md` + `scripts/task list`: which tasks are open
+3. `docs/PLAN.md`: milestones, task board, role assignments
+4. Your task packet: `docs/tasks/T-NNN-k/brief.md` (if you were given one)
+5. The spec + design it links to: `docs/specs/NNN-slug/`
+6. `docs/STANDARDS.md`: code rules, which are enforced
+7. `docs/DECISIONS.md` and `docs/architecture/architecture.md`: before changing anything structural
+8. `docs/BUILD-PLAN.md`: the full approved plan (frozen; for context, not for status)
 
 ## Truth hierarchy (when sources disagree, the higher one wins)
 running code + tests > `packages/contracts/openapi.json` > `design.md` > `spec.md` > `docs/PLAN.md` > chat
 
 If you find a disagreement, fix the lower source or report it. Never silently follow the lower one.
 
-## Definition of done (all of these, in one commit)
-- [ ] The verify command from the task passed, with output pasted in `report.md`
-- [ ] `scripts/check-standards` passes
-- [ ] The task checkbox is ticked in `tasks.md`; the row is updated in `docs/PLAN.md`
-- [ ] `docs/STATUS.md` updated (the line cites a file path + verify command)
-- [ ] `docs/WORKLOG.md` has an appended line
-- [ ] `.agent-logs/` is included in the commit
-- [ ] The commit message is plain: **no `Co-Authored-By` or other attribution trailers**
+## Definition of done
+
+**Implementer** (in the worktree, never on `main`):
+- [ ] `scripts/task verify` passes (it runs the verify block and `check-standards`, writes `verify.log`)
+- [ ] `report.md` is written next to the brief
+- [ ] `scripts/task submit` is done, with the transcript captured (`--transcript`, unless Claude Code hooks did it)
+
+**Orchestrator, at merge** (one merge commit on `main`):
+- [ ] re-ran `scripts/task verify` itself; a different model reviewed the diff
+- [ ] `scripts/task review <TASK> accept` is recorded
+- [ ] merged with `git merge --no-ff task/<TASK>`; ticked `tasks.md`; updated STATUS and WORKLOG; included `.agent-logs/`
+- [ ] the commit message is plain: **no `Co-Authored-By` or other attribution trailers**
 
 ## Hard rules
 - Only touch the files your brief allows. If you need another file, stop and say so in `report.md`.
@@ -42,7 +47,7 @@ If you find a disagreement, fix the lower source or report it. Never silently fo
 | Reviewer | strong reasoning, different model from the implementer | diff vs acceptance criteria + STANDARDS |
 | Scout | cheap, fast | cataloguing screenshots, grep, lint, doc sync |
 
-**The task packet is the whole interface:**
+**The task packet is the whole interface** (`docs/tasks/<TASK>/`: `brief.md`, `status`, `thread.md`, `verify.log`, `report.md`):
 - The orchestrator writes `docs/tasks/T-NNN-k/brief.md` (template: `docs/templates/delegation-brief.md`).
 - The agent writes `report.md` next to it (template: `docs/templates/report.md`).
 - The orchestrator re-runs the verify command itself; reported results aren't trusted.
@@ -58,6 +63,7 @@ If you find a disagreement, fix the lower source or report it. Never silently fo
 | `docs/playbooks/research-flow.md` | turning product screenshots into flow notes |
 | `docs/playbooks/spec-new.md` | starting a feature |
 | `docs/playbooks/task-run.md` | implementing one task packet |
+| `docs/playbooks/multi-harness.md` | claiming, doing and submitting a task from any harness |
 | `docs/playbooks/verify-slice.md` | checking a feature on the live URL |
 | `docs/playbooks/handoff.md` | ending any session |
 

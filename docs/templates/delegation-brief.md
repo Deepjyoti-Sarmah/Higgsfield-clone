@@ -1,9 +1,10 @@
 # Brief T-NNN-k: <title>
 
 You are the **<implementer | reviewer | scout>** for this one task. Your first steps:
-1. Read `AGENTS.md` and `docs/STANDARDS.md`.
-2. Read the links below.
-3. Nothing else is needed.
+1. `scripts/task claim <TASK> --as <you>` and `cd` into the worktree it prints.
+2. Read `AGENTS.md` and `docs/STANDARDS.md`.
+3. Read the links below.
+4. Nothing else is needed.
 
 ## Context links
 - Spec: `docs/specs/NNN-slug/spec.md` (acceptance criteria: AC-…)
@@ -31,4 +32,9 @@ One or two sentences on the outcome.
 - …
 
 ## Report
-Write `docs/tasks/T-NNN-k/report.md` using `docs/templates/report.md`. Don't commit unless the brief says to.
+Write `docs/tasks/T-NNN-k/report.md` using `docs/templates/report.md`. Run `scripts/task verify`, then `scripts/task submit`. Don't commit on main.
+
+## Verify command (one fenced block under this heading; `scripts/task verify` runs it)
+```
+…
+```

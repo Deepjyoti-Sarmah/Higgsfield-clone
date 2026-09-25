@@ -1,7 +1,6 @@
 # Report T-NNN-k
 
-**Agent / model / tool:** <e.g. implementer · qwen3-coder · aider via scripts/agent-run>
-**Result:** DONE | PARTIAL | BLOCKED
+**Agent:** <model>@<harness> · **Role:** … · **Result:** DONE | PARTIAL | BLOCKED
 
 ## Files changed
 - `…`: what changed
@@ -9,7 +8,7 @@
 ## Reused
 - `…`
 
-## Verify output (full paste, no summarising)
+## Verify: see `verify.log` (written by `scripts/task verify`); paste only the RESULT line and anything notable
 ```
 …
 ```

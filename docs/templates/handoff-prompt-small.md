@@ -24,13 +24,18 @@ STEP 1: Read these files, in this order, and nothing else unless the brief links
   b. docs/tasks/<TASK_ID>/brief.md
   c. every file listed under "Allowed files" in the brief
 
+STEP 1b: `scripts/task claim <TASK_ID> --as <agent>@<harness>` and `cd` into the worktree it prints.
+  Work only there, only in the allowed files.
+
 STEP 2: Before editing, write down (in your reply) the exact files you will change and a one-line plan per file.
   If the brief's plan is unclear, or it needs a file that is not in "Allowed files", STOP and go to STEP 6 with status BLOCKED.
 
 STEP 3: Make the change. Keep everything else in each file exactly as it was. Do not rename, reformat,
   or "improve" code the brief did not mention. Keep each file at 200 lines or fewer, and comments at 3 lines or fewer.
+  If the brief is unclear, `scripts/task say <TASK_ID> QUESTION "…" --as <agent>@<harness>` instead of guessing,
+  and read the answer with `scripts/task show <TASK_ID>`.
 
-STEP 4: Run the verify command from the brief exactly as written. Then run: scripts/check-standards
+STEP 4: Run `scripts/task verify <TASK_ID>` exactly as written. Then run: scripts/check-standards
   If a command fails: read the error, fix only what the error points to, and run it again.
   If it still fails after 2 fix attempts, STOP and go to STEP 6 with status PARTIAL.
 
@@ -40,9 +45,11 @@ STEP 6: Write docs/tasks/<TASK_ID>/report.md with exactly these sections:
   ## Status        DONE | PARTIAL | BLOCKED
   ## Model/tool    your model name and the tool you run in
   ## Files changed one line per file
-  ## Verify output the full terminal output of STEP 4 (paste it, do not summarise)
+  ## Verify        the RESULT line from `scripts/task verify` (the full log is in `verify.log`)
   ## Checks        the list from STEP 5
   ## Problems      anything unclear, failing or skipped (write "none" if none)
+
+Then `scripts/task submit <TASK_ID> --as <agent>@<harness> --transcript <file>` (no `--transcript` for Claude Code).
 
 Do NOT commit, push, install new packages, or edit docs/PLAN.md, docs/STATUS.md or docs/WORKLOG.md.
 A reviewer on a bigger model re-runs your verify command and commits.
