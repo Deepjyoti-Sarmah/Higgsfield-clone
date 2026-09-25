@@ -61,6 +61,21 @@ If you find a disagreement, fix the lower source or report it. Never silently fo
 | `docs/playbooks/verify-slice.md` | checking a feature on the live URL |
 | `docs/playbooks/handoff.md` | ending any session |
 
+## Third-party skills (installed with `npx skills`, pinned in `skills-lock.json`)
+| Skill | Use when |
+|---|---|
+| `grill-me` / `grilling` | stress-testing a plan or design through a round-by-round interview before building |
+| `design-taste-frontend` | default frontend design skill: anti-template UI, audit-first on redesigns (`-v1` is the old version; only use it for exact backward compatibility) |
+| `redesign-existing-projects` | upgrading an existing screen without breaking behaviour |
+| `high-end-visual-design`, `minimalist-ui`, `industrial-brutalist-ui`, `gpt-taste` | a specific visual direction (pick one per screen; they conflict) |
+| `image-to-code`, `imagegen-frontend-web`, `imagegen-frontend-mobile`, `brandkit` | generating design reference images first, then building to match (needs an image-gen tool) |
+| `stitch-design-taste` | writing a `DESIGN.md` design-system file |
+| `full-output-enforcement` | tasks that need complete, untruncated code output |
+
+The canonical copy lives in `.agents/skills/<name>/SKILL.md` (Codex, Amp, Cline, Gemini and others read it there).
+Claude Code finds it through a symlink in `.claude/skills/`, and Eve through `agent/skills/`. If your tool has no skill loader, read the `SKILL.md` and follow it.
+Restore with `npx skills experimental_install`.
+
 ## Repo map
 ```
 apps/web/            Vite + React + TS SPA (served by FastAPI as static files: one origin)
