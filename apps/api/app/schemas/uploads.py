@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
-UploadContentType = Literal["image/jpeg", "image/png", "image/webp"]
-AssetKind = Literal["input_image", "output_video", "output_poster"]
+UploadContentType = Literal["image/jpeg", "image/png", "image/webp", "audio/mpeg", "audio/mp4", "audio/wav"]
+AssetKind = Literal["input_image", "input_audio", "output_video", "output_poster"]
 AssetStatus = Literal["pending", "ready"]
 
 

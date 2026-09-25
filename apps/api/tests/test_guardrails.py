@@ -4,6 +4,7 @@ from httpx import AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.domain.credit_rules import GUEST_PER_IP_DAILY
 from app.repositories.jobs import find_job
 from app.services.guardrails import hash_client_ip
 from app.settings import Settings, get_settings
@@ -15,7 +16,7 @@ from tests.worker_run_helpers import create_and_claim, run_video_step
 GUEST_CAP_IP = "198.51.100.250"
 
 
-async def test_sixth_guest_from_one_ip_is_rate_limited(
+async def test_guest_past_the_daily_ip_cap_is_rate_limited(
     client: AsyncClient, session_maker: async_sessionmaker[AsyncSession]
 ) -> None:
     ip_hash = hash_client_ip(GUEST_CAP_IP, get_settings().session_secret)
@@ -25,14 +26,14 @@ async def test_sixth_guest_from_one_ip_is_rate_limited(
         )
         await session.commit()
     headers = {"X-Forwarded-For": GUEST_CAP_IP}
-    for _ in range(5):
+    for _ in range(GUEST_PER_IP_DAILY):
         assert (await client.post("/api/v1/auth/guest", headers=headers)).status_code == 201
     blocked = await client.post("/api/v1/auth/guest", headers=headers)
     assert blocked.status_code == 429
     assert blocked.json() == {
         "detail": "Too many guest sessions from this address today.",
-        "limit": 5,
-        "used": 5,
+        "limit": GUEST_PER_IP_DAILY,
+        "used": GUEST_PER_IP_DAILY,
     }
 
 

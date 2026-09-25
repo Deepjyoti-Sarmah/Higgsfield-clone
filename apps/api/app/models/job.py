@@ -17,16 +17,21 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
-JOB_KIND_CHECK = "kind IN ('video', 'image')"
+JOB_KIND_CHECK = "kind IN ('video', 'image', 'sequence')"
 JOB_INPUTS_BY_KIND_CHECK = (
     "(kind = 'video' AND preset_slug IS NOT NULL AND input_asset_id IS NOT NULL)"
     " OR (kind = 'image' AND preset_slug IS NULL AND input_asset_id IS NULL)"
+    " OR (kind = 'sequence' AND preset_slug IS NULL AND input_asset_id IS NULL)"
 )
 JOB_IMAGE_PARAMS_CHECK = (
     "(kind = 'image' AND aspect_ratio IS NOT NULL AND quality IS NOT NULL"
     " AND image_count BETWEEN 1 AND 4)"
     " OR (kind = 'video' AND aspect_ratio IS NULL AND quality IS NULL AND image_count IS NULL)"
+    " OR (kind = 'sequence' AND aspect_ratio IS NULL AND quality IS NULL"
+    " AND image_count IS NULL)"
 )
+JOB_AUDIO_CHECK = "audio_asset_id IS NULL OR kind = 'sequence'"
+JOB_DURATION_CHECK = "duration_ms IS NULL OR duration_ms > 0"
 
 
 class Job(Base):
@@ -38,6 +43,8 @@ class Job(Base):
         CheckConstraint(JOB_KIND_CHECK, name="ck_job_kind"),
         CheckConstraint(JOB_INPUTS_BY_KIND_CHECK, name="ck_job_inputs_by_kind"),
         CheckConstraint(JOB_IMAGE_PARAMS_CHECK, name="ck_job_image_params"),
+        CheckConstraint(JOB_AUDIO_CHECK, name="ck_job_audio_sequence_only"),
+        CheckConstraint(JOB_DURATION_CHECK, name="ck_job_duration_positive"),
         UniqueConstraint("user_id", "idempotency_key", name="uq_job_user_idempotency_key"),
         Index("ix_job_user_created", "user_id", text("created_at DESC")),
     )
@@ -68,6 +75,10 @@ class Job(Base):
     output_poster_asset_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("asset.id")
     )
+    audio_asset_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("asset.id")
+    )
+    duration_ms: Mapped[int | None] = mapped_column(Integer)
     generated_by: Mapped[str | None] = mapped_column(String(32))
     error_message: Mapped[str | None] = mapped_column(String(300))
     created_at: Mapped[datetime] = mapped_column(

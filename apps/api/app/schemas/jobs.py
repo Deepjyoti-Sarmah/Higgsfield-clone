@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 JobStatus = Literal["queued", "running", "succeeded", "failed"]
-JobKind = Literal["video", "image"]
+JobKind = Literal["video", "image", "sequence"]
 
 
 class JobCreateRequest(BaseModel):
@@ -63,6 +63,11 @@ class PaidBudgetExceededResponse(BaseModel):
     budget_cents: int
 
 
+class LibraryImageResponse(BaseModel):
+    asset_id: uuid.UUID
+    url: str
+
+
 class LibraryItemResponse(BaseModel):
     id: uuid.UUID
     kind: JobKind
@@ -73,6 +78,9 @@ class LibraryItemResponse(BaseModel):
     thumbnail_url: str | None
     video_url: str | None
     image_urls: list[str]
+    images: list[LibraryImageResponse] = []
+    clip_count: int | None = None
+    duration_ms: int | None = None
     generated_by: str | None
     created_at: datetime
     error_message: str | None

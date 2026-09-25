@@ -23,7 +23,7 @@ class Asset(Base):
     __tablename__ = "asset"
     __table_args__ = (
         CheckConstraint(
-            "kind IN ('input_image', 'output_video', 'output_poster', 'output_image')",
+            "kind IN ('input_image', 'output_video', 'output_poster', 'output_image', 'input_audio')",
             name="ck_asset_kind",
         ),
         CheckConstraint("status IN ('pending', 'ready')", name="ck_asset_status"),
