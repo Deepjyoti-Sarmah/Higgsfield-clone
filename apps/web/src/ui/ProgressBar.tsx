@@ -14,12 +14,12 @@ export function ProgressBar({ value, label }: ProgressBarProps) {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={isDeterminate ? percent : undefined}
-      className="h-1.5 w-full overflow-hidden rounded-full bg-border"
+      className="h-1.5 w-full overflow-hidden rounded-full bg-sunken"
     >
       {isDeterminate ? (
         <div className="h-full rounded-full bg-accent" style={{ width: `${percent}%` }} />
       ) : (
-        <div className="h-full w-1/3 rounded-full bg-accent motion-safe:animate-hf-progress" />
+        <div className="h-full w-1/3 rounded-full bg-accent motion-safe:animate-motion-progress" />
       )}
     </div>
   )

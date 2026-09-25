@@ -11,7 +11,7 @@ export function Toast({ message, actionLabel, onAction, onDismiss }: ToastProps)
   return (
     <div
       role="alert"
-      className="fixed bottom-4 right-4 z-50 flex max-w-sm items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text shadow-lg"
+      className="fixed bottom-4 right-4 z-50 flex max-w-sm items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text shadow-[0_12px_32px_-12px_rgb(28_25_23_/_0.18)]"
     >
       <span>{message}</span>
       {actionLabel && onAction && (

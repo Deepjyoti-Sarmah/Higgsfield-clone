@@ -1,27 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #000000;
-  --color-surface: #121214;
-  --color-border: #26262b;
+  /* Reel & Still tokens (DESIGN.md §2, light). Names kept for older feature code. */
+  --color-bg: #f6f3ee;
+  --color-surface: #fffdf9;
+  --color-sunken: #ede8e0;
+  --color-border: #ddd6cb;
 
-  --color-text: #f5f6f7;
-  --color-muted: #9ba0a8;
-  --color-scrim: rgb(0 0 0 / 0.74);
+  --color-text: #1c1917;
+  --color-muted: #6b635a;
+  --color-faint: #9a9187;
 
-  --color-accent: #ccff00;
-  --color-accent-ink: #0a0a0a;
+  --color-accent: #b4442a;
+  --color-accent-ink: #fff8f2;
+  --color-success: #3f7d58;
+  --color-danger: #8c2f39;
+  --color-scrim: rgb(28 25 23 / 0.55);
 
-  --font-display: "Anton", "Arial Narrow", sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "Geist", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --animate-hf-motion-zoom-in: hf-zoom-in 2.4s ease-in-out infinite alternate;
-  --animate-hf-motion-zoom-out: hf-zoom-out 2.4s ease-in-out infinite alternate;
-  --animate-hf-motion-pan-left: hf-pan-left 2.4s ease-in-out infinite alternate;
-  --animate-hf-motion-pan-right: hf-pan-right 2.4s ease-in-out infinite alternate;
-  --animate-hf-motion-tilt-up: hf-tilt-up 2.4s ease-in-out infinite alternate;
-  --animate-hf-motion-shake: hf-shake 0.5s linear infinite;
-  --animate-hf-progress: hf-progress 1.4s ease-in-out infinite;
+  --animate-motion-zoom-in: hf-zoom-in 2.4s ease-in-out infinite alternate;
+  --animate-motion-zoom-out: hf-zoom-out 2.4s ease-in-out infinite alternate;
+  --animate-motion-pan-left: hf-pan-left 2.4s ease-in-out infinite alternate;
+  --animate-motion-pan-right: hf-pan-right 2.4s ease-in-out infinite alternate;
+  --animate-motion-tilt-up: hf-tilt-up 2.4s ease-in-out infinite alternate;
+  --animate-motion-shake: hf-shake 0.5s linear infinite;
+  --animate-motion-progress: hf-progress 1.4s ease-in-out infinite;
+
+  --animate-status-pulse: status-pulse 2s ease-in-out infinite;
+  --animate-skeleton-shimmer: skeleton-shimmer 1.6s ease-in-out infinite;
 
   /* Transforms only, scale capped at 1.15 so object-cover never shows an edge. */
   @keyframes hf-zoom-in {
@@ -87,23 +96,68 @@
       transform: translateX(320%);
     }
   }
-}
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-body);
-}
+  /* Running status dot: opacity only (DESIGN.md §8). */
+  @keyframes status-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  /* Skeleton shimmer: transform only. */
+  @keyframes skeleton-shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(220%);
+    }
+  }
 }
 
 @layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #141210;
+      --color-surface: #1c1a17;
+      --color-sunken: #0f0e0c;
+      --color-border: #2e2a25;
+
+      --color-text: #eee8df;
+      --color-muted: #a39a8e;
+      --color-faint: #6f675d;
+
+      --color-accent: #e0765a;
+      --color-accent-ink: #1a0f0a;
+      --color-success: #6fae85;
+      --color-danger: #d46a74;
+      --color-scrim: rgb(0 0 0 / 0.6);
+    }
+  }
+
   /* Touch screens have no hover: keep gallery names always visible. */
   @media (hover: none) {
     .preset-overlay {
