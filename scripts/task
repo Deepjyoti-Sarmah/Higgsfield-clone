@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+import sys
+
+# Never drop .pyc files into worktrees; they would poison fingerprints.
+sys.dont_write_bytecode = True
+
+import argparse
+import os
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tasklib.board import (  # noqa: E402
+    list_board_rows,
+    refresh_board,
+    release_task,
+    review_task,
+    say_task,
+)
+from tasklib.paths import TaskError, find_main_root, task_dir  # noqa: E402
+from tasklib.submit import submit_task  # noqa: E402
+from tasklib.verify import run_verify  # noqa: E402
+from tasklib.worktree import claim_task  # noqa: E402
+
+
+def parse_identity(raw):
+    value = raw or os.environ.get("TASK_AS", "")
+    agent, sep, harness = value.partition("@")
+    if sep == "" or "@" in harness or not agent or not harness:
+        raise TaskError(f"invalid identity '{value}': use <agent>@<harness>")
+    if any(char.isspace() for char in value):
+        raise TaskError(f"invalid identity '{value}': use <agent>@<harness>")
+    return value
+
+
+def read_message(words):
+    if words == ["-"]:
+        return sys.stdin.read().strip()
+    return " ".join(words)
+
+
+def print_board():
+    main_root = find_main_root(Path.cwd())
+    for task, title, state, owner, _ in list_board_rows(main_root):
+        print(f"{task}  {state}  {owner or '-'}  {title}")
+
+
+def print_task(task):
+    main_root = find_main_root(Path.cwd())
+    packet = task_dir(main_root, task)
+    if not (packet / "brief.md").exists():
+        raise TaskError(f"task {task} is not on the board")
+    print(f"brief: {packet / 'brief.md'}")
+    print(f"status: {(packet / 'status').read_text(encoding='utf-8').strip()}")
+    thread = packet / "thread.md"
+    print(thread.read_text(encoding="utf-8") if thread.exists() else "(no thread yet)")
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(prog="scripts/task")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("list")
+    sub.add_parser("board")
+    shown = sub.add_parser("show")
+    shown.add_argument("task")
+    claimed = sub.add_parser("claim")
+    claimed.add_argument("task")
+    claimed.add_argument("--as", dest="as_")
+    said = sub.add_parser("say")
+    said.add_argument("task")
+    said.add_argument("kind", choices=["QUESTION", "ANSWER", "NOTE", "REVIEW"])
+    said.add_argument("message", nargs="+")
+    said.add_argument("--as", dest="as_")
+    verified = sub.add_parser("verify")
+    verified.add_argument("task")
+    submitted = sub.add_parser("submit")
+    submitted.add_argument("task")
+    submitted.add_argument("--as", dest="as_")
+    submitted.add_argument("--transcript")
+    reviewed = sub.add_parser("review")
+    reviewed.add_argument("task")
+    reviewed.add_argument("decision", choices=["accept", "changes"])
+    reviewed.add_argument("message", nargs="+")
+    reviewed.add_argument("--as", dest="as_")
+    released = sub.add_parser("release")
+    released.add_argument("task")
+    released.add_argument("reason", nargs="+")
+    released.add_argument("--as", dest="as_")
+    return parser
+
+
+def main(argv=None):
+    seen = build_parser().parse_args(argv)
+    try:
+        if seen.cmd == "list":
+            print_board()
+        elif seen.cmd == "board":
+            refresh_board()
+        elif seen.cmd == "show":
+            print_task(seen.task)
+        elif seen.cmd == "claim":
+            target = claim_task(seen.task, parse_identity(seen.as_))
+            print(target)
+            print(f"cd {target} to start work, then read docs/tasks/{seen.task}/brief.md")
+            print(f"verify with scripts/task verify {seen.task}, submit with scripts/task submit {seen.task}")
+        elif seen.cmd == "say":
+            say_task(seen.task, seen.kind, read_message(seen.message), parse_identity(seen.as_))
+        elif seen.cmd == "verify":
+            passed = run_verify(seen.task)
+            print(f"RESULT: {'PASS' if passed else 'FAIL'}")
+            return 0 if passed else 1
+        elif seen.cmd == "submit":
+            head = submit_task(seen.task, parse_identity(seen.as_), seen.transcript)
+            print(f"submitted {seen.task} at {head}")
+        elif seen.cmd == "review":
+            review_task(seen.task, seen.decision, read_message(seen.message), parse_identity(seen.as_))
+        elif seen.cmd == "release":
+            release_task(seen.task, read_message(seen.reason), parse_identity(seen.as_))
+    except TaskError as failed:
+        print(f"error: {failed}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

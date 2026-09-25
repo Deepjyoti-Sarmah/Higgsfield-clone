@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+from conftest import OWNER, TASK, add_task, run_task, worktree_of
+
+
+def test_verify_pass_writes_log(claimed_repo):
+    root = claimed_repo
+    done = run_task(root, "verify", TASK, cwd=worktree_of(root, TASK))
+    assert done.returncode == 0, done.stderr
+    assert "RESULT: PASS" in done.stdout
+    log = (worktree_of(root, TASK) / "docs" / "tasks" / TASK / "verify.log").read_text(
+        encoding="utf-8"
+    )
+    assert log.splitlines()[-1] == "RESULT: PASS"
+    assert "\nfingerprint: " in log
+    assert "## check-standards (exit 0)" in log
+
+
+def test_verify_fail_exits_one(task_repo):
+    add_task(task_repo, "T-901", "false")
+    assert run_task(task_repo, "claim", "T-901", "--as", OWNER).returncode == 0
+    done = run_task(task_repo, "verify", "T-901", cwd=worktree_of(task_repo, "T-901"))
+    assert done.returncode == 1
+    assert "RESULT: FAIL" in done.stdout
+    log = (worktree_of(task_repo, "T-901") / "docs" / "tasks" / "T-901" / "verify.log").read_text(
+        encoding="utf-8"
+    )
+    assert log.splitlines()[-1] == "RESULT: FAIL"

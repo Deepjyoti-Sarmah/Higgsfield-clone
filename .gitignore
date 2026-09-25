@@ -19,3 +19,4 @@ reference-images/
 
 # Wrangler CLI scratch dir
 .wrangler/
+.worktrees/
