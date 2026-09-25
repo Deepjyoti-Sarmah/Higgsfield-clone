@@ -71,6 +71,7 @@ If you find a disagreement, fix the lower source or report it. Never silently fo
 | `image-to-code`, `imagegen-frontend-web`, `imagegen-frontend-mobile`, `brandkit` | generating design reference images first, then building to match (needs an image-gen tool) |
 | `stitch-design-taste` | writing a `DESIGN.md` design-system file |
 | `full-output-enforcement` | tasks that need complete, untruncated code output |
+| `no-ai-slop` | editing any prose (UI copy, docs, reports) to cut AI-sounding patterns, or auditing a draft for them without rewriting |
 
 The canonical copy lives in `.agents/skills/<name>/SKILL.md` (Codex, Amp, Cline, Gemini and others read it there).
 Claude Code finds it through a symlink in `.claude/skills/`, and Eve through `agent/skills/`. If your tool has no skill loader, read the `SKILL.md` and follow it.
