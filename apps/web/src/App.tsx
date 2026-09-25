@@ -1,14 +1,31 @@
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { AppShell } from "./ui/AppShell"
-import { CreateVideoPage } from "./features/create-video/CreateVideoPage"
-import { CreditsPage } from "./features/credits/CreditsPage"
-import { ExplorePage } from "./features/explore/ExplorePage"
-import { CreateImagePage } from "./features/image-create/CreateImagePage"
-import { LibraryPage } from "./features/library/LibraryPage"
+import { CreditsPopoverProvider } from "./ui/CreditsPopoverContext"
+import { CreditsButton } from "./features/credits/CreditsButton"
 import { GuestButton } from "./features/session/GuestButton"
 import { SessionBadge } from "./features/session/SessionBadge"
 import { useSession } from "./features/session/useSession"
 import { SharePage } from "./features/share/SharePage"
+import { StartPage } from "./features/start/StartPage"
+import { StudioPage } from "./features/studio/StudioPage"
+
+// Redirects keep every query param; /library's ?job= is renamed ?item= (AC-6).
+function LibraryRedirect() {
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const job = params.get("job")
+  params.delete("job")
+  if (job !== null) params.set("item", job)
+  const search = params.toString()
+  return <Navigate to={`/studio${search ? `?${search}` : ""}`} replace />
+}
+
+function StudioRedirect({ tab }: { tab: "clip" | "still" }) {
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  params.set("tab", tab)
+  return <Navigate to={`/studio?${params.toString()}`} replace />
+}
 
 export function App() {
   const session = useSession()
@@ -20,17 +37,20 @@ export function App() {
     ) : null
 
   return (
-    <Routes>
-      <Route
-        element={<AppShell rightSlot={rightSlot} outletContext={session} />}
-      >
-        <Route index element={<ExplorePage />} />
-        <Route path="create/video" element={<CreateVideoPage />} />
-        <Route path="create/image" element={<CreateImagePage />} />
-        <Route path="library" element={<LibraryPage />} />
-        <Route path="credits" element={<CreditsPage />} />
-        <Route path="v/:jobId" element={<SharePage />} />
-      </Route>
-    </Routes>
+    <CreditsPopoverProvider>
+      <Routes>
+        <Route
+          element={<AppShell rightSlot={rightSlot} creditsSlot={<CreditsButton session={session} />} outletContext={session} />}
+        >
+          <Route index element={<StartPage />} />
+          <Route path="studio" element={<StudioPage />} />
+          <Route path="create/video" element={<StudioRedirect tab="clip" />} />
+          <Route path="create/image" element={<StudioRedirect tab="still" />} />
+          <Route path="library" element={<LibraryRedirect />} />
+          <Route path="credits" element={<Navigate to="/studio?credits=open" replace />} />
+          <Route path="v/:jobId" element={<SharePage />} />
+        </Route>
+      </Routes>
+    </CreditsPopoverProvider>
   )
 }
