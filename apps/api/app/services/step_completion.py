@@ -25,6 +25,7 @@ async def complete_step_success(
     poster_key: str,
     video_size: int,
     poster_size: int,
+    duration_ms: int | None = None,
 ) -> bool:
     async with session_maker() as session:
         if not await finish_step(session, step_id, worker_id, "succeeded", backend=backend):
@@ -65,6 +66,7 @@ async def complete_step_success(
             generated_by=backend,
             output_video_asset_id=video_asset_id,
             output_poster_asset_id=poster_asset_id,
+            duration_ms=duration_ms,
             finished_at=datetime.now(UTC),
         )
         if not succeeded:

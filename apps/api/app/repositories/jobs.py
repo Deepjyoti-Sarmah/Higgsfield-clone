@@ -88,6 +88,7 @@ async def transition_job_status(
     generated_by: str | None = None,
     output_video_asset_id: uuid.UUID | None = None,
     output_poster_asset_id: uuid.UUID | None = None,
+    duration_ms: int | None = None,
     started_at: datetime | None = None,
     finished_at: datetime | None = None,
 ) -> bool:
@@ -97,6 +98,7 @@ async def transition_job_status(
         "generated_by": generated_by,
         "output_video_asset_id": output_video_asset_id,
         "output_poster_asset_id": output_poster_asset_id,
+        "duration_ms": duration_ms,
         "started_at": started_at,
         "finished_at": finished_at,
     }
