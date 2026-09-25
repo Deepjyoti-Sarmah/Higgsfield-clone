@@ -5,16 +5,16 @@ import { ShareResult } from "./ShareResult"
 import { shareCopy } from "./shareCopy"
 import { ShareStates, type ShareStateKind } from "./ShareStates"
 
-function useDocumentTitle(presetName: string | null): void {
-  // shareCopy has no base app title, so the title from before the share page is restored on unmount.
+function useDocumentTitle(title: string | null): void {
+  // The previous title is restored when the viewer unmounts.
   useEffect(() => {
-    if (presetName === null) return
+    if (title === null) return
     const previousTitle = document.title
-    document.title = shareCopy.page.documentTitle(presetName)
+    document.title = title
     return () => {
       document.title = previousTitle
     }
-  }, [presetName])
+  }, [title])
 }
 
 function resolveState(status: PublicJobState["status"], job: PublicJob | null): ShareStateKind {
@@ -27,7 +27,8 @@ function resolveState(status: PublicJobState["status"], job: PublicJob | null): 
 export function SharePage() {
   const { jobId } = useParams<{ jobId: string }>()
   const { status, job, reload } = usePublicJob(jobId)
-  useDocumentTitle(job === null ? null : job.preset_name)
+  const title = job === null ? null : shareCopy.page.documentTitle(shareCopy.page.shareTitle(job))
+  useDocumentTitle(title)
 
   if (status === "ready" && job !== null && job.status === "succeeded") {
     return <ShareResult job={job} />
