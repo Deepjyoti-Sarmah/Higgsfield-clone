@@ -29,6 +29,7 @@ function StudioRedirect({ tab }: { tab: "clip" | "still" }) {
 
 export function App() {
   const session = useSession()
+  const isSharePage = useLocation().pathname.startsWith("/v/")
   const rightSlot =
     session.status === "signed-in" && session.user ? (
       <SessionBadge user={session.user} />
@@ -40,7 +41,13 @@ export function App() {
     <CreditsPopoverProvider>
       <Routes>
         <Route
-          element={<AppShell rightSlot={rightSlot} creditsSlot={<CreditsButton session={session} />} outletContext={session} />}
+          element={
+            <AppShell
+              rightSlot={isSharePage ? null : rightSlot}
+              creditsSlot={isSharePage ? null : <CreditsButton session={session} />}
+              outletContext={session}
+            />
+          }
         >
           <Route index element={<StartPage />} />
           <Route path="studio" element={<StudioPage />} />

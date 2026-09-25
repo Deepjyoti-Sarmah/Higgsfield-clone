@@ -32,11 +32,16 @@ function PopoverSurface({ session, onClose }: { session: GuestSessionSource; onC
   )
 }
 
+// Fetching the balance while signed out would 401 and make the guest runner mint a session,
+// so only a signed-in visitor mounts the control.
 export function CreditsButton({ session }: CreditsButtonProps) {
+  if (session.status !== "signed-in") return null
+  return <CreditsControl session={session} />
+}
+
+function CreditsControl({ session }: CreditsButtonProps) {
   const { isOpen, openCredits, closeCredits } = useCreditsPopover()
   const balance = useCreditBalance(session)
-
-  if (session.status !== "signed-in") return null
 
   return (
     <div
@@ -48,13 +53,19 @@ export function CreditsButton({ session }: CreditsButtonProps) {
       <button
         type="button"
         aria-haspopup="dialog"
+        aria-label="Credits"
         aria-expanded={isOpen}
         onClick={() => (isOpen ? closeCredits() : openCredits())}
         className="rounded-md px-2 py-1 font-mono text-[13px] text-text transition-colors hover:text-accent"
       >
-        {balance.status === "known" && balance.balance !== null
-          ? `${balance.balance} credits`
-          : "\u2026"}
+        {balance.status === "known" && balance.balance !== null ? (
+          <>
+            {balance.balance}
+            <span className="hidden sm:inline"> credits</span>
+          </>
+        ) : (
+          "\u2026"
+        )}
       </button>
       {isOpen && <PopoverSurface session={session} onClose={closeCredits} />}
     </div>
