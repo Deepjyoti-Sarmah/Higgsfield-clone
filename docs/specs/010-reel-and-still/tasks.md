@@ -52,7 +52,7 @@ Rules:
 - [x] **T-010-11** · Credits button and popover with the ledger
   - Files: `apps/web/src/features/credits/*`, `apps/web/src/api/{ledger,credits}.ts` (+ tests), the one `creditsSlot` line in `App.tsx`
   - Suggested model: small/medium · Depends on: T-010-4, T-010-7
-- [ ] **T-010-12** · Docs and smoke: the D-015 decision, WALKTHROUGH, README brand, `scripts/smoke-sequence`
+- [x] **T-010-12** · Docs and smoke: the D-015 decision, WALKTHROUGH, README brand, `scripts/smoke-sequence`
   - Files: `docs/DECISIONS.md`, `docs/WALKTHROUGH.md`, `README.md`, `scripts/smoke-sequence`
   - Suggested model: small · Depends on: T-010-3, T-010-6, T-010-9
 - [ ] **T-010-13** · Deploy and verify-slice live (orchestrator)

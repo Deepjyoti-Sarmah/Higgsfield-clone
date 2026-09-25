@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""End-to-end smoke of sequence stitching on any deployed URL (brief T-010-12)."""
+
+import argparse, http.cookiejar, json, os, subprocess, tempfile, time, urllib.error, urllib.request, uuid
+DEFAULT_BASE_URL, API, UA = "http://localhost:8000", "/api/v1", "smoke-sequence/1.0"
+UPLOADS, JOBS, SEQUENCES, LEDGER = f"{API}/uploads", f"{API}/jobs", f"{API}/sequence-jobs", f"{API}/credits/ledger"
+IMAGE_SIZE, VIDEO_SECONDS = (1280, 720), 5.0
+SEQUENCE_TIMEOUT = float(os.environ.get("SMOKE_SEQUENCE_TIMEOUT", "300"))
+LEDGER_LIMIT, MIN_CLIPS = 10, 2
+
+failures = []
+
+def check(label, ok, detail=""):
+    print(f"{'PASS' if ok else 'FAIL'} {label}" + (f": {detail}" if detail else ""))
+    if not ok:
+        failures.append(label)
+
+class SmokeError(Exception):
+    """A setup step failed; the message is the whole diagnosis."""
+
+def raw(url, method, payload=None, cookie_jar=None, headers=None, timeout=30):
+    body = None if payload is None else json.dumps(payload).encode()
+    merged = {"User-Agent": UA, "Accept": "application/json"}
+    if body is not None:
+        merged["Content-Type"] = "application/json"
+    merged.update(headers or {})
+    request = urllib.request.Request(url, data=body, headers=merged, method=method)
+    try:
+        with urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar)).open(request, timeout=timeout) as response:
+            return response.status, response.read(), response.headers
+    except urllib.error.HTTPError as error:
+        return error.code, error.read(), error.headers
+
+def api(base_url, method, path, payload=None, cookie_jar=None, expect=200):
+    status, body, _ = raw(base_url + path, method, payload, cookie_jar)
+    if status != expect:
+        raise SmokeError(f"{method} {path} -> {status} (expected {expect}): {body[:200]!r}")
+    return None if not body else json.loads(body)
+
+def run_tool(label, command):
+    done = subprocess.run(command, capture_output=True)
+    if done.returncode != 0:
+        raise SmokeError(f"{label} failed: {done.stderr.decode(errors='replace')[-400:]}")
+
+def guest_session(base_url):
+    cookie_jar = http.cookiejar.CookieJar()
+    return cookie_jar, api(base_url, "POST", f"{API}/auth/guest", None, cookie_jar, expect=201)
+
+def make_test_image(path):
+    run_tool("ffmpeg", ["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                        f"testsrc2=size={IMAGE_SIZE[0]}x{IMAGE_SIZE[1]}:rate=1", "-frames:v", "1", path])
+
+def upload_image(base_url, cookie_jar, path):
+    with open(path, "rb") as handle:
+        data = handle.read()
+    created = api(base_url, "POST", UPLOADS, {"content_type": "image/jpeg", "byte_size": len(data)}, cookie_jar, expect=201)
+    headers = {"User-Agent": UA, "Content-Length": str(len(data))}
+    headers.update(created.get("upload_headers") or {})
+    request = urllib.request.Request(created["upload_url"], data=data, headers=headers, method="PUT")
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            if response.status not in (200, 201, 204):
+                raise SmokeError(f"PUT upload_url -> {response.status}")
+    except urllib.error.HTTPError as error:
+        raise SmokeError(f"PUT upload_url -> {error.code}: {error.read()[:200]!r}") from error
+    asset = api(base_url, "POST", f"{UPLOADS}/{created['asset_id']}/complete", None, cookie_jar)
+    if asset["status"] != "ready":
+        raise SmokeError(f"asset {created['asset_id']} is {asset['status']!r}, expected 'ready'")
+    return created["asset_id"]
+
+def create_clip(base_url, cookie_jar, asset_id):
+    payload = {"preset_slug": "dolly-in", "input_asset_id": asset_id, "idempotency_key": f"smoke-{uuid.uuid4()}"}
+    return api(base_url, "POST", JOBS, payload, cookie_jar, expect=202)["id"]
+
+def wait_job(base_url, cookie_jar, job_id, timeout):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        job = api(base_url, "GET", f"{JOBS}/{job_id}", None, cookie_jar)
+        if job["status"] == "succeeded":
+            return job
+        if job["status"] == "failed":
+            raise SmokeError(f"clip {job_id} failed: {job.get('error_message')!r}")
+        time.sleep(1.0)
+    raise SmokeError(f"clip {job_id} never succeeded within {timeout:.0f}s")
+
+def wait_sequence(base_url, cookie_jar, sequence_id, timeout=SEQUENCE_TIMEOUT):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        sequence = api(base_url, "GET", f"{SEQUENCES}/{sequence_id}", None, cookie_jar)
+        if sequence["status"] == "succeeded":
+            return sequence
+        if sequence["status"] == "failed":
+            raise SmokeError(f"sequence {sequence_id} failed: {sequence.get('error_message')!r}")
+        time.sleep(1.0)
+    raise SmokeError(f"sequence {sequence_id} never succeeded within {timeout:.0f}s")
+
+def probe_video(url):
+    # Presigned URLs are GET-only, so probe with a 1-byte range request.
+    request = urllib.request.Request(url, headers={"User-Agent": UA, "Range": "bytes=0-0"})
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            return response.status, response.headers.get("Content-Type", "")
+    except urllib.error.HTTPError as error:
+        return error.code, ""
+
+def ledger_for_job(base_url, cookie_jar, job_id):
+    entries = api(base_url, "GET", f"{LEDGER}?limit={LEDGER_LIMIT}", None, cookie_jar)["items"]
+    return [entry for entry in entries if entry.get("job_id") == job_id]
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Smoke-test sequence stitching: 2 clips -> crossfade sequence -> ledger checks.")
+    parser.add_argument("base_url", nargs="?", default=DEFAULT_BASE_URL,
+                        help="deployed base URL, e.g. http://localhost:8000 (default)")
+    parser.add_argument("--timeout", type=float, default=SEQUENCE_TIMEOUT,
+                        help="seconds to wait for the sequence to finish (default 300)")
+    arguments = parser.parse_args()
+    base_url = arguments.base_url.rstrip("/")
+    print(f"smoke-sequence: base_url={base_url}")
+    try:
+        with tempfile.TemporaryDirectory(prefix="smoke-seq-") as work_dir:
+            cookie_jar, user = guest_session(base_url)
+            print(f"ok 0 guest: {user['id']}")
+            image_path = f"{work_dir}/smoke-input.jpg"
+            make_test_image(image_path)
+            asset_id = upload_image(base_url, cookie_jar, image_path)
+            print(f"ok 0 upload: asset {asset_id} ready")
+            clip_ids = [create_clip(base_url, cookie_jar, asset_id) for _ in range(MIN_CLIPS)]
+            for clip_id in clip_ids:
+                wait_job(base_url, cookie_jar, clip_id, arguments.timeout)
+            print(f"ok 0 clips succeeded: {clip_ids}")
+            payload = {"clips": [{"job_id": clip_ids[0], "transition_in": "cut"},
+                                 {"job_id": clip_ids[1], "transition_in": "crossfade"}],
+                       "idempotency_key": f"smoke-{uuid.uuid4()}"}
+            created = api(base_url, "POST", SEQUENCES, payload, cookie_jar, expect=202)
+            sequence_id = created["id"]
+            print(f"ok 0 sequence accepted: {sequence_id} (clips={created.get('clip_count')}, cost={created.get('credit_cost')})")
+            sequence = wait_sequence(base_url, cookie_jar, sequence_id)
+            check("sequence succeeded", sequence["status"] == "succeeded", f"status={sequence['status']}")
+            video_url = sequence.get("video_url")
+            check("sequence has video_url", bool(video_url))
+            if video_url:
+                status, content_type = probe_video(video_url)
+                check("video_url GET 200 video/mp4", status in (200, 206) and content_type.startswith("video/mp4"),
+                      f"GET -> {status} {content_type!r}")
+            duration_ms = sequence.get("duration_ms")
+            check("duration_ms > 5000", isinstance(duration_ms, (int, float)) and duration_ms > 5000, f"duration_ms={duration_ms}")
+            entries = ledger_for_job(base_url, cookie_jar, sequence_id)
+            kinds = {entry["kind"] for entry in entries}
+            amounts = {entry["kind"]: entry["amount"] for entry in entries}
+            check("ledger has HOLD -1 for the sequence", "HOLD" in kinds and amounts.get("HOLD") == -1, f"entries={entries}")
+            check("ledger has SETTLE for the sequence", "SETTLE" in kinds, f"kinds={sorted(kinds)}")
+    except SmokeError as error:
+        check("setup", False, str(error))
+    except urllib.error.URLError as error:
+        check("setup", False, f"cannot reach {base_url}: {error}")
+    print(f"smoke-sequence: {'PASS' if not failures else 'FAIL'} ({len(failures)} failed)")
+    raise SystemExit(1 if failures else 0)
+
+if __name__ == "__main__":
+    main()

@@ -1,52 +1,36 @@
-# 5-Minute Video Walkthrough Script & Beat Sheet
+# 5-minute walkthrough: Reel & Still
 
-**Title:** Higgsfield AI Clone — 24h Agentic Rebuild  
-**Target Duration:** 5:00  
-**Presenter Setup:** Camera on, browser open to `https://api-production-8afc.up.railway.app`  
+First person, read aloud. Timings assume the local stack is up (`docker compose up -d --wait db minio`, the API on :8000, the worker running, `npm --prefix apps/web run dev` on :5173) and the browser is signed out. Every label in quotes is on screen exactly as written.
 
----
+## 0:00 — Open the start page (30 s)
+> "This is Reel & Still, a small studio for short films. Make a still, animate it into a clip, then cut your clips into a sequence — one workspace, one credit ledger.
+> The page shows the three steps with real media we generated, and motion-preset chips that deep-link into the studio. One button here: **Open the studio**."
 
-## Beat 1: Intro & Signed-Out Explore Landing Page (0:00 – 1:00)
-- **Visual:** Open `https://api-production-8afc.up.railway.app` signed out in clean browser window.
-- **Script:**
-  > "Hi! I'm Deepjyoti Sarmah. This is my 24-hour rebuild of Higgsfield.ai, an AI-native image and video generation platform.
-  > Notice the signed-out Explore landing page — brand header, a compact hero, and a dense 5-up wall of 12 motion-preset tiles grouped into Camera, Cinematic, and Dynamic.
-  > All preset cards feature live autoplaying looping motion previews that we generate ourselves and serve from our own storage."
+## 0:30 — Make a still (75 s)
+> "The studio is one screen: the rail of my generations on the left, the stage in the middle, and the composer underneath with **Still · Clip · Sequence** tabs.
+> I'm on the **Still** tab. I type a prompt — 'neon alley after rain' — pick a wide shape, and press **Generate · 10 credits**.
+> While it runs, the stage shows the phase with elapsed time over a polite live region. When it lands, the caption shows what actually made it. If the placeholder fallback ran, the page says so plainly."
 
----
+## 1:45 — Animate this, and a second clip (90 s)
+> "Every still has **Animate this**. Clicking it hands the image to the **Clip** tab with no download and no re-upload — the composer shows it labelled **From your still**.
+> I pick a motion preset, press **Animate · 20 credits**, and the clip starts on the same ledger. I'll make one more clip from another still so I have two to cut.
+> Notice the credits button in the top bar dropped from 60 to 20 as each job held its credits."
 
-## Beat 2: One-Click Guest Session & Video Creation Flow (1:00 – 2:15)
-- **Visual:** Click "Start creating" or "✦ Recreate" on the **Dolly In** preset card.
-- **Script:**
-  > "Clicking 'Recreate' deep links straight to `/create/video?preset=dolly-in`.
-  > Notice that guest authentication is entirely seamless — a one-click guest session is initialized in an httpOnly cookie with a 60-credit grant recorded on an append-only Postgres ledger.
-  > On the control panel, we drop an image into the upload box. The presigned upload goes straight to S3/Cloudflare R2 storage without proxying through our API server.
-  > We click **Generate (20 credits)**. The API validates idempotency, holds 20 credits, inserts the job + worker step, and streams real-time status updates back over Server-Sent Events (SSE) with a 5-second polling fallback.
-  > Once finished, the 720p H.264 faststart MP4 plays in the canvas, and credits settle automatically from 60 → 40."
+## 3:15 — Cut a sequence (75 s)
+> "Now the **Sequence** tab. The strip holds two to six clips; I drag to reorder, or use the move and remove buttons — it's all keyboard-operable.
+> The chip between the slots cycles **CUT · XFADE · FADE**. I set a crossfade. I drop in a music file, up to ten megabytes, and the readout shows the length — about 0:10.
+> Press **Render · 1 credit**. When it lands, the rail shows the sequence with a status dot, and the stage plays it with its shots-and-length caption."
 
----
+## 4:00 — Where the credits went (30 s)
+> "Click the balance. **Add demo credits (100)** — no payment is taken — and below it, the ledger: every job left a **Hold** of −1 or −20 and a **Settled** row linked to the job. If a render had failed, a **Refund** would be here instead. The money is fake; the accounting is real."
 
-## Beat 3: Text-to-Image Generation & Library (2:15 – 3:30)
-- **Visual:** Navigate to `/create/image`, then `/library`.
-- **Script:**
-  > "Next, let's navigate to `/create/image`. Here creators can select aspect ratios, quality levels, and image counts up to 4. Below the composer sits an interactive sample gallery showcase.
-  > Now let's visit `/library`. Every output generated during this session is listed here with thumbnail previews, status tags, creation timestamps, and inline result playback."
+## 4:30 — Share it (15 s)
+> "One **Share** link gives `/v/<id>` — a quiet viewer that plays the clip or sequence signed out, with one button, **Make your own**."
 
----
-
-## Beat 4: Public Share Page & OG Metadata (3:30 – 4:15)
-- **Visual:** Click "Share" on a finished generation or open `/v/<job-id>` in a new incognito window.
-- **Script:**
-  > "When you share a generation, open `/v/<job-id>`.
-  > Even with JavaScript disabled or for social crawler bots, our FastAPI backend server-renders Open Graph and Twitter Card meta tags (`og:title`, `og:video`, `og:image`) before the SPA hydrates, allowing rich social previews on Twitter, Discord, and Slack."
+## 4:45 — How it was built with agents (15 s + closing line)
+> "One more thing: this repo was built by agents. A `scripts/task` board hands each agent a task packet — a `brief.md`, a `thread.md` for questions, a `verify.log` with the exact command output, and a `report.md` from a *different* model reviewing the diff. Every prompt and response is captured in `.agent-logs/`, and several models shared the work across harnesses.
+> The docs say what the running system does — including the decisions that changed, like D-015 superseding D-014 when images became real. Thank you."
 
 ---
 
-## Beat 5: Multi-Agent Architecture & Engineering Standards (4:15 – 5:00)
-- **Visual:** Switch to code editor / GitHub repo view `Deepjyoti-Sarmah/Higgsfield-clone`.
-- **Script:**
-  > "Behind the scenes, this entire codebase was engineered using a multi-agent workflow.
-  > We enforced a strict truth hierarchy where running code and tests beat specs.
-  > Role assignments separated Orchestrator, Implementer, Reviewer, and Scout duties across structured task briefs in `docs/tasks/`.
-  > The frontend is Vite + React + TS; the backend is FastAPI + SQLAlchemy + Alembic running on Railway with Neon Postgres (unpooled DSN for SSE LISTEN/NOTIFY) and Cloudflare R2 media storage.
-  > All linting, strict TypeScript checks, standards checks (`scripts/check-standards`), and unit test suites pass 100%. Thank you!"
+**Total: 5:00.** If the model backends aren't configured locally, say at 0:30: "locally this runs against the labelled fallback backend — the UI tells you which one made each result; the deployed stack runs the real models."

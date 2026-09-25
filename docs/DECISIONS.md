@@ -110,3 +110,12 @@ Never edit an old entry. To change a decision, add a new one that supersedes it.
 
 **Rejected:** faking a Modal/OpenRouter image adapter; blocking the whole slice until the model exists (the page, job shape, ledger, worker branch and SSE are the reusable majority); shipping a page that cannot generate at all.
 
+Superseded by D-015.
+
+## D-015 · 2026-09-26 · Images are real (FLUX.1-schnell on Modal); the placeholder is a labelled fallback
+**Why:**
+- The image model shipped: `apps/gpu/flux_image.py` deploys FLUX.1-schnell as a persistent Modal endpoint (H100, bearer secret shared with the API), and `apps/api/app/adapters/modal_image_adapter.py` calls it with the same lease/refund discipline as video.
+- Selection is honest per environment: `select_image_adapter` in `apps/api/app/adapters/backend_selection.py` returns the real `ModalImageAdapter` when `IMAGE_GENERATION_BACKEND=modal` and the endpoint is configured, and otherwise a `FallbackImageAdapter` that renders the deterministic placeholder **and says so** — the API returns `backend`, and the UI captions placeholder results (spec 010 AC-11).
+- The deployed stack runs the real model: `GET /api/health/deep` reports `image_backend: "modal"` (STATUS line "Real text→image backend LIVE", 2026-09-14), and generated stills feed Clip create as first-class inputs (spec 010 AC-10).
+
+**Rejected:** keeping D-014's "the real model is P2" framing — it stopped being true the moment `flux_image.py` went live, and the docs must match the running system.
