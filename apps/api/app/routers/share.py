@@ -31,10 +31,14 @@ async def read_public_job(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Job not found")
     return PublicJobResponse(
         id=view.job.id,
+        kind=view.job.kind,  # type: ignore[arg-type]
         status=view.job.status,
         preset_slug=view.job.preset_slug,
         preset_name=view.preset_name,
         poster_url=view.poster_url,
         video_url=view.video_url,
+        image_urls=view.image_urls,
+        clip_count=view.clip_count,
+        duration_ms=view.duration_ms,
         created_at=view.job.created_at,
     )

@@ -10,7 +10,20 @@ from app.repositories.assets import find_user_asset, insert_asset, mark_asset_re
 from app.settings import Settings
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
-EXTENSIONS_BY_CONTENT_TYPE = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+EXTENSIONS_BY_CONTENT_TYPE = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "audio/mpeg": "mp3",
+    "audio/mp4": "m4a",
+    "audio/wav": "wav",
+}
+AUDIO_CONTENT_TYPES = frozenset({"audio/mpeg", "audio/mp4", "audio/wav"})
+
+
+def asset_kind_for_content_type(content_type: str) -> str:
+    # Music uploads must not collide with the image kinds the Library keys off.
+    return "input_audio" if content_type in AUDIO_CONTENT_TYPES else "input_image"
 
 
 class UploadNotFoundError(Exception):
@@ -59,7 +72,7 @@ async def create_pending_upload(
         session,
         asset_id=asset_id,
         user_id=user_id,
-        kind="input_image",
+        kind=asset_kind_for_content_type(content_type),
         status="pending",
         storage_key=key,
         content_type=content_type,

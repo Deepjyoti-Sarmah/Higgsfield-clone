@@ -18,6 +18,10 @@ class PresetNotFoundError(Exception):
     """No active preset with the requested slug."""
 
 
+# A generated still (output_image) seeds a clip without a download/re-upload (spec 010 AC-10).
+INPUT_ASSET_KINDS = ("input_image", "output_image")
+
+
 class InputAssetNotFoundError(Exception):
     """The input image does not exist or belongs to another user."""
 
@@ -70,7 +74,7 @@ async def create_job(
     if preset is None:
         raise PresetNotFoundError(preset_slug)
     asset = await find_user_asset(session, user_id, input_asset_id)
-    if asset is None or asset.kind != "input_image":
+    if asset is None or asset.kind not in INPUT_ASSET_KINDS:
         raise InputAssetNotFoundError(str(input_asset_id))
     if asset.status != "ready":
         raise InputAssetNotReadyError(str(input_asset_id))

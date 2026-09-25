@@ -8,13 +8,8 @@ from tests.fakes.in_memory_object_storage import InMemoryObjectStorage
 from tests.job_api_helpers import PRESET_NAME, create_queued_job, current_user_id
 
 PUBLIC_KEYS = {
-    "id",
-    "status",
-    "preset_slug",
-    "preset_name",
-    "poster_url",
-    "video_url",
-    "created_at",
+    "id", "kind", "status", "preset_slug", "preset_name", "poster_url", "video_url",
+    "image_urls", "clip_count", "duration_ms", "created_at",
 }
 PRIVATE_FAILURE_TEXT = "private provider failure text"
 

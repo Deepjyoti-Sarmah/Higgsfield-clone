@@ -1,3 +1,4 @@
+import html
 import uuid
 from html import escape
 from pathlib import Path
@@ -94,11 +95,11 @@ async def test_no_cookie_gets_html_with_the_job_meta_tags(
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/html")
-    assert f"<title>{PRESET_NAME} \u00b7 Higgsfield</title>" in body
+    assert f"<title>{PRESET_NAME} \u00b7 Reel &amp; Still</title>" in body
     for tag in ("og:title", "og:description", "og:type", "og:url", "twitter:card", "twitter:title"):
         assert tag in body
     assert 'name="twitter:card" content="summary_large_image"' in body
-    assert GENERATING_DESCRIPTION in body
+    assert html.escape(GENERATING_DESCRIPTION) in body
     assert "og:video" not in body
     assert "<video" not in body
 
@@ -130,7 +131,7 @@ async def test_unknown_or_malformed_id_returns_generic_html(client: AsyncClient)
         assert response.status_code == 200
         assert response.headers["content-type"].startswith("text/html")
         assert "og:title" in response.text
-        assert UNKNOWN_DESCRIPTION in response.text
+        assert html.escape(UNKNOWN_DESCRIPTION) in response.text
 
 
 async def test_failed_job_hides_the_private_error_text(
@@ -185,5 +186,5 @@ async def test_missing_index_falls_back_to_the_builtin_shell(
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/html")
     assert "og:title" in response.text
-    assert UNKNOWN_DESCRIPTION in response.text
+    assert html.escape(UNKNOWN_DESCRIPTION) in response.text
     assert response.text.count("</head>") == 1

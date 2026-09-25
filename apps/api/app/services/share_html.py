@@ -4,12 +4,12 @@ from pathlib import Path
 
 from app.services.share_views import PublicJobView
 
-SITE_NAME = "Higgsfield"
+SITE_NAME = "Reel & Still"
 OG_TYPE = "video.other"
-GENERIC_TITLE = "Higgsfield"
-UNKNOWN_DESCRIPTION = "Watch AI-generated videos on Higgsfield."
-GENERATING_DESCRIPTION = "This video is still being generated on Higgsfield."
-FAILED_DESCRIPTION = "This video isn't available on Higgsfield."
+GENERIC_TITLE = "Reel & Still"
+UNKNOWN_DESCRIPTION = "Watch short films made with Reel & Still."
+GENERATING_DESCRIPTION = "This film is still being rendered on Reel & Still."
+FAILED_DESCRIPTION = "This film isn't available on Reel & Still."
 
 TITLE_PATTERN = re.compile(r"<title>.*?</title>", re.DOTALL)
 
@@ -20,7 +20,7 @@ FALLBACK_SHELL = (
     "<head>\n"
     '<meta charset="utf-8" />\n'
     '<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n'
-    "<title>Higgsfield</title>\n"
+    "<title>Reel &amp; Still</title>\n"
     "</head>\n"
     "<body>\n"
     '<div id="root"></div>\n'
@@ -34,14 +34,14 @@ def share_url_for(base_url: str, job_id: str) -> str:
 
 
 def page_title(view: PublicJobView | None) -> str:
-    return GENERIC_TITLE if view is None else f"{view.preset_name} \u00b7 Higgsfield"
+    return GENERIC_TITLE if view is None else f"{view.preset_name} \u00b7 Reel & Still"
 
 
 def describe_public_job(view: PublicJobView | None) -> str:
     if view is None:
         return UNKNOWN_DESCRIPTION
     if view.job.status == "succeeded":
-        return f"A 5-second AI-generated video made with the {view.preset_name} effect on Higgsfield."
+        return f"A short film made with the {view.preset_name} effect on Reel & Still."
     if view.job.status == "failed":
         return FAILED_DESCRIPTION
     return GENERATING_DESCRIPTION
