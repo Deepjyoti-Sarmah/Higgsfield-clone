@@ -55,5 +55,5 @@ Rules:
 - [x] **T-010-12** · Docs and smoke: the D-015 decision, WALKTHROUGH, README brand, `scripts/smoke-sequence`
   - Files: `docs/DECISIONS.md`, `docs/WALKTHROUGH.md`, `README.md`, `scripts/smoke-sequence`
   - Suggested model: small · Depends on: T-010-3, T-010-6, T-010-9
-- [ ] **T-010-13** · Deploy and verify-slice live (orchestrator)
+- [x] **T-010-13** · Deploy and verify-slice live (orchestrator)
   - Deploy gate: the live bundle hash changes, then `scripts/smoke-sequence` against the public URL, then `verify-slice` screenshots in both themes at 390 and 1440px
