@@ -21,6 +21,7 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | M3 | P0 slices (specs 003+) | 10h | CODE COMPLETE + LIVE: specs 003–009 all tasks done + committed; spec 003 smoke 9/9; specs 003–009 walked live in a real browser at 1440x900 (T-011, 7/7 PASS) | each verified live via `verify-slice` |
 | M4 | P1 slices | — | TODO | each verified live |
 | M5 | Ship: signed-out pass, README, public repo, walkthrough | 2h | TODO | checklist below all ticked |
+| M6 | Resubmission: own identity + studio + sequences (spec 010) | 1.5d | IN PROGRESS: spec approved 2026-09-25; T-042 protocol first | live URL passes `verify-slice` for spec 010 + `scripts/smoke-sequence`; due end of Sat 2026-09-26 |
 
 ## Task board
 | Id | Task | Status | Owner model | Where |
@@ -106,6 +107,10 @@ The frozen, approved plan is in `docs/BUILD-PLAN.md`. This file is the live vers
 | T-017 | Real text→image on our GPU: FLUX.1-schnell on Modal behind `ImageModelAdapter` | DONE + LIVE: paid probe PASS — 4 real 1024² images; warm 10.2 s load + 25.7 s gen (~$0.05) on H100; deployed as a persistent Modal endpoint, Railway `api`+`worker` flipped to `IMAGE_GENERATION_BACKEND=modal`, `GET /api/health/deep` -> `image_backend: "modal"` | deepseek-flash + Claude Opus 5 (ops) | `docs/tasks/T-017/report.md`, `docs/STATUS.md`, `docs/WORKLOG.md` |
 | T-018 | Google OAuth sign-in/sign-up (needs human credentials) | TODO (blocked on credentials) | TBD | `docs/research/flows/auth.md` |
 | T-019 | Mobile/responsive pass over the six routed pages | TODO | TBD | `apps/web/src/` |
+| T-042 | `scripts/task`: a harness-agnostic task protocol (claim / say / verify / submit / review) | READY FOR HANDOFF (old flow: `docs/tasks/T-042/kickoff.md`) | TBD (any harness) | `docs/tasks/T-042/brief.md` |
+| T-043 | Move AGENTS.md, playbooks and templates onto `scripts/task` | ON BOARD after T-042 | TBD | `docs/tasks/T-043/brief.md` |
+| T-010-0 | Spec 010 Reel & Still: spec, design, DESIGN.md, tasks, briefs | DONE | Claude Opus 5.5 | `docs/specs/010-reel-and-still/`, `DESIGN.md` |
+| T-010-1..12 | Spec 010 build tasks (waves W1–W5); live state on `docs/tasks/BOARD.md` | W1 open (1, 2, 5) once T-042 lands | TBD per task | `docs/specs/010-reel-and-still/tasks.md` |
 
 ## Scope (locked by D-012; the source of truth is `docs/research/product-map.md`)
 - **P0, the core loop:**
