@@ -1,32 +1,32 @@
 const zoomInClasses =
-  "motion-safe:group-hover:animate-hf-motion-zoom-in " +
-  "motion-safe:has-[:checked]:animate-hf-motion-zoom-in " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-zoom-in"
+  "motion-safe:group-hover:animate-motion-zoom-in " +
+  "motion-safe:has-[:checked]:animate-motion-zoom-in " +
+  "motion-safe:has-[:focus-visible]:animate-motion-zoom-in"
 
 const zoomOutClasses =
-  "motion-safe:group-hover:animate-hf-motion-zoom-out " +
-  "motion-safe:has-[:checked]:animate-hf-motion-zoom-out " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-zoom-out"
+  "motion-safe:group-hover:animate-motion-zoom-out " +
+  "motion-safe:has-[:checked]:animate-motion-zoom-out " +
+  "motion-safe:has-[:focus-visible]:animate-motion-zoom-out"
 
 const panLeftClasses =
-  "motion-safe:group-hover:animate-hf-motion-pan-left " +
-  "motion-safe:has-[:checked]:animate-hf-motion-pan-left " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-pan-left"
+  "motion-safe:group-hover:animate-motion-pan-left " +
+  "motion-safe:has-[:checked]:animate-motion-pan-left " +
+  "motion-safe:has-[:focus-visible]:animate-motion-pan-left"
 
 const panRightClasses =
-  "motion-safe:group-hover:animate-hf-motion-pan-right " +
-  "motion-safe:has-[:checked]:animate-hf-motion-pan-right " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-pan-right"
+  "motion-safe:group-hover:animate-motion-pan-right " +
+  "motion-safe:has-[:checked]:animate-motion-pan-right " +
+  "motion-safe:has-[:focus-visible]:animate-motion-pan-right"
 
 const tiltUpClasses =
-  "motion-safe:group-hover:animate-hf-motion-tilt-up " +
-  "motion-safe:has-[:checked]:animate-hf-motion-tilt-up " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-tilt-up"
+  "motion-safe:group-hover:animate-motion-tilt-up " +
+  "motion-safe:has-[:checked]:animate-motion-tilt-up " +
+  "motion-safe:has-[:focus-visible]:animate-motion-tilt-up"
 
 const shakeClasses =
-  "motion-safe:group-hover:animate-hf-motion-shake " +
-  "motion-safe:has-[:checked]:animate-hf-motion-shake " +
-  "motion-safe:has-[:focus-visible]:animate-hf-motion-shake"
+  "motion-safe:group-hover:animate-motion-shake " +
+  "motion-safe:has-[:checked]:animate-motion-shake " +
+  "motion-safe:has-[:focus-visible]:animate-motion-shake"
 
 const motionClassBySlug: Record<string, string> = {
   "dolly-in": zoomInClasses,

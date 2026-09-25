@@ -16,21 +16,13 @@ export function balanceKnown(balance: number): string {
 }
 
 export function insufficient(balance: number, required: number): string {
-  return `You have ${balance} credits. This image needs ${required}.`
-}
-
-export function imageAlt(index: number, prompt: string): string {
-  return `Generated image ${index}: ${prompt}`
-}
-
-export function elapsedLabel(formatted: string): string {
-  return `${formatted} elapsed`
+  return `You have ${balance} credits. This still needs ${required}.`
 }
 
 export const imageCreateCopy = {
   page: {
-    title: "Create image",
-    subtitle: "Describe an image, pick its shape, and generate up to four.",
+    title: "Make a still",
+    subtitle: "Describe the scene, pick its shape, and generate up to four.",
   },
   prompt: {
     label: "Prompt",
@@ -58,14 +50,17 @@ export const imageCreateCopy = {
     label: "Generate",
     withCost,
     blockedNoPrompt: "Describe the image first.",
+    optionsUnavailable: "Wait for the options to load, or retry.",
     submitting: "Starting...",
     balanceKnown,
     balanceLoading: "Checking your credits...",
     balanceError: "Balance unavailable.",
     insufficient,
-    getCredits: "Get credits",
-    getCreditsHref: "/credits",
     sessionError: "Your session ended. Reload to continue.",
+    invalid: "That didn't go through. Try again.",
+    network: "Couldn't reach the server.",
+    limitHit: "That's today's job limit. It resets at midnight UTC.",
+    creditsOpened: "Not enough credits — the credits panel is open.",
   },
   states: {
     optionsError: {
@@ -77,26 +72,4 @@ export const imageCreateCopy = {
       srText: "Loading image options",
     },
   },
-  progress: {
-    queued: "Queued",
-    queuedSub: "Waiting for a free worker...",
-    requeuedSub: "Retrying on another worker...",
-    running: "Generating your image...",
-    generatingSub: "This usually takes under a minute, longer on a cold start.",
-    succeeded: "Your images are ready.",
-    barLabel: "Generating image",
-    elapsed: elapsedLabel,
-    polling: "Live updates paused. Checking every 5 seconds.",
-  },
-  result: {
-    imageAlt,
-    download: "Download",
-    makeAnother: "Make another",
-    placeholderNotice: "Demo placeholder images - a real image model ships later.",
-  },
-  failure: {
-    title: "This generation failed and its credits were refunded.",
-    missing: "This generation is no longer available.",
-    retry: "Try again",
-  },
-}
+} as const

@@ -9,7 +9,7 @@ type PresetPickerProps = {
   presets: PresetsState
   selection: PresetSelection
   previewImageUrl: string | null
-  groupRef: RefObject<HTMLFieldSetElement | null>
+  groupRef?: RefObject<HTMLFieldSetElement | null>
 }
 
 const SKELETON_KEYS = [0, 1, 2, 3, 4, 5]
@@ -67,12 +67,12 @@ function PresetGrid({
 function useScrollToSelectedPreset(
   isReady: boolean,
   slug: string | null,
-  groupRef: RefObject<HTMLFieldSetElement | null>,
+  groupRef?: RefObject<HTMLFieldSetElement | null>,
 ) {
   const hasScrolledRef = useRef(false)
   useEffect(() => {
     if (!isReady || slug === null || hasScrolledRef.current) return
-    const checked = groupRef.current?.querySelector<HTMLInputElement>("input:checked")
+    const checked = groupRef?.current?.querySelector<HTMLInputElement>("input:checked")
     checked?.scrollIntoView({ block: "nearest" })
     hasScrolledRef.current = true
   }, [isReady, slug, groupRef])

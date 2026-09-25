@@ -8,7 +8,7 @@ import type {
   UploadState,
 } from "./createVideoTypes"
 import { checkImageFile } from "./imageFileRules"
-import { putFileWithProgress } from "./putFileWithProgress"
+import { putFileWithProgress } from "../../api/putFileWithProgress"
 
 const RETRY_DELAY_MS = 1000
 

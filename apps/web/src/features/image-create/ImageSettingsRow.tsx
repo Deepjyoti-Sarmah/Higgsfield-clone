@@ -2,10 +2,10 @@ import type { ReactNode } from "react"
 import type { ImageOptions } from "../../api/imageOptions"
 import { imageCreateCopy } from "./imageCreateCopy"
 import type { ImageSettingsControls } from "./imageCreateTypes"
+import { useStillSettings } from "./useStillSettings"
 
 type ImageSettingsRowProps = {
   options: ImageOptions
-  settings: ImageSettingsControls
 }
 
 type GroupProps = {
@@ -106,7 +106,8 @@ function CountGroup({ options, settings }: GroupProps) {
   )
 }
 
-export function ImageSettingsRow({ options, settings }: ImageSettingsRowProps) {
+export function ImageSettingsRow({ options }: ImageSettingsRowProps) {
+  const settings = useStillSettings()
   return (
     <div className="flex flex-wrap gap-6">
       <AspectGroup options={options} settings={settings} />
