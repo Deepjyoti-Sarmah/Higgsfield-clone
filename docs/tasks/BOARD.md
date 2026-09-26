@@ -10,5 +10,5 @@ Generated 2026-09-26T01:23:23Z. States: open → claimed ⇄ blocked → submitt
 | T-011-1 | Faithful, warm LTX clip endpoint on Modal | claimed | sonnet-5@claude-code | 2026-09-26T01:23:23Z |
 | T-011-2 | Always send the video model a real prompt | claimed | sonnet-5@claude-code | 2026-09-26T01:23:23Z |
 | T-011-3 | Face swap endpoint on Modal | claimed | sonnet-5@claude-code | 2026-09-26T01:23:21Z |
-| T-011-4 | Face swap jobs (contract, data, create/read, worker step) | open | - | - |
+| T-011-4 | Face swap jobs (contract, data, create/read, worker step) | claimed | sonnet-5@claude-code | 2026-09-26T01:23:23Z |
 | T-043 | Switch the docs and templates to the `scripts/task` protocol | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:08:05Z |
