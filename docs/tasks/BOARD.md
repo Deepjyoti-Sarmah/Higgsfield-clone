@@ -7,7 +7,7 @@ Generated 2026-09-26T01:23:23Z. States: open → claimed ⇄ blocked → submitt
 | T-010-1 | Publish the spec 010 contract (schemas, 501 stubs, openapi.json) | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:17:46Z |
 | T-010-2 | Data for sequences (migration 0007, models, sequence_rules, guest cap) | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:17:46Z |
 | T-010-5 | Design tokens, fonts, brand mark, top bar and UI primitives | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:17:46Z |
-| T-011-1 | Faithful, warm LTX clip endpoint on Modal | open | - | - |
+| T-011-1 | Faithful, warm LTX clip endpoint on Modal | claimed | sonnet-5@claude-code | 2026-09-26T01:23:23Z |
 | T-011-2 | Always send the video model a real prompt | claimed | sonnet-5@claude-code | 2026-09-26T01:23:23Z |
 | T-011-3 | Face swap endpoint on Modal | claimed | sonnet-5@claude-code | 2026-09-26T01:23:21Z |
 | T-011-4 | Face swap jobs (contract, data, create/read, worker step) | open | - | - |
