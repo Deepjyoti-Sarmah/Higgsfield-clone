@@ -16,8 +16,14 @@ export function useClipInput(
   seedDropped: boolean
   dropSeed: () => void
 } {
+  // The parent clears its seed once adopted, so keep our own copy until the user drops it.
+  const [heldSeed, setHeldSeed] = useState<SeedImage | null>(seedImage)
   const [seedDropped, setSeedDropped] = useState(false)
-  const activeSeed = seedDropped ? null : seedImage
+  if (seedImage !== null && seedImage.assetId !== heldSeed?.assetId) {
+    setHeldSeed(seedImage)
+    setSeedDropped(false)
+  }
+  const activeSeed = seedDropped ? null : heldSeed
   const uploadAssetId = upload.state.status === "ready" ? upload.state.asset.id : null
   const previewUrl = upload.state.status === "idle" ? null : upload.state.previewUrl
   const input = clipInputImage(activeSeed, uploadAssetId, previewUrl)
