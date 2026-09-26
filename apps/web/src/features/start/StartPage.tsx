@@ -24,9 +24,15 @@ export function StartPage() {
           <StartSteps />
         </div>
       </div>
-      <div className="mt-10">
-        <ShowcaseRow />
-      </div>
+      <section className="mt-16 sm:mt-20">
+        <h2 className="text-[1.25rem] font-semibold text-text">{startCopy.galleryHeading}</h2>
+        <p className="mt-2 max-w-[65ch] text-[0.9375rem] leading-relaxed text-muted">
+          {startCopy.galleryIntro}
+        </p>
+        <div className="mt-6">
+          <ShowcaseRow />
+        </div>
+      </section>
       <div className="mt-12">
         <PresetChipRow presetsState={presetsState} />
       </div>

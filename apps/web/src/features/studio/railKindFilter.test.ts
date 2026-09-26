@@ -30,6 +30,12 @@ describe("railKindFilter", () => {
     expect(matchesRailKindFilter(still, "video")).toBe(false)
   })
 
+  it("groups still and video face swaps under the faceswap filter", () => {
+    expect(matchesRailKindFilter(item("a", "faceswap"), "faceswap")).toBe(true)
+    expect(matchesRailKindFilter(item("b", "video_faceswap"), "faceswap")).toBe(true)
+    expect(matchesRailKindFilter(item("c", "video"), "faceswap")).toBe(false)
+  })
+
   it("counts each kind plus the total", () => {
     const items = [item("a", "image"), item("b", "video"), item("c", "video")]
     expect(countRailKinds(items)).toEqual({
@@ -38,6 +44,17 @@ describe("railKindFilter", () => {
       video: 2,
       sequence: 0,
       faceswap: 0,
+    })
+  })
+
+  it("counts both face swap kinds toward the faceswap count", () => {
+    const items = [item("a", "image"), item("b", "faceswap"), item("c", "video_faceswap")]
+    expect(countRailKinds(items)).toEqual({
+      all: 3,
+      image: 1,
+      video: 0,
+      sequence: 0,
+      faceswap: 2,
     })
   })
 })

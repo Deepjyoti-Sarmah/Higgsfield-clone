@@ -1,12 +1,9 @@
 import uuid
 
 from httpx import AsyncClient
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.domain.sequence_rules import MAX_CLIPS, MIN_CLIPS
-from app.models.asset import Asset
-from app.models.job import Job
 from tests.fakes.in_memory_object_storage import InMemoryObjectStorage
 from tests.job_api_helpers import (
     balance_of,
@@ -15,56 +12,15 @@ from tests.job_api_helpers import (
     current_user_id,
     post_job,
 )
+from tests.sequence_helpers import (
+    build_sequence_body,
+    clip_rows,
+    count_where,
+    create_succeeded_clip,
+    create_succeeded_video_faceswap,
+)
 
 SessionMaker = async_sessionmaker[AsyncSession]
-
-
-def build_sequence_body(clip_ids: list[str], key: str, audio_id: str | None = None) -> dict:
-    body: dict[str, object] = {
-        "clips": [{"job_id": clip_id, "transition_in": "crossfade"} for clip_id in clip_ids],
-        "idempotency_key": key,
-    }
-    if audio_id is not None:
-        body["audio_asset_id"] = audio_id
-    return body
-
-
-async def create_succeeded_clip(
-    guest_client: AsyncClient, storage: InMemoryObjectStorage, session_maker: SessionMaker, key: str,
-) -> str:
-    job_id = await create_queued_job(guest_client, storage, key)
-    user_id = await current_user_id(guest_client)
-    video_id, poster_id = uuid.uuid4(), uuid.uuid4()
-    async with session_maker() as session:
-        for asset_id, kind, name in (
-            (video_id, "output_video", "video.mp4"),
-            (poster_id, "output_poster", "poster.jpg"),
-        ):
-            session.add(Asset(id=asset_id, user_id=uuid.UUID(user_id), kind=kind,
-                              status="ready", byte_size=100,
-                              storage_key=f"users/{user_id}/jobs/{job_id}/{name}",
-                              content_type="video/mp4"))
-        job = await session.get(Job, uuid.UUID(job_id))
-        assert job is not None
-        job.status = "succeeded"
-        job.output_video_asset_id = video_id
-        job.output_poster_asset_id = poster_id
-        await session.commit()
-    return job_id
-
-
-async def count_where(session_maker: SessionMaker, table: str, clause: str, job: uuid.UUID) -> int:
-    async with session_maker() as session:
-        return int(await session.scalar(
-            text(f"SELECT count(*) FROM {table} WHERE {clause}"), {"job_id": job}) or 0)
-
-
-async def clip_rows(session_maker: SessionMaker, job: uuid.UUID) -> list[tuple[int, str]]:
-    async with session_maker() as session:
-        found = await session.execute(
-            text("SELECT position, transition_in FROM job_sequence_clip "
-                 "WHERE job_id = :job_id ORDER BY position"), {"job_id": job})
-        return [(row[0], row[1]) for row in found]
 
 
 async def test_create_writes_hold_step_and_clips(
@@ -137,6 +93,17 @@ async def test_queued_or_image_clip_is_422(
         "/api/v1/sequence-jobs", json=build_sequence_body([good, image.json()["id"]], "t0103-seq-06"))
     assert queued_post.status_code == 422
     assert image_post.status_code == 422
+
+
+async def test_face_swapped_video_can_join_a_sequence(
+    guest_client: AsyncClient, object_storage: InMemoryObjectStorage, session_maker: SessionMaker,
+) -> None:
+    first = await create_succeeded_clip(guest_client, object_storage, session_maker, "t0103-sw-a")
+    swapped = await create_succeeded_video_faceswap(guest_client, session_maker, "t0103-sw-b")
+    created = await guest_client.post(
+        "/api/v1/sequence-jobs", json=build_sequence_body([first, swapped], "t0103-seq-swap"))
+    assert created.status_code == 202
+    assert created.json()["clip_count"] == 2
 
 
 async def test_non_audio_asset_is_404(

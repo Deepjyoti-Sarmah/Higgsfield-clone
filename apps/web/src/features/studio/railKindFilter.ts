@@ -8,13 +8,15 @@ const EMPTY_COUNTS: RailKindCounts = { all: 0, image: 0, video: 0, sequence: 0, 
 
 export function matchesRailKindFilter(item: LibraryItem, filter: RailKindFilter): boolean {
   if (filter === "all") return true
+  if (filter === "faceswap") return item.kind === "faceswap" || item.kind === "video_faceswap"
   return item.kind === filter
 }
 
 export function countRailKinds(items: LibraryItem[]): RailKindCounts {
   const counts: RailKindCounts = { ...EMPTY_COUNTS, all: items.length }
   for (const item of items) {
-    if (item.kind in counts) counts[item.kind as Exclude<RailKindFilter, "all">] += 1
+    if (item.kind === "video_faceswap") counts.faceswap += 1
+    else if (item.kind in counts) counts[item.kind as Exclude<RailKindFilter, "all">] += 1
   }
   return counts
 }

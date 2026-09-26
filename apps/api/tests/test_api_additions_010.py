@@ -13,7 +13,7 @@ from tests.job_api_helpers import (
     current_user_id,
     post_job,
 )
-from tests.test_sequence_jobs_api import create_succeeded_clip
+from tests.sequence_helpers import create_succeeded_clip
 
 LIBRARY_URL = "/api/v1/jobs"
 AUDIO_BYTES = b"ID3" + b"0" * 300

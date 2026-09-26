@@ -58,6 +58,10 @@ describe("aspect eligibility", () => {
     expect(clipEligibility(clip, 16 / 9, 16 / 9, false).eligible).toBe(true)
   })
 
+  it("accepts a face-swapped video", () => {
+    expect(clipEligibility({ ...clip, kind: "video_faceswap" }, 16 / 9, 16 / 9, false).eligible).toBe(true)
+  })
+
   it("disables a different aspect with its reason", () => {
     const result = clipEligibility(clip, 16 / 9, 9 / 16, false)
     expect(result.eligible).toBe(false)
@@ -74,7 +78,7 @@ describe("aspect eligibility", () => {
 describe("render blockers", () => {
   it("needs two clips", () => {
     expect(renderBlocker(draftOf(["cut"]), false)).toBe("need-two-clips")
-    expect(renderReason("need-two-clips")).toBe("Add one more clip to render.")
+    expect(renderReason("need-two-clips")).toBe("Add one more shot to render.")
   })
   it("waits for the music upload", () => {
     expect(renderBlocker(draftOf(["cut", "cut"]), true)).toBe("music-uploading")

@@ -2,7 +2,6 @@ import { ClipComposer } from "../create-video/ClipComposer"
 import { FaceSwapComposer } from "../face-swap/FaceSwapComposer"
 import { StillComposer } from "../image-create/StillComposer"
 import { SequenceComposer } from "../sequence/SequenceComposer"
-import { Tabs } from "../../ui/Tabs"
 import { ComposerExplainer } from "./ComposerExplainer"
 import { StudioFlowStrip } from "./StudioFlowStrip"
 import type {
@@ -21,16 +20,10 @@ type ComposerTabsProps = ComposerProps & {
   onSeedConsumed: () => void
   seedTarget: FaceSwapSeed | null
   onSeedTargetConsumed: () => void
+  onFaceSwapClip?: (item: LibraryItem) => void
   sequence: SequenceDraftControls
   libraryItems: LibraryItem[]
 }
-
-const TAB_ITEMS = [
-  { value: "still", label: "Still" },
-  { value: "clip", label: "Clip" },
-  { value: "sequence", label: "Sequence" },
-  { value: "faceswap", label: "Face swap" },
-] as const
 
 function ActiveComposer(props: ComposerTabsProps) {
   if (props.tab === "still") return <StillComposer onJobStarted={props.onJobStarted} />
@@ -48,6 +41,7 @@ function ActiveComposer(props: ComposerTabsProps) {
       <SequenceComposer
         onJobStarted={props.onJobStarted}
         onTabChange={props.onTabChange}
+        onFaceSwapClip={props.onFaceSwapClip}
         sequence={props.sequence}
         libraryItems={props.libraryItems}
       />
@@ -63,14 +57,10 @@ function ActiveComposer(props: ComposerTabsProps) {
 }
 
 export function ComposerTabs(props: ComposerTabsProps) {
-  const isEmptyRail = props.libraryItems.length === 0
   return (
     <section aria-label="Composer" className="border-t border-border bg-surface">
-      <div className="px-4 pt-2 sm:px-6">
-        <Tabs items={TAB_ITEMS} value={props.tab} onChange={props.onTabChange} ariaLabel="Composer tabs" />
-      </div>
+      <StudioFlowStrip activeTab={props.tab} onTabChange={props.onTabChange} />
       <ComposerExplainer tab={props.tab} />
-      {isEmptyRail && <StudioFlowStrip activeTab={props.tab} onTabChange={props.onTabChange} />}
       <ActiveComposer {...props} />
     </section>
   )

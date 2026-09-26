@@ -23,6 +23,7 @@ vi.mock("../../api/presets", () => ({
 
 const { StartPage } = await import("./StartPage")
 const { PresetChipRow } = await import("./PresetChipRow")
+const { TOOL_DEMOS } = await import("./toolDemos")
 
 function render(node: React.ReactElement): string {
   return renderToStaticMarkup(<MemoryRouter>{node}</MemoryRouter>)
@@ -34,6 +35,17 @@ describe("start page", () => {
     const ctaMatches = html.match(/href="\/studio"/g) ?? []
     expect(ctaMatches.length).toBe(1)
     expect(html).toContain("Open the studio")
+  })
+
+  it("tours all four tools with a label each", () => {
+    const html = render(<StartPage />)
+    for (const label of ["Still", "Clip", "Sequence", "Face swap"]) {
+      expect(html).toContain(`>${label}<`)
+    }
+  })
+
+  it("uses a different source still for the Still and Clip demos", () => {
+    expect(TOOL_DEMOS.still.media.source).not.toBe(TOOL_DEMOS.clip.media.source)
   })
 
   it("links preset chips into the clip tab with the preset slug", () => {

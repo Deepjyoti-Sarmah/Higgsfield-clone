@@ -1,25 +1,55 @@
-// Studio composer guidance copy: per-tab explainer + first-run flow strip.
+// Studio guidance copy: per-tool purpose, output, next step, and rail labels.
 export const studioCopy = {
-  explainer: {
+  tools: {
     still: {
-      title: "Still — make a picture",
-      body: "Make a picture from a prompt — then animate it in Clip.",
+      step: 1,
+      label: "Still",
+      purpose: "Make a picture from a written prompt.",
+      output: "One still image, saved to your work.",
+      next: "Open Clip to animate it.",
     },
     clip: {
-      title: "Clip — animate a still",
-      body: "Animate a still with a motion preset — then cut clips in Sequence.",
+      step: 2,
+      label: "Clip",
+      purpose: "Animate a still with a motion preset.",
+      output: "One short clip, saved to your work.",
+      next: "Add it to a sequence.",
     },
     sequence: {
-      title: "Sequence — cut one film",
-      body: "Cut 2–6 clips + optional music into one film — then Render & share.",
+      step: 3,
+      label: "Sequence",
+      purpose: "Cut clips and optional music into one film.",
+      output: "One rendered film, saved to your work.",
+      next: "Render, then share the link.",
     },
     faceswap: {
-      title: "Face swap — swap one face",
-      body: "Put one face into a target photo — result lands in your rail.",
+      step: 4,
+      label: "Face swap",
+      purpose: "Put one face into a still or a clip.",
+      output: "The swapped still or clip, saved to your work.",
+      next: "Animate or cut it like any other take.",
     },
   },
+  toolOrder: ["still", "clip", "sequence", "faceswap"],
+  guidance: {
+    outputLabel: "What you get",
+    nextLabel: "Next step",
+  },
+  stage: {
+    empty: {
+      title: "Nothing on the stage yet.",
+      body: "The stage plays the still, clip, or sequence you select from your work. Start one with a tool in the composer below, or pick an item from the rail.",
+      action: "Start with a Still",
+    },
+  },
+  flowStrip: {
+    heading: "How this works",
+  },
   rail: {
-    filterLabel: "Filter generations by kind",
+    heading: "Your work",
+    count: (total: number) => `${total} ${total === 1 ? "generation" : "generations"}`,
+    newAction: "New still",
+    filterLabel: "Filter your work by kind",
     filters: {
       all: "All",
       image: "Stills",
@@ -27,19 +57,11 @@ export const studioCopy = {
       sequence: "Sequences",
       faceswap: "Swaps",
     },
-    emptyTitle: "No generations yet.",
-    emptyBody: "Make your first still — then animate it in Clip.",
+    emptyTitle: "Nothing here yet.",
+    emptyBody: "Make a still, or pick a preset from the start page. Your work lands here.",
     emptyAction: "Make a still",
     filteredEmptyTitle: "Nothing of this kind yet.",
-    filteredEmptyAction: "Show everything",
-  },
-  flowStrip: {
-    heading: "Make your first film in three steps",
-    steps: [
-      { tab: "still", label: "Still", caption: "Prompt to picture" },
-      { tab: "clip", label: "Clip", caption: "Still to 5s clip" },
-      { tab: "sequence", label: "Sequence", caption: "Clips to one film" },
-    ],
-    dismiss: "Dismiss",
+    filteredEmptyBody: "Clear the filter to see everything.",
+    filteredEmptyAction: "Show all",
   },
 } as const

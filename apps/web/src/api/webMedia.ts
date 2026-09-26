@@ -10,67 +10,143 @@ export function previewPosterUrl(mediaUrl: string): string | null {
   return mediaUrl.endsWith(".mp4") ? `${mediaUrl.slice(0, -4)}.jpg` : null
 }
 
-export const SHOWCASE_MEDIA = {
-  dollyIn: { title: "DOLLY IN", tag: "CAMERA MOVE", slug: "dolly-in" },
-  dollyOutSlug: "dolly-out",
-  panLeftSlug: "pan-left",
-  orbitPush: { title: "ORBIT PUSH", tag: "CINEMATIC", slug: "orbit-push" },
-  crashZoom: { title: "CRASH ZOOM", tag: "DYNAMIC", slug: "crash-zoom" },
-  kenBurns: { title: "KEN BURNS", tag: "DOCUMENTARY", slug: "ken-burns" },
-} as const
+export type ShowcaseSource = "neon-alley" | "desert-canyon" | "portrait" | "forest-path"
+export type ShowcaseKind = "clip" | "still" | "sequence"
+
+export type ShowcaseMedia = {
+  id: string
+  kind: ShowcaseKind
+  title: string
+  caption: string
+  url: string
+  poster: string | null
+  source: ShowcaseSource | null
+}
+
+// build-preset-previews renders preset N from source (N mod 4), so each group of four
+// clips uses all four stills before a subject comes back.
+const SOURCE_CYCLE: readonly ShowcaseSource[] = [
+  "neon-alley",
+  "desert-canyon",
+  "portrait",
+  "forest-path",
+]
+
+type MotionPresetSeed = {
+  slug: string
+  name: string
+  caption: string
+}
+
+// One line per PRESET_CATALOG slug; the caption names the move the clip shows.
+const MOTION_PRESET_SEEDS: readonly MotionPresetSeed[] = [
+  { slug: "dolly-in", name: "Dolly In", caption: "Dolly In: glide toward the subject" },
+  { slug: "dolly-out", name: "Dolly Out", caption: "Dolly Out: pull back to reveal the scene" },
+  { slug: "pan-left", name: "Pan Left", caption: "Pan Left: sweep the frame to the left" },
+  { slug: "pan-right", name: "Pan Right", caption: "Pan Right: sweep the frame to the right" },
+  { slug: "tilt-up", name: "Tilt Up", caption: "Tilt Up: rise from the bottom of the frame" },
+  { slug: "ken-burns", name: "Ken Burns", caption: "Ken Burns: slow push across a still" },
+  { slug: "orbit-push", name: "Orbit Push", caption: "Orbit Push: push in while arcing around the subject" },
+  { slug: "slow-drift", name: "Slow Drift", caption: "Slow Drift: a barely-there diagonal float" },
+  { slug: "crash-zoom", name: "Crash Zoom", caption: "Crash Zoom: snap straight into the subject" },
+  { slug: "whip-pan", name: "Whip Pan", caption: "Whip Pan: a fast blurred swing across the frame" },
+  { slug: "handheld", name: "Handheld", caption: "Handheld: subtle shake, like a camera in hand" },
+  { slug: "spiral-in", name: "Spiral In", caption: "Spiral In: twist inward for a dramatic entrance" },
+]
+
+export const MOTION_PREVIEWS: readonly ShowcaseMedia[] = MOTION_PRESET_SEEDS.map((seed, index) => {
+  const clipUrl = previewClipUrl(seed.slug)
+  return {
+    id: seed.slug,
+    kind: "clip",
+    title: seed.name,
+    caption: seed.caption,
+    url: clipUrl,
+    poster: previewPosterUrl(clipUrl),
+    source: SOURCE_CYCLE[index % SOURCE_CYCLE.length],
+  }
+})
 
 // Real FLUX.1-schnell generations (apps/gpu/flux_image.py); see docs/research/preview-sources.md.
-export const SHOWCASE_STILLS = [
-  { title: "NEON ALLEY", url: "/showcase/sample-01.jpg", aspect: "IMAGE" },
-  { title: "DESERT CANYON", url: "/showcase/sample-02.jpg", aspect: "IMAGE" },
-  { title: "PORTRAIT", url: "/showcase/sample-03.jpg", aspect: "IMAGE" },
-  { title: "FOREST PATH", url: "/showcase/sample-04.jpg", aspect: "IMAGE" },
-] as const
-
-// T1 (012): old R2 image-1.png stills resolved but looked near-identical,
-// so stills use distinct local samples and clips use R2 previews.
-type ShowcaseItem = { url: string; poster: string | null; caption: string }
-
-const dollyInUrl = previewClipUrl(SHOWCASE_MEDIA.dollyIn.slug)
-const orbitPushUrl = previewClipUrl(SHOWCASE_MEDIA.orbitPush.slug)
-
-export const SHOWCASE: {
-  still: ShowcaseItem
-  clip: ShowcaseItem
-  faceswap: ShowcaseItem
-  sequence: ShowcaseItem
-  orbitClip: ShowcaseItem
-  canyonStill: ShowcaseItem
-} = {
-  still: {
+export const SHOWCASE_STILLS: readonly ShowcaseMedia[] = [
+  {
+    id: "neon-alley",
+    kind: "still",
+    title: "Neon alley",
+    caption: "Prompt to still: a neon alley in deep perspective",
     url: "/showcase/sample-01.jpg",
     poster: null,
-    caption: "Still — prompt → picture",
+    source: "neon-alley",
   },
-  clip: {
-    url: dollyInUrl,
-    poster: previewPosterUrl(dollyInUrl),
-    caption: "Clip — still + motion preset, 0:05",
-  },
-  faceswap: {
-    url: "/showcase/sample-03.jpg",
-    poster: null,
-    caption: "Face swap — face + target photo",
-  },
-  sequence: {
-    url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/video.mp4",
-    poster:
-      "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/poster.jpg",
-    caption: "Sequence — 2 shots cut to 0:07",
-  },
-  orbitClip: {
-    url: orbitPushUrl,
-    poster: previewPosterUrl(orbitPushUrl),
-    caption: "Clip — orbit push preset, 0:05",
-  },
-  canyonStill: {
+  {
+    id: "desert-canyon",
+    kind: "still",
+    title: "Desert canyon",
+    caption: "Prompt to still: a desert canyon at golden hour",
     url: "/showcase/sample-02.jpg",
     poster: null,
-    caption: "Still — landscape prompt → picture",
+    source: "desert-canyon",
   },
+  {
+    id: "portrait",
+    kind: "still",
+    title: "Portrait",
+    caption: "Prompt to still: a portrait in side light",
+    url: "/showcase/sample-03.jpg",
+    poster: null,
+    source: "portrait",
+  },
+  {
+    id: "forest-path",
+    kind: "still",
+    title: "Forest path",
+    caption: "Prompt to still: a forest path at dawn",
+    url: "/showcase/sample-04.jpg",
+    poster: null,
+    source: "forest-path",
+  },
+]
+
+// A real rendered sequence: two shots cut into one film on our storage.
+export const SHOWCASE_SEQUENCE: ShowcaseMedia = {
+  id: "sequence-example",
+  kind: "sequence",
+  title: "Two shot sequence",
+  caption: "Sequence: two shots cut into one 0:07 film",
+  url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/video.mp4",
+  poster:
+    "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/poster.jpg",
+  source: null,
+}
+
+// Clips cycle all four source stills, then the stills follow in order, so no two
+// neighbouring tiles start from the same still.
+export const SHOWCASE_GALLERY: readonly ShowcaseMedia[] = [
+  ...MOTION_PREVIEWS,
+  ...SHOWCASE_STILLS,
+]
+
+export type ShowcaseGroup = {
+  source: ShowcaseSource
+  still: ShowcaseMedia
+  previews: readonly ShowcaseMedia[]
+}
+
+// One column per source still: the still on top, its three motion previews below.
+export const SHOWCASE_GROUPS: readonly ShowcaseGroup[] = SHOWCASE_STILLS.map((still) => ({
+  source: still.source as ShowcaseSource,
+  still,
+  previews: MOTION_PREVIEWS.filter((preview) => preview.source === still.source),
+}))
+
+const ALL_SHOWCASE_MEDIA: readonly ShowcaseMedia[] = [
+  ...MOTION_PREVIEWS,
+  ...SHOWCASE_STILLS,
+  SHOWCASE_SEQUENCE,
+]
+
+export function findShowcaseItem(id: string): ShowcaseMedia {
+  const item = ALL_SHOWCASE_MEDIA.find((entry) => entry.id === id)
+  if (!item) throw new Error(`Unknown showcase item: ${id}`)
+  return item
 }

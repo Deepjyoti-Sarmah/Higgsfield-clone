@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.credit_rules import hold_amount
-from app.domain.sequence_rules import SEQUENCE_CREDIT_COST, STITCH_STEP_KIND
+from app.domain.sequence_rules import ELIGIBLE_CLIP_KINDS, SEQUENCE_CREDIT_COST, STITCH_STEP_KIND
 from app.models.job import Job
 from app.repositories.assets import find_user_asset
 from app.repositories.job_steps import insert_job_step
@@ -58,7 +58,7 @@ async def _replayed_creation(session: AsyncSession, job: Job) -> SequenceJobCrea
 def _check_clip_eligible(job_id: uuid.UUID, source: Job | None) -> None:
     if source is None:
         raise SequenceClipNotFoundError(str(job_id))
-    if source.kind != "video":
+    if source.kind not in ELIGIBLE_CLIP_KINDS:
         raise SequenceClipIneligibleError(job_id, "not a video job")
     if source.status != "succeeded":
         raise SequenceClipIneligibleError(job_id, "not succeeded")

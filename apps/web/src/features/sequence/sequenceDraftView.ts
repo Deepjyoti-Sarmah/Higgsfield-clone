@@ -78,6 +78,9 @@ export type ClipEligibility = {
   reason: string | null
 }
 
+// Plain clips and face-swapped videos both carry a finished mp4.
+const ELIGIBLE_CLIP_KINDS = ["video", "video_faceswap"]
+
 // AC-13: succeeded videos only; after the first clip the aspect must match.
 export function clipEligibility(
   item: { kind: string; status: string; video_url: string | null; id: string },
@@ -85,7 +88,7 @@ export function clipEligibility(
   aspect: number | null,
   isAlreadyInDraft: boolean,
 ): ClipEligibility {
-  if (item.kind !== "video" || item.status !== "succeeded" || !item.video_url) {
+  if (!ELIGIBLE_CLIP_KINDS.includes(item.kind) || item.status !== "succeeded" || !item.video_url) {
     return { eligible: false, reason: "Only finished clips can join." }
   }
   if (isAlreadyInDraft) return { eligible: true, reason: null }

@@ -3,6 +3,8 @@ from typing import Literal
 SEQUENCE_CREDIT_COST = 1
 MIN_CLIPS = 2
 MAX_CLIPS = 6
+# Source jobs a sequence can cut: plain clips and face-swapped videos.
+ELIGIBLE_CLIP_KINDS: tuple[str, ...] = ("video", "video_faceswap")
 TRANSITIONS: tuple[str, ...] = ("cut", "crossfade", "fade_black")
 SEQUENCE_TRANSITIONS: tuple[str, ...] = TRANSITIONS
 SequenceTransition = Literal["cut", "crossfade", "fade_black"]

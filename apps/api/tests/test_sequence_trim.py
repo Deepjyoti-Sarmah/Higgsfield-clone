@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.adapters.ffmpeg_stitcher import stitch_clips
 from app.adapters.stitch_filtergraph import build_stitch_command
 from tests.fakes.in_memory_object_storage import InMemoryObjectStorage
-from tests.test_sequence_jobs_api import build_sequence_body, create_succeeded_clip
+from tests.sequence_helpers import build_sequence_body, create_succeeded_clip
 
 SessionMaker = async_sessionmaker[AsyncSession]
 

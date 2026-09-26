@@ -1,70 +1,64 @@
 import { useState } from "react"
-import { SHOWCASE } from "../../api/webMedia"
+import type { ShowcaseMedia } from "../../api/webMedia"
+import { SHOWCASE_GROUPS } from "../../api/webMedia"
 
-type CellProps = { url: string; poster: string | null; caption: string; isVideo: boolean }
-
-function CellMedia({ url, poster, isVideo, onError }: {
-  url: string
-  poster: string | null
-  isVideo: boolean
-  onError: () => void
-}) {
-  if (isVideo) {
-    return (
-      <video
-        src={url}
-        poster={poster ?? undefined}
-        muted
-        loop
-        playsInline
-        autoPlay
-        preload="metadata"
-        onError={onError}
-        className="h-full w-full object-cover motion-safe:block"
-      />
-    )
+function TileMedia({ item, onError }: { item: ShowcaseMedia; onError: () => void }) {
+  if (item.kind === "still") {
+    return <img src={item.url} alt="" onError={onError} className="h-full w-full object-cover" />
   }
-  return <img src={url} alt="" onError={onError} className="h-full w-full object-cover" />
+  return (
+    <video
+      src={item.url}
+      poster={item.poster ?? undefined}
+      muted
+      loop
+      playsInline
+      autoPlay
+      preload="metadata"
+      onError={onError}
+      className="h-full w-full object-cover"
+    />
+  )
 }
 
-function ShowcaseCell({ url, poster, caption, isVideo }: CellProps) {
+function ShowcaseTile({ item }: { item: ShowcaseMedia }) {
   const [failed, setFailed] = useState(false)
-  if (failed && poster === null) return null
+  if (failed && item.poster === null) return null
   const media = failed ? (
-    <img src={poster ?? ""} alt="" className="h-full w-full object-cover" />
+    <img src={item.poster ?? ""} alt="" className="h-full w-full object-cover" />
   ) : (
-    <CellMedia url={url} poster={poster} isVideo={isVideo} onError={() => setFailed(true)} />
+    <TileMedia item={item} onError={() => setFailed(true)} />
   )
+  const aspect = item.kind === "still" ? "aspect-square" : "aspect-video"
   return (
-    <div className="flex flex-col gap-2">
-      <div className="aspect-square overflow-hidden rounded-lg border border-border bg-sunken">
+    <figure className="flex flex-col gap-2">
+      <div className={aspect + " overflow-hidden rounded-lg border border-border bg-sunken"}>
         {media}
       </div>
-      <p className="font-mono text-[11px] text-muted">{caption}</p>
-    </div>
+      <figcaption className="text-[0.8125rem] leading-snug text-muted">{item.caption}</figcaption>
+    </figure>
   )
 }
 
-const TILES = [
-  SHOWCASE.still,
-  SHOWCASE.clip,
-  SHOWCASE.faceswap,
-  SHOWCASE.sequence,
-  SHOWCASE.orbitClip,
-  SHOWCASE.canyonStill,
-] as const
+function SourceColumn({ still, previews }: { still: ShowcaseMedia; previews: readonly ShowcaseMedia[] }) {
+  return (
+    <section className="flex flex-col gap-3">
+      <h3 className="text-sm font-semibold text-text">{still.title}</h3>
+      <ShowcaseTile item={still} />
+      <div className="flex flex-col gap-3">
+        {previews.map((preview) => (
+          <ShowcaseTile key={preview.id} item={preview} />
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export function ShowcaseRow() {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-      {TILES.map((tile) => (
-        <ShowcaseCell
-          key={tile.caption}
-          url={tile.url}
-          poster={tile.poster}
-          caption={tile.caption}
-          isVideo={tile.url.endsWith(".mp4")}
-        />
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {SHOWCASE_GROUPS.map((group) => (
+        <SourceColumn key={group.source} still={group.still} previews={group.previews} />
       ))}
     </div>
   )

@@ -60,7 +60,7 @@ export const imageCreateCopy = {
     invalid: "That didn't go through. Try again.",
     network: "Couldn't reach the server.",
     limitHit: "That's today's job limit. It resets at midnight UTC.",
-    creditsOpened: "Not enough credits — the credits panel is open.",
+    creditsOpened: "Not enough credits. The credits panel is open.",
   },
   states: {
     optionsError: {

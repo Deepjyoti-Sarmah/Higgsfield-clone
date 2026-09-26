@@ -36,6 +36,7 @@ export type SequenceComposerProps = ComposerProps & {
   sequence: SequenceDraftControls
   libraryItems: LibraryItem[]
   onTabChange?: (tab: StudioTab) => void
+  onFaceSwapClip?: (item: LibraryItem) => void
 }
 export type FaceSwapComposerProps = ComposerProps & {
   seedTarget: FaceSwapSeed | null

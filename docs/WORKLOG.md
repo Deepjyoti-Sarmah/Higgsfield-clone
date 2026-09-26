@@ -104,3 +104,1788 @@
 - 2026-09-26 · Claude Opus 5.5 (orchestrator, T-010-13) · deploy spec 010 · Railway `api`+`worker`, `docs/verification/T-010-13/` · DONE: pushed `3277750`; built a clean detached worktree (`npm ci && npm run build` → `index-CDM5O7ai.js`), `railway up --path-as-root` for both services, polled deployment ids to SUCCESS, live bundle hash matched the clean build; health 5/5; `scripts/smoke-sequence` 6/6 PASS on the public URL; 12 real light/dark screenshots. Found 2 issues (share page shows credits + auto-creates guests; cramped 390px top bar), logged in STATUS BROKEN
 - 2026-09-26 · Claude Opus 5.5 (orchestrator) · fix + redeploy the two T-010-13 findings · `App.tsx`, `CreditsButton.tsx`, `SessionBadge.tsx` · DONE: `00a1047` deployed (bundle hash gate passed), verified live in a fresh browser context: no guest minted on `/` or share, share page free of credits/session UI, 390px top bar on one line
 - 2026-09-26 · Claude Opus 5.5 (orchestrator) · spec 011 quality/face swap/trim · T-011-1..10 · DONE: live audit found clips drifting off their input (empty prompt, unfitted input, cold model); 10 task packets implemented by Sonnet 5 agents via scripts/task, each re-verified, reviewed and merged by the orchestrator; Railway MODAL_ENDPOINT_URL switched to the new LTX app and MODAL_FACESWAP_ENDPOINT_URL set; one transient Railway upload failure retried; live verification by the higgsfield-c6 session (T-011-8 PASS, findings fixed in T-011-10)
+- 2026-09-26 · deepseek-flash (orchestrator) + 2 background workers · T-050 studio UX + sequence/face-swap flow · , , , , , , ,  · DONE locally: sequences accept ; start page four-tool tour + subject-grouped demo gallery; per-tool studio guidance (step/purpose/output/next); rail "Your work" header + fixed Swaps filter; Sequence film timeline with per-shot Swap that seeds the face-swap tool; no-slop copy pass. API 298, web 133, build + standards ok; Playwright screenshots + handoff assert. Not deployed; no paid generation (gallery reuses the 4 real stills, grouped) · see commit 0e598802e15091400ca68e58bd254d6df5f5f06a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 16:42:24 2026 +0530
+
+    T6: video face swap end to end (mock-verified)
+
+commit a89c196d975b7e038dc71f7e880d30c9008c1137
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:59:30 2026 +0530
+
+    Spec 011 done: final live re-check 7/7 PASS
+
+commit 17fdd74810f5346d326f662aa5cdd44658dee797
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:59:18 2026 +0530
+
+    T-011-11: final live re-check of the T-011-8 findings, all pass
+
+commit 040ec21202dfed32fd86fe57106b17e1a3b95500
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:50:44 2026 +0530
+
+    STATUS/WORKLOG: spec 011 live
+
+commit 302df6032aa96ecbaddcc7909fe30fc0f0e21759
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:44:13 2026 +0530
+
+    Tick T-011-10
+
+commit 9876612f3fdaa190ace03d0fcb8917a8d69d50a3
+Merge: c085a9f 074c40b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:44:05 2026 +0530
+
+    Merge task/T-011-10: fixes for the T-011-8 live findings
+
+commit c085a9f48950236018e2d3c6d3828091a38832dd
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:44:04 2026 +0530
+
+    T-011-10: REVIEW from claude-opus-5.5@claude-code
+
+commit 0b512f009fe804a3031ea9432847e3374c9de16c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:43:28 2026 +0530
+
+    Tick T-011-9
+
+commit 17a5f0344496d67c1ee6b585d6493716f1660a4f
+Merge: c2491e8 8953e02
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:43:28 2026 +0530
+
+    Merge task/T-011-9: real showcase on the start page
+
+commit c2491e899160946895ffc210778357f2686716bc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:43:28 2026 +0530
+
+    T-011-9: REVIEW from claude-opus-5.5@claude-code
+
+commit d7870ea7757f25a912d2b704ee3c4302ae69464b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:43:28 2026 +0530
+
+    T-011-10: submitted by sonnet-5@claude-code
+
+commit 074c40b903f2e9cfe62c566f889028ab22981325
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:43:26 2026 +0530
+
+    T-011-10: submit by sonnet-5@claude-code
+
+commit 56ccef169817be96839ada4a91631870709273f7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:42:49 2026 +0530
+
+    T-011-9: submitted by sonnet-5@claude-code
+
+commit 8953e0245f24252c36b9f545007adff2cf48d350
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:42:48 2026 +0530
+
+    T-011-9: submit by sonnet-5@claude-code
+
+commit 23c79a3559d2d487c18241b2aa617409ac57715c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:37:36 2026 +0530
+
+    T-011-9: claimed by sonnet-5@claude-code
+
+commit 85381475110d444a2ccbace6e77c5c812e9078f1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:36:57 2026 +0530
+
+    T-011-10: claimed by sonnet-5@claude-code
+
+commit 7590ec47e617ba9bf1e701c988a77a450baaeea4
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:36:29 2026 +0530
+
+    board: regenerate
+
+commit 8c5e732a9f769e961ab6fb9b40f6954f4cd39519
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:36:29 2026 +0530
+
+    T-011-10 brief (T-011-8 findings); open T-011-9 and T-011-10
+
+commit 96b2f39f4e38d066565a08f02adbb3c9629c5b16
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:35:37 2026 +0530
+
+    T-011-8: live verification of spec 011 and showcase URLs
+
+commit b82cebd5286c1b0da4385dd6702e651574cc35ec
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:24:14 2026 +0530
+
+    T-011-9 brief: real showcase on the start page (split from T-011-7)
+
+commit ed8162ef354715eb045d6eafa91dd4da22524bad
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:21:58 2026 +0530
+
+    Tick T-011-7 (showcase split out to T-011-9)
+
+commit 23b14cfd545633393dcc3a09756238532a2b1258
+Merge: e385ee5 5b193a3
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:21:52 2026 +0530
+
+    Merge task/T-011-7: trim controls and tool links
+
+commit e385ee526f0bbe2cee79da0f16b0d7f01e3093f6
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 10:21:52 2026 +0530
+
+    T-011-7: REVIEW from claude-opus-5.5@claude-code
+
+commit 11f77d37d6b7bf4d59ab90cf52ca09d2c0b9b865
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 08:23:26 2026 +0530
+
+    T-011-7: submitted by sonnet-5@claude-code
+
+commit 2e20a541be2deeba4a81a363d5207c2b1089e157
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 08:23:22 2026 +0530
+
+    T-011-7: ANSWER from sonnet-5@claude-code
+
+commit 5b193a3699fbf0720ea0ec76e33636352c055afc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 08:23:07 2026 +0530
+
+    T-011-7: submit by sonnet-5@claude-code
+
+commit 833b9a1fd291a6f2604d76c1c16c57324f5d74d2
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:39:35 2026 +0530
+
+    T-011-7: QUESTION from sonnet-5@claude-code
+
+commit 5b89ed591fcc6a2208548c6c719301484966c1c9
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:35:44 2026 +0530
+
+    T-011-7: claimed by sonnet-5@claude-code
+
+commit 684d16ca112d1ecd01df1fa4c1cb3f1a28febb6a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:35:44 2026 +0530
+
+    D-016: rebuilt clip endpoint and face swap on Modal (with licence note)
+
+commit a08a59614793d2d9d20cd546a84bd051da777fa6
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:35:30 2026 +0530
+
+    board: regenerate
+
+commit cd8d9e40938b2e91f51270c1934441037cced4e1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:35:30 2026 +0530
+
+    Open T-011-7
+
+commit e9ac61102108b979aef9de33311b4629999f125c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:32:58 2026 +0530
+
+    Update the payload test for T-011-6's default trim fields
+    
+    toPayloadClips now sends trim_start_ms 0 and trim_end_ms null; T-011-6's
+    verify ran typecheck but not vitest, so this expectation was missed.
+
+commit 4ecf4ab3cc1eaf962d2f93ffb022ce28f64623ce
+Merge: 252eb99 e8f4679
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:32:45 2026 +0530
+
+    Merge task/T-011-5: face swap tab in the studio
+
+commit 252eb998cbd9f75d09b73a4cc7c90cda0b92436e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:32:29 2026 +0530
+
+    Tick T-011-5, T-011-6
+
+commit c0e7d4da11267707aba811b47ccbef4bce22b21a
+Merge: bacfd8b 4c30856
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:31:08 2026 +0530
+
+    Merge task/T-011-6
+
+commit bacfd8b32ff261c3d171ceb8aceee44cc733a66b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:31:08 2026 +0530
+
+    T-011-5: REVIEW from claude-opus-5.5@claude-code
+
+commit 6698cbe354098816ff40e13d9eec0d9b7672b645
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:31:08 2026 +0530
+
+    T-011-6: REVIEW from claude-opus-5.5@claude-code
+
+commit f5f062e94e778d9ff7b61d2d9a7a399569e4a949
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:27:55 2026 +0530
+
+    T-011-5: submitted by sonnet-5@claude-code
+
+commit e8f4679a3a6144adfd50a64d433625c5d5f5b8ef
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:27:53 2026 +0530
+
+    T-011-5: submit by sonnet-5@claude-code
+
+commit 9f9538d6cb0de372824a5789814ea7895761aca7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:49 2026 +0530
+
+    T-011-6: submitted by sonnet-5@claude-code
+
+commit 4c308568d42d6c4777dbdee931ed8553ecd631c6
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:47 2026 +0530
+
+    T-011-6: submit by sonnet-5@claude-code
+
+commit 0b80f0b7fb800fd0bcd5d121d78f840169ccad70
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:39 2026 +0530
+
+    Tick T-011-3
+
+commit e35ee727081820beb39508b8f92f773d5ff20564
+Merge: 78fc472 f54968a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:39 2026 +0530
+
+    Merge task/T-011-3: face swap endpoint on Modal
+
+commit 78fc4728ab598de8747c6dc683b40fbabcbe913f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:39 2026 +0530
+
+    T-011-3: REVIEW from claude-opus-5.5@claude-code
+
+commit f54968af422308ee6d41800e438936ae50e221e9
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:02 2026 +0530
+
+    T-011-3: submit by sonnet-5@claude-code
+
+commit 34e0b12732ade65a41b1dd08907f97e7fb930e5b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:26:02 2026 +0530
+
+    T-011-3: submitted by sonnet-5@claude-code
+
+commit 1f551b4cf74d8336b9a92b51704ffad9359e36ba
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:23:59 2026 +0530
+
+    T-011-6: ANSWER from claude-opus-5.5@claude-code
+
+commit d86195c5bdb45055bd45068b47cf7e7d075ae2ee
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:22:29 2026 +0530
+
+    T-011-6: QUESTION from sonnet-5@claude-code
+
+commit 0efcaa349ba2707fdb82e32b58cc13f83003260b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:17:00 2026 +0530
+
+    T-011-5: claimed by sonnet-5@claude-code
+
+commit 0127889ae1f9a58eec59f3929aa0b3aca137f4d8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:16:55 2026 +0530
+
+    T-011-6: claimed by sonnet-5@claude-code
+
+commit 1aa1557d94c33cecdf30f1fb7320a1dce8ea3cde
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:16:22 2026 +0530
+
+    board: regenerate
+
+commit dbb185db6ca25ba052f62b6cd75628a7df6ac5d8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:16:22 2026 +0530
+
+    Tick T-011-4; open wave 2 (T-011-5, T-011-6)
+
+commit d0c53fd46d352357198574ec780e74036ce66045
+Merge: 89bcd07 cc9327f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:16:22 2026 +0530
+
+    Merge task/T-011-4: face swap jobs (contract, data, worker)
+
+commit 89bcd07c4ac2ca5e1dc6335bb4ed5f36c33e47b1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:16:22 2026 +0530
+
+    T-011-4: REVIEW from claude-opus-5.5@claude-code
+
+commit 8cfc9a9431801afebea939c6b8b356c69c55dc11
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:14:37 2026 +0530
+
+    T-011-4: submitted by sonnet-5@claude-code
+
+commit cc9327f0a240cdb2509a274e5fdb1cae1e9b117b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:14:36 2026 +0530
+
+    T-011-4: submit by sonnet-5@claude-code
+
+commit 0875bd8de9d68ae893f29c0d6a2a05101f217328
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:10:19 2026 +0530
+
+    T-011-4: ANSWER from claude-opus-5.5@claude-code
+
+commit 87e389d7ade52203b23065c242f3f61ec628b4d0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:08:17 2026 +0530
+
+    Tick T-011-1
+
+commit 98ba4ec545888d26cd7214d379fe769121532913
+Merge: 7a185ae f4d737f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:08:17 2026 +0530
+
+    Merge task/T-011-1: faithful, warm LTX clip endpoint
+
+commit 7a185ae4fcf18e87466dd2e493489fa765d84931
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:08:17 2026 +0530
+
+    T-011-1: REVIEW from claude-opus-5.5@claude-code
+
+commit f4d737f28f9fc78f46bda5f6c301316e15c0438b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:07:43 2026 +0530
+
+    T-011-1: submit by sonnet-5@claude-code
+
+commit 946bb6fd0929147e9755513244578db295cc1331
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:07:43 2026 +0530
+
+    T-011-1: submitted by sonnet-5@claude-code
+
+commit 4e966d6be63bdbda31c7001bd8f4f78b30309e15
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 07:05:50 2026 +0530
+
+    T-011-4: QUESTION from sonnet-5@claude-code
+
+commit a352ffe27ce54226bd81ec6b4d5adcace2aef73c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:57:37 2026 +0530
+
+    Tick T-011-2
+
+commit 3d8944a55778ccc9dd7e3ec85e7d554963a64e4a
+Merge: d32a354 e4a32e3
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:57:37 2026 +0530
+
+    Merge task/T-011-2: always send the video model a real prompt
+
+commit d32a35424e9c0f922857c4c564053ea5ca3e9e31
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:57:37 2026 +0530
+
+    T-011-2: REVIEW from claude-opus-5.5@claude-code
+
+commit e4a32e31a61e3a422d524690191ed3dd2f4a7305
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:57:08 2026 +0530
+
+    T-011-2: submit by sonnet-5@claude-code
+
+commit 9a06caa468f896addfe7f89b1607601fe7cbd712
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:57:08 2026 +0530
+
+    T-011-2: submitted by sonnet-5@claude-code
+
+commit 17d2ad78cd03700b6a9bd8ee4b70f3b167e2ab46
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:54:22 2026 +0530
+
+    T-011-2: ANSWER from claude-opus-5.5@claude-code
+
+commit 4713459240adb3e4f3dcb65b2d0c2fda912bbcd0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:54:04 2026 +0530
+
+    T-011-2: QUESTION from sonnet-5@claude-code
+
+commit b9634bdf0235ba14beae7f2b5e60d0774f8d9977
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:53:23 2026 +0530
+
+    T-011-4: claimed by sonnet-5@claude-code
+
+commit 14ab6fa366bec90023c3738407b246257d75e593
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:53:23 2026 +0530
+
+    T-011-1: claimed by sonnet-5@claude-code
+
+commit 95f81ce18d72bf655d42cea62aabfad528090967
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:53:23 2026 +0530
+
+    T-011-2: claimed by sonnet-5@claude-code
+
+commit 6416e9c2834c18f08ed8eb9372262d1bd91e9326
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:53:21 2026 +0530
+
+    T-011-3: claimed by sonnet-5@claude-code
+
+commit 6f40f1d19a59f4ab0377f19e15b3e92bcc9042be
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:52:44 2026 +0530
+
+    board: regenerate
+
+commit c454c2927e078caa7ed6fd15b31eab30e2f7584e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:52:44 2026 +0530
+
+    Spec 011: output quality, face swap, clip trim (spec, rules, 7 briefs)
+    
+    Live audit: real clips drift off the input image because the model gets an
+    empty prompt, the input is not fitted to the output aspect, and the model
+    reloads per call. Adds face swap (Modal swapper + GFPGAN) and per-clip trim.
+    W1 (T-011-1..4) is open on the board.
+
+commit 96de011f61010691728c3ec43795407f5d43e4e8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:48:14 2026 +0530
+
+    T-042: review, ACCEPT with two minors
+
+commit 80c1b1a09ed6d30427b55da082f63202a442e87e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:46:51 2026 +0530
+
+    T-010-14: closing live pass, sequence render verified with and without music
+
+commit e77192d382966b2673f9ba8ae7d4870012698e42
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:37:25 2026 +0530
+
+    T-010-15: stable draft updaters so attached music no longer undoes clearDraft after Render
+
+commit 9620126b58cb9c0ccc97665d1a4052bf03664971
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 06:33:57 2026 +0530
+
+    T-010-14: live click-through report and screenshots for spec 010
+
+commit 53ff2ac286f50c8a20ca1819fe4c76ba2e9888b7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:56:51 2026 +0530
+
+    Refresh the credit balance when a job starts or finishes
+    
+    The top-bar balance loaded once, so the HOLD from a new job never showed.
+    A small credits-changed event is announced by the studio on job start and
+    settle; every balance hook reloads on it.
+
+commit ac2657f8764b04e628bfd51a9a0f13c3d93ecec5
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:56:49 2026 +0530
+
+    Mint at most one guest session at a time
+    
+    Each hook's runner deduplicated only its own calls, so the Library, credits
+    and composer 401s plus the guest button could create two guests at once; a
+    job made under the first cookie was then invisible to the second. One
+    shared in-flight request in useSession, and no new guest once signed in.
+
+commit 257a0b0f397a4b527b1fd8e315f467ec2d9c2861
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:56:47 2026 +0530
+
+    Keep the Animate this still in the Clip composer after it is adopted
+    
+    useClipInput read the seed straight from the parent, which clears it via
+    onSeedConsumed on adoption, so the input vanished and the drop zone came
+    back. The composer now holds its own copy until the user drops it.
+
+commit fed8f20437e8c2a66cd5722935e18ba319cc5ad0
+Merge: 46b28c4 642f69e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    Merge task/T-010-2: verify.log from the scripts/task re-verification
+
+commit 46b28c453e5b1484199bc1683fd742389924c4a9
+Merge: 1580eba 49dfb83
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    Merge task/T-010-1: verify.log from the scripts/task re-verification
+
+commit 1580eba2ac2c702abb8643d7f94269eb45599479
+Merge: f7701b8 f943d3c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    Merge task/T-010-5: verify.log from the scripts/task re-verification
+
+commit f7701b8d6f50baa6a6fd22b474284aefffa3cc0a
+Merge: 994f54b 9bc9302
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    Merge task/T-043: verify.log from the scripts/task re-verification
+
+commit 994f54bfc860fc7fa273861e82a59066ed8d81a6
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    T-010-2: REVIEW from claude-opus-5.5@claude-code
+
+commit e0850b4aea0ba646e32c1463f887c51893db275d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    T-010-1: REVIEW from claude-opus-5.5@claude-code
+
+commit d8520dc28ed4379982f059b1eee509efa9f4f752
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:46 2026 +0530
+
+    T-010-5: REVIEW from claude-opus-5.5@claude-code
+
+commit 642f69e816c53f43e55a53f766bdcbdd5f33d552
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:36 2026 +0530
+
+    T-010-2: submit by claude-opus-5.5@claude-code
+
+commit 0e4fc4789782327a65018e16f22dc109697a593c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:47:36 2026 +0530
+
+    T-010-2: submitted by claude-opus-5.5@claude-code
+
+commit ec83606f37c55291030891ee091370a432d058c1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:46:18 2026 +0530
+
+    T-010-1: submitted by claude-opus-5.5@claude-code
+
+commit 49dfb83f2cd682650e7d1c4dd83df11677460d2c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:46:15 2026 +0530
+
+    T-010-1: submit by claude-opus-5.5@claude-code
+
+commit 7844563a4d2e4a184150ca2019f87ef59ba2138f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:44:57 2026 +0530
+
+    T-010-5: submitted by claude-opus-5.5@claude-code
+
+commit f943d3c4cce0101dcc7a920f221d0098a03319a0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:44:56 2026 +0530
+
+    T-010-5: submit by claude-opus-5.5@claude-code
+
+commit b3385a963280ff843a1c98ee6e5aeab67fcf1e4b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:44:40 2026 +0530
+
+    Regenerate web API types: AssetKind includes input_audio
+    
+    T-010-4 widened AssetKind and regenerated openapi.json but not schema.d.ts;
+    found when re-running T-010-1's verify through scripts/task.
+
+commit 9bc9302720f0f838e706be55a2267687d8a43311
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:44:12 2026 +0530
+
+    T-043: drop the accidentally committed .venv symlink
+
+commit 69035334f29bcc930921327fba31f89490d727a8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:44:12 2026 +0530
+
+    gitignore .venv and node_modules as any path type, not only directories
+    
+    scripts/task claim symlinks both into each worktree; the trailing-slash
+    patterns only matched directories, so submit's 'git add -A' committed the
+    apps/api/.venv symlink onto task/T-043.
+
+commit e629dc11b3e9a43341d3f6eb0c39c011b4c07474
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:39:23 2026 +0530
+
+    scripts/task verify: target the main checkout's docker compose project
+    
+    In a worktree, compose names the project after the folder (t-010-1), so a
+    brief's 'docker compose up -d --wait db' tried to start a second Postgres on
+    port 5432 and failed. verify now defaults COMPOSE_PROJECT_NAME to the main
+    checkout's project. Found while re-verifying T-010-1/T-010-2; with a test.
+
+commit b4506a36556d7026c9ac18bb74b04a561fd381fc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:23 2026 +0530
+
+    T-010-2: claimed by claude-opus-5.5@claude-code
+
+commit fef694f67b5ca0c6d380983aebffc2409511162c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:23 2026 +0530
+
+    T-010-2: NOTE from claude-opus-5.5@claude-code
+
+commit 705a6f832160886430abf04f8a5d50027c7d1c20
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:21 2026 +0530
+
+    T-010-1: claimed by claude-opus-5.5@claude-code
+
+commit b2c82b96f508878441a94a03c1746fcfde104b88
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:21 2026 +0530
+
+    T-010-1: NOTE from claude-opus-5.5@claude-code
+
+commit 9f6379b38fe73e112b621a150b75ec0ba0de388c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:14 2026 +0530
+
+    T-010-5: claimed by claude-opus-5.5@claude-code
+
+commit 9dada5390710dad900feb4ec49aa2cbff8115906
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:14 2026 +0530
+
+    T-010-5: NOTE from claude-opus-5.5@claude-code
+
+commit 518eb7fca24439ed3bbebdc7abaf2d646b5e9d65
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:05 2026 +0530
+
+    T-043: submit by claude-opus-5.5@claude-code
+
+commit 487aad05ca7454f4f3fb7fe3708e27b5f94a6c87
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:05 2026 +0530
+
+    T-043: REVIEW from claude-opus-5.5@claude-code
+
+commit 496d0401ce776e60745e23cb704f5ce7f185e2fb
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:38:05 2026 +0530
+
+    T-043: submitted by claude-opus-5.5@claude-code
+
+commit 347a1553c25a2fbe344010137e88202e21eaf7ce
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:37:59 2026 +0530
+
+    T-043: claimed by claude-opus-5.5@claude-code
+
+commit 1a46adbf3502bcc3309781fe585ea9e306b65b85
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:37:59 2026 +0530
+
+    T-043: NOTE from claude-opus-5.5@claude-code
+
+commit 30499ec518dcd0194c8c86c36cba26033d5b7bf7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:35:03 2026 +0530
+
+    Hide the Still composer's 'Describe the image first' hint once a prompt exists
+
+commit e642cdd9730303a7fc0acc22ed76e0f9c9123238
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:35:00 2026 +0530
+
+    Stage watches the live job and refreshes the Library when it ends
+    
+    StageProgress ignored its jobId, so a finished job stayed on Rendering until
+    a manual reload. It now subscribes with useJobEvents via fetchJobForProgress
+    and reloads the Library on a terminal status, as T-010-7's brief required.
+
+commit 78038227e6f225dea7ddf3999094e5da33894fd8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 05:35:00 2026 +0530
+
+    Fix Library stills missing from images, which hid Animate this
+    
+    images was built from an asset map that only held video, poster and input
+    assets, so every still's URL was None and got filtered out. One query now
+    returns asset id and URL together; image_urls is derived from it. Adds a
+    regression assertion that fails on the old code.
+
+commit 09be382e425643943ad7b401b0a2fe784cb0af22
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:38:42 2026 +0530
+
+    Record live verification of the guest and share-page fixes
+
+commit 00a1047686055d46ccf321e5579a99f45ba77698
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:35:32 2026 +0530
+
+    Stop cold visits minting guests; keep the share page free of studio UI
+    
+    CreditsButton fetched the balance before checking the session, so a 401 made
+    the guest runner create a session on every page, spending the per-IP cap.
+    The share route now renders without credits or session slots (AC-18), and
+    the 390px top bar shows a bare balance and 'Guest' so it no longer wraps.
+
+commit b7635c9a79549ac363ec17aea442fc63935c248f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:30:47 2026 +0530
+
+    T-010-13: deploy spec 010 live and record verification
+    
+    3277750 on Railway api+worker, bundle index-CDM5O7ai.js matches a clean
+    build, health 5/5, smoke-sequence 6/6 PASS on the public URL, light/dark
+    screenshots at 390 and 1440. Two follow-ups logged in STATUS.
+
+commit 327775036797c291f185cd626781710cfe625625
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:18:37 2026 +0530
+
+    T-010-12: D-015, walkthrough, README for Reel & Still, scripts/smoke-sequence
+    
+    D-015 supersedes D-014 (images are real on Modal FLUX with a labelled
+    fallback). smoke-sequence builds two clips, stitches a crossfade sequence
+    and checks the video, duration and ledger; 6/6 PASS on a local stack.
+
+commit 2a8ea02e4cbc91067c853bf3aa3c3803fb2dcdef
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:08:18 2026 +0530
+
+    Spec 010: tick T-010-1..11, update PLAN/STATUS/WORKLOG, capture agent logs
+
+commit 97bf07716b1cfa299733ed02bc31c29c71066ac0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:08:01 2026 +0530
+
+    T-010-8: compact Still and Clip composers with still-to-clip seeding
+    
+    Composers only collect input and start jobs; progress and results live on
+    the stage. Removes the duplicated canvas/result views, the session-history
+    strip and the old hf motion tokens.
+
+commit 23331c481c9673881bc82531da32b48f8264f7c8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:08:00 2026 +0530
+
+    T-010-11: credits button and popover with the ledger and demo top-up
+
+commit abafbb13a41d0c886f3f77c5e79ddc9602267090
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:58 2026 +0530
+
+    T-010-10: start page and share viewer for clips, stills and sequences
+
+commit 339703d1f180fd0ab97d2eec1bf8cd01e2803105
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:57 2026 +0530
+
+    T-010-9: the Sequence tab (strip, transitions, music, eligibility, render)
+
+commit 02b6bcfb7cce65ad242087c1468f30323dbe3565
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:55 2026 +0530
+
+    T-010-7: the studio workspace (rail, stage, composer tabs, redirects)
+    
+    /studio replaces Explore and Library; old routes redirect in. Shared
+    contracts in api/studioContracts.ts, live stage progress for any job kind,
+    a session-persisted sequence draft, and a visible Animate this action.
+
+commit d5b7a7536370202d1c21b4641de6083b49df4e51
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:53 2026 +0530
+
+    T-010-5: Reel & Still identity (tokens, dark theme, fonts, brand, primitives)
+    
+    Warm-paper light and dark token sets, Instrument Serif / Geist / JetBrains
+    Mono, new mark and favicon, 56px top bar with a credits slot, restyled
+    primitives plus Tabs, Popover and Skeleton. No Higgsfield look left in ui/.
+
+commit 83bc94bac2edf9e95ecfa38e758b9c2c9a3bbd2b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:32 2026 +0530
+
+    T-010-4: still-to-clip input, audio uploads, ledger read, Library and share fields
+
+commit 204e61203dc4fdaa501610a4c9704cd6a09cb9d1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:32 2026 +0530
+
+    T-010-6: stitch_video worker step
+    
+    ffmpeg normalise to 1280x720/24fps, per-cut cut/crossfade/fade-to-black,
+    optional music trimmed with a fade-out, poster at 1 s; lease-guarded, SETTLE
+    on success and RELEASE on failure, generated_by=ffmpeg with duration_ms.
+
+commit 2be44ff6ab47d17e91fd80e30347352910298bff
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:32 2026 +0530
+
+    T-010-3: sequence API (create with one HOLD, validation, idempotency; read)
+
+commit ea7c0ad148118dc0cc56ebe70e87c3df67dbfc00
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:30 2026 +0530
+
+    T-010-1, T-010-2: sequence contract and data
+    
+    Schemas for sequence jobs, the ledger read, audio uploads and the widened
+    Library/share responses (501 stubs first), regenerated openapi.json and
+    web types. Migration 0007 (sequence kind, job_sequence_clip, audio and
+    duration columns, input_audio assets), sequence_rules, guest cap 30.
+
+commit 0e30009c02f71df6f4eeb9594a1ec3eca31187ec
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:30 2026 +0530
+
+    T-043: move AGENTS.md, playbooks and templates onto scripts/task
+    
+    New docs/playbooks/multi-harness.md; the definition of done split into
+    implementer and orchestrator-at-merge; kickoff prompts no longer commit.
+
+commit 5868ca596dcbc54ceef17cdd9e29d935a1061fe8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sat Sep 26 02:07:29 2026 +0530
+
+    T-042: scripts/task, a harness-agnostic task protocol
+    
+    claim/say/verify/submit/review/release/board over plain files: one-line
+    status, append-only thread.md, generated BOARD.md, per-task worktrees with
+    symlinked deps, verify.log with a tree fingerprint, board lock via flock.
+    Implemented by an opencode agent; 18 tests.
+
+commit 24cd71cc574c631d9230d5b28559f30277dfc12f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Fri Sep 25 20:16:46 2026 +0530
+
+    T-010-0: spec 010 Reel & Still (design, DESIGN.md, tasks, 12 briefs)
+    
+    Resubmission plan approved by the user: own identity and a studio workspace
+    on the existing backend, still -> clip chaining, and sequences (stitch 2-6
+    clips with per-cut transitions and optional music, 1 credit, ffmpeg worker
+    step). Briefs are written for agents in other harnesses via scripts/task;
+    wave 1 (T-010-1, T-010-2, T-010-5) is marked open.
+
+commit e7e452a1c6bb091392a902a8c2c37fbb44a01d59
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Fri Sep 25 19:58:32 2026 +0530
+
+    T-042, T-043: briefs for the harness-agnostic task protocol
+    
+    T-042 builds scripts/task (claim, say, verify, submit, review, release, board)
+    so agents in any harness can take packets, talk through thread.md and submit
+    with a verify fingerprint and captured transcript. T-043 moves AGENTS.md,
+    playbooks and templates onto it and is the first packet on the new board.
+
+commit eeec5c432f0daa76adc84c3d60e37400249eea86
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Fri Sep 25 19:58:32 2026 +0530
+
+    Add no-ai-slop skill (project + global install)
+    
+    Installed with npx skills and pinned in skills-lock.json. Canonical copy in
+    .agents/skills, symlinked into .claude/skills, copied into agent/skills for Eve.
+    AGENTS.md lists when to use it.
+
+commit 3ed04fcc658215a8c6a4b68dcd3047ce59dd4721
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Fri Sep 25 17:07:51 2026 +0530
+
+    Add third-party agent skills (grill-me, grilling, taste-skill set)
+    
+    Installed with npx skills and pinned in skills-lock.json. Canonical copies in
+    .agents/skills, symlinked into .claude/skills, copied into agent/skills for Eve.
+    AGENTS.md documents when to use each skill.
+
+commit 4dcc812bb24bc34496d2f3dc49dded2e1139e62b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 12:25:37 2026 +0530
+
+    Capture: agent transcripts for the current session
+
+commit dba00683dba21be3d35dd48cebc669e2f3bcaf31
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 12:24:31 2026 +0530
+
+    Capture: agent transcripts for the push/verification session
+
+commit 308b571ef14165f3cd83ee968aaa37782bb02047
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:38:05 2026 +0530
+
+    Capture: agent transcripts for the T-036..T-041 sessions
+
+commit c07dd4b997c8695368ad28a24f372cd56eed6131
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:38:03 2026 +0530
+
+    Split imageJobs.ts into imageJobs + imageJobHelpers
+    
+    The file sat at 199/200 lines with no headroom, and its half-committed
+    state broke two deploys when committed code imported the untracked half.
+
+commit cf07943bd622660e95e3c271aebba154933b1267
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:38:02 2026 +0530
+
+    Format Modal GPU entrypoints (line wrapping only, no behaviour change)
+
+commit e700e6c2be80f4db0bb7045f4648118fe4aee5fa
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:17:54 2026 +0530
+
+    T-041: deploy live, confirm via bundle hash and deployment status
+
+commit e3775a7a2718139e1100fadfd191c5943f9cf869
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:14:02 2026 +0530
+
+    T-041: session history tile selection and open feedback
+
+commit 08f2e35f384bb2331775cf44198576049201aed5
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:05:32 2026 +0530
+
+    Brief T-041: session history tile selection and open feedback
+
+commit 5a714fb63a4cf9e52ae5e330effb4fb84304a143
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 11:00:39 2026 +0530
+
+    T-040: deploy live, confirm via bundle hash and deployment status
+
+commit 19ba73a1eb1389cf919d9639f9a5b546054424d9
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:55:55 2026 +0530
+
+    T-040: make Library selection and result opening visible
+
+commit c69c44cf22a651d114f1d0db54c07416f7b4c175
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:44:49 2026 +0530
+
+    Brief T-040: make Library selection and result opening visible
+
+commit 14832146cae3e461a6219775d6e00faa55f4d0bf
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:43:08 2026 +0530
+
+    Correct T-038/T-039 records: prior deploys had failed, now genuinely live
+    
+    A peer session caught this: the live T-039 screenshot committed in
+    9959612 actually showed the footer bug, not the fix, and the live
+    bundle hash hadn't moved since before T-038. railway deployment list
+    confirmed every deploy since T-038's first attempt had FAILED (fixed
+    separately in 6ab456a). Updates STATUS.md, both task reports, and the
+    WORKLOG with an honest account, and replaces the misleading live
+    screenshots with real ones taken after gating on evidence: bundle
+    hash match, live CSS, live openapi.json shape.
+
+commit 6ab456aad2897971a23bb65f578c05d36a70ae64
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:36:40 2026 +0530
+
+    Fix build failure: stop depending on uncommitted imageJobHelpers.ts
+    
+    Every deploy since T-038 (04:44 UTC onward) has been FAILING the build:
+    useImageJobProgress.ts imported fetchImageJob/ImageJob from
+    api/imageJobHelpers.ts, a file that only exists in the uncommitted
+    working tree (never staged, per repeated instruction -- another
+    agent's in-flight work). A clean git worktree/checkout has no such
+    file, so tsc failed with 'Cannot find module' and the Docker build
+    never produced a new image for either the api or worker service.
+    
+    Both services have silently been serving the pre-T-038 build this
+    whole time. health/deep and 'railway up exited 0' both looked fine
+    because neither proves the app image actually changed -- confirmed by
+    diffing the deployed JS bundle hash and cross-checking
+    railway deployment list, which shows every deploy since 04:44 UTC as
+    FAILED and the last SUCCESS still at 03:45 UTC.
+    
+    Fix: useImageJobProgress.ts now has its own tiny local fetchImageJob
+    (imageJobs.ts keeps its own copy private on purpose), importing only
+    the ImageJob type from imageJobs.ts, which is safe -- exported in both
+    the committed and uncommitted versions of that file.
+    
+    Verified against a fresh git worktree (not just the working directory):
+    lint + 60 vitest + tsc -b + build + check-standards all pass, 124
+    modules transformed, new bundle hash.
+
+commit 995961286773313f86297feeb383b717ae6dc7f4
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:25:29 2026 +0530
+
+    T-039: deploy live, confirm footer fix on the live site
+
+commit a4441b96ff2fd47bd8cb6be4e7b209823f07c275
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:22:23 2026 +0530
+
+    T-039: footer layout fix and consistent square thumbnails
+
+commit b8b04aa54ba7b50fbd8b8041fe3ab2e8c9c65b72
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:16:31 2026 +0530
+
+    T-038: deploy live, live paid check blocked by exhausted guest cap
+
+commit dedcfdbce351d81baf557e7205c9c904afbb121f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 10:14:25 2026 +0530
+
+    T-038: image job progress, result rendering and Library inclusion
+    
+    - backend: Library is now kind-agnostic (list_owned_jobs drops the
+      video-only filter); LibraryItemResponse contract change (+kind,
+      optional preset fields, +prompt, +image_urls); openapi regenerated
+    - frontend: found the real bug behind root cause #1 by testing against
+      running code rather than trusting the brief's grep -- the SSE/notify
+      backend was already correct and kind-agnostic; the actual defect is
+      imageJobs.ts's onStatus no-op, which leaves the page frozen on a
+      static Queued for the whole ~50-200s FLUX wait. Fixed with an
+      additive parallel progress watcher (useImageJobProgress) since
+      imageJobs.ts/imageJobHelpers.ts are off-limits (another agent's
+      in-flight work) -- never staged, never edited
+    - generified useJobEvents + moved useElapsedSeconds to api/, updated
+      video's own usage (its tests still pass, behavior unchanged)
+    - Library renders both kinds: image items show their own grid and the
+      prompt as the label instead of a preset name
+    - verified locally end to end (free) against a fake 55s-slow backend
+      before any live/paid step: elapsed timer ticks live, result renders
+      with no refresh, job appears in the Library with a real image
+    
+    full findings, file list and verify output in docs/tasks/T-038/report.md
+
+commit 000389a2fbc6f5ae987547a60d28718103d219b7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 09:40:25 2026 +0530
+
+    Brief T-039: footer layout and thumbnail aspect consistency (queued behind T-038)
+
+commit 958484181b2f02213c3406df6b8447b763bbbdba
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 09:29:32 2026 +0530
+
+    Brief T-038: image job progress, result rendering and Library inclusion
+
+commit 2bf42efbd97d320d28db4f0b9bb14f3c81aa8447
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 09:17:48 2026 +0530
+
+    T-037: confirm honest label + real showcase imagery on the live site
+
+commit 00dc42f71bf5994e1a53bb8cb35318d7ca6bee91
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 09:15:32 2026 +0530
+
+    Fix false GPT Image 2 claim and stale showcase samples on Create image
+
+commit 093278f21545306fa9ec0e41f64a693a8e6de40d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 08:51:36 2026 +0530
+
+    Replace synthetic preview stills with real FLUX generations
+
+commit 49c69175f6ee642c9cde0e5ffc01358f6f316cf5
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 08:40:44 2026 +0530
+
+    T-036: confirm real preview clips play on the live deployed site
+
+commit 9b64eecca0805ff4e4b51ea9a456352fec928ca7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 08:35:52 2026 +0530
+
+    T-036: reference-matching Explore gallery (masonry, bare tiles, hover reveal)
+
+commit 1502d2527010ea422d803ea2625a3fc360042d2b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:55:17 2026 +0530
+
+    agent-run: support opencode (opencode run) for captured non-Claude tasks
+
+commit 1c6525a72fedfffb81670cd646107a3e35a7508a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:53:27 2026 +0530
+
+    Brief T-036: match the reference Explore gallery
+
+commit fc397199eb4524412ef791beaf488912c0a06aa7
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:46:28 2026 +0530
+
+    Final live verification + preview posters
+    
+    - deployed the poster fix (b71035e) live: clean detached worktree at
+      main, railway up --path-as-root for api+worker, other agent's
+      uncommitted imageJobs.ts/imageJobHelpers.ts never shipped
+    - GET /api/health/deep: all 5 checks ok, video_backend + image_backend
+      both modal
+    - Task C (Playwright walk + screenshots) is UNVERIFIED this round:
+      this IP's guest-session cap was already 5/5 used before the walk
+      started (confirmed via a rejected POST /auth/guest, no slot spent);
+      did not delete rate-limit rows or bypass the guardrail, so the
+      walkthrough + docs/verification/VERIFICATION-REPORT.md refresh is
+      left for a run from a different IP (e.g. mobile data)
+
+commit b71035e916409929e78db77810a6f688590c77d0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:43:18 2026 +0530
+
+    Preset preview poster fix: still frame instead of black before buffer
+    
+    - shared previewPosterUrl helper (webMedia.ts): mp4 key -> .jpg,
+      the poster scripts/build-preset-previews already uploads next
+      to every preview clip in R2
+    - wired poster + preload=metadata into PresetGalleryCard (Explore)
+      and PresetCard (Create video)
+    - verify: lint + tsc -b + 60 vitest + build + check-standards all pass
+
+commit 6d3cef968c619429f676116b6ab1d07baf2c175d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:33:09 2026 +0530
+
+    ops: flip live image backend to real Modal FLUX.1-schnell
+    
+    - deployed api+worker from a clean detached worktree at main (T-017's
+      code was already committed); avoids shipping another agent's
+      in-flight uncommitted imageJobs.ts/imageJobHelpers.ts refactor
+    - modal deploy apps/gpu/flux_image.py -> persistent H100 endpoint
+    - Railway api+worker: IMAGE_GENERATION_BACKEND=modal,
+      MODAL_IMAGE_ENDPOINT_URL set (reuses existing MODAL_WEBHOOK_SECRET)
+    - verified: GET /api/health/deep -> image_backend: modal; direct
+      authenticated probe of the endpoint returned a real, distinct
+      512x512 PNG (not the placeholder)
+    - also fixed .env.local (untracked): local dev/tests were pointed at
+      the production R2 bucket instead of local MinIO
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_014kNoNGCAHxzTRX52XgvZxV
+
+commit 98f9aa84b12c830926a22765fdb02ed39748ee34
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 07:14:57 2026 +0530
+
+    T-034: report, load-test guard, docs
+
+commit 1c8b04406c4d696742f75b3709a2e1e6c2a83e31
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 06:45:59 2026 +0530
+
+    T-034: deep health, structured logs, load test, runbook
+
+commit ae533ec0e9dd3a158ade2068751afb80622bf61e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 06:14:40 2026 +0530
+
+    Paid image cost 5 -> 8 cents
+
+commit f4278069f1efc5296c74b79f153e069296d28771
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 06:08:10 2026 +0530
+
+    Brief T-034: observability, load test, runbook with measured unit economics
+
+commit fa64695b6e22a342cbd84b0526a33e5b1dde35c6
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 05:25:03 2026 +0530
+
+    T-017: paid FLUX probe PASS (4 images, cold/warm timings)
+
+commit b12f012772e00f8d32d51ce5f921e8da5f55011e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 05:15:55 2026 +0530
+
+    T-033: live real-AI run verified (modal, 132s, AI VIDEO badge)
+
+commit 0d80500d069187d05c9d9362f4fe77070cd0b3d8
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 05:03:58 2026 +0530
+
+    T-017: real text->image on Modal (FLUX.1-schnell), probe blocked on HF gating
+
+commit 76b3d34ff7883f2aed854e1075b4ca51fed3b3dd
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 05:01:57 2026 +0530
+
+    T-033: ship httpx so the Modal adapter imports on the worker
+
+commit 085895b56c50306816f8b259f9882635f70ed363
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 04:50:06 2026 +0530
+
+    T-033: guardrails + real-AI cutover (generated_by, caps, fallback)
+
+commit b30014f2798a1ffbbb6bf298918d1ea2bcb9e6b1
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 04:36:33 2026 +0530
+
+    Briefs T-033 (guardrails + real-AI cutover) and T-017 (FLUX.1-schnell on our GPU)
+
+commit cfe61c6644e5b101c6e3e6da16836d4998a52e5c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 04:05:00 2026 +0530
+
+    T-011: live browser verification of all six pages (7/7 PASS)
+
+commit 4b06a171864032c422bc578e530943e017651e07
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:59:10 2026 +0530
+
+    T-031: density pass (media-first gallery, compact hero, slimmer shell)
+
+commit afca3cb516e60851bd525bbc07a351d640344bf0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:54:34 2026 +0530
+
+    T-030: live preview re-probe on the deployed API
+
+commit c0640b7d4bdfd843cd280630d6086360ac4f7a25
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:52:21 2026 +0530
+
+    T-030: own preset preview media (12 R2 clips), drop all hotlinks
+
+commit 8e55e5e57909f67a0148499b90fd43c8861fb5cc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:47:20 2026 +0530
+
+    T-013: real ModalAdapter live on H100 (145.2s clip, ~/usr/bin/zsh.23)
+
+commit c5f10e47f102d23ca9c261b70d69ab7e34f8c6a2
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:40:01 2026 +0530
+
+    Docs: README, capture disclosure, walkthrough script, verification draft
+
+commit 98c91218643d8d1a69e27e94bad7a74f644a9a01
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:39:59 2026 +0530
+
+    T-013 WIP: modal adapter
+
+commit 17abd90f15e54a2486d2ea5fe2363709cdf4527b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:11:45 2026 +0530
+
+    Brief T-013: real ModalAdapter with a demo-able speed budget
+
+commit 549e7d82dc7a6d4f2a3fc7225e1b298281080b22
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 03:09:58 2026 +0530
+
+    Briefs T-030 (own preview media, drop hotlinks) and T-031 (UI density pass)
+
+commit 9db9597d6b10553726c93b39834b213679b23e10
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 02:54:35 2026 +0530
+
+    T-012: Modal LTX-2.5 spike GREEN on A10G (real clip in R2, ~/usr/bin/zsh.20)
+
+commit 1bc125595d4ff803852593828e7424958bf863a5
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 02:05:04 2026 +0530
+
+    T-012: Modal spike on A10G BLOCKED on HF gating (401, gated:auto); code ready
+
+commit 699280cf9177b3fb7b09fcfc8a436c6a219a3e19
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 01:24:28 2026 +0530
+
+    T-020: reference-look reskin (styles only); delete WhatsApp credential screenshot
+
+commit d400382f9a3c7d33bff370966ddc481e7e94283a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 01:03:56 2026 +0530
+
+    T-010: STATUS truth pass (retire falsified rows, LIVE goes UNPOOLED, NOT STARTED rewritten)
+
+commit 0ccd427f4f54ae01799e2690ef75bf54d4634863
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 00:47:23 2026 +0530
+
+    Live smoke PASS 9/9: fix SSE budget + sequence assert; use unpooled Neon (LISTEN/NOTIFY)
+
+commit 0159f282e6c709586805800bbd0de5ed33b75b90
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 00:14:13 2026 +0530
+
+    T-003-8: isolate the lease-reaper test (full suite green twice); gitignore .wrangler
+
+commit 0e83094f0190afca3dbfdf6ea57d05acd50b6cea
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Mon Sep 14 00:11:44 2026 +0530
+
+    Deploy: api + SPA live on Railway against Neon; record the live URL
+
+commit 89163edf408b9ef5fa16ec0980ae766bc530408b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 23:43:19 2026 +0530
+
+    Open T-003-8: isolate the lease-reaper test (flaky in the full suite)
+
+commit 30748cccb63a10377dbe9650082f8531155b3639
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 23:42:29 2026 +0530
+
+    T-009-8: authorise the event stream on ownership only (image jobs now stream); spec 009 done
+
+commit 844de7f0440095f46f221955bf932e7ee88d99f2
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 23:28:36 2026 +0530
+
+    T-009-7: route /create/image to CreateImagePage; log image-job SSE 404 and open T-009-8
+
+commit 09de5f38ee397344cca1616c8f064f9400497634
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 23:22:07 2026 +0530
+
+    T-009-1..6: create-image slice (migration 0004, PNG placeholder backend, image API+worker, image-create UI)
+
+commit 9786fdd9375e454387bfd25ec601685e92145648
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:59:34 2026 +0530
+
+    T-009-0: design spec 009 Create image and publish the image contract
+    
+    Three new routes published as 501 stubs: GET /api/v1/image-options (public),
+    POST /api/v1/image-jobs (202/401/402/422) and GET /api/v1/image-jobs/{job_id}
+    (200/401/404/422), plus five image schemas and domain/image_rules.py.
+    
+    Backend reality, stated honestly: no image model runs in this repo (ModelAdapter is
+    video-only and LLaDA-Image on Modal is blocked on licence, GPU and R2), so P1 ships an
+    ImageModelAdapter port with a deterministic PNG placeholder for local-motion/mock and the
+    real text->image stays P2 (D-014).
+    
+    One additive migration 0004 is planned: job.kind with per-kind checks, nullable video-only
+    columns, the image params, the output_image asset kind and the job_image child table.
+    
+    Every pre-existing path and schema is byte-identical (openapi +451/-0).
+    
+    Seven briefs in four waves, 24 disjoint files.
+
+commit c8c2ee6770435cadb62ca0d649314a34f8ec2384
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:44:32 2026 +0530
+
+    T-000-7: README labelled links + local-dev docs; record .agent-logs transcript gap
+
+commit 48359a997a38db7d68b4b55c4755b633093bcfa3
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:38:57 2026 +0530
+
+    PLAN: M3 P0 slices code-complete (specs 003-008)
+
+commit 256343f8fcafbf09f1c831fb09d344e7f02c8182
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:38:36 2026 +0530
+
+    T-008-1..4: fake credit top-up API + credits page (spec 008 complete)
+
+commit 0af707409f96831198ac3417da4784b26b662c96
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:21:09 2026 +0530
+
+    T-008-0: design spec 008 Credits + fake top-up and publish the top-up contract
+    
+    New POST /api/v1/credits/topup -> TopUpResponse {amount, balance}, published as a 501
+    stub so openapi.json is frozen before any UI task. It writes a pre-provisioned TOPUP
+    ledger row of +100: a GRANT is impossible because uq_ledger_entry_guest_grant is a
+    one-time partial unique index, so D-013 records the kind and the P0 scope.
+    
+    No migration. GET /api/v1/credits and every other pre-existing path and schema are
+    byte-identical (openapi +77/-0, 0 changed entries).
+    
+    Spec pack docs/specs/008-credits/{spec,design,tasks}.md, four briefs in waves
+    T-008-0 -> (T-008-1 || T-008-2) -> T-008-3 -> T-008-4, 11 disjoint files.
+
+commit 193c05c9fb8d53286c34aea4c07a87eaec3e419e
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:14:31 2026 +0530
+
+    T-007-5: route /v/:jobId to SharePage (spec 007 complete)
+
+commit cfc0945ffd30591207b6e1bac58cb51896c2aa85
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 22:11:23 2026 +0530
+
+    T-007-2 + T-007-4: share OG HTML route + share page UI (spec 007 wave 2)
+
+commit cb55fd262967050c17232a7e153edf467c3a3ce2
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 21:59:45 2026 +0530
+
+    T-005-5 + T-007-1 + T-007-3: Library assembly + share public read + share web data
+
+commit 8eccbd71f0524337a5896ace417bffcc0b234f09
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 20:39:27 2026 +0530
+
+    Fix npm run typecheck to tsc -b (was a no-op); update STANDARDS enforcement row
+
+commit 776fc652bc485e1271dd137fb74974090a99f3ba
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 20:38:44 2026 +0530
+
+    T-007-0: design spec 007 Share page and publish GET /api/v1/public/jobs/{job_id}
+
+commit 0b2d2f060debca2aa7074b5b39a7a59f2ba6fd65
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 20:37:14 2026 +0530
+
+    T-005-4: Library page UI (list, items, states, result panel, ?job= selection)
+
+commit 95090e0a54d260da7d591a3eaae72862ce33904d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 20:31:18 2026 +0530
+
+    T-005-1/2/3: Library API list + web data + copy/helper (spec 005 wave 1)
+
+commit 947940b3cdb6fc18efbe38e47625fd79f1c57074
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 20:06:49 2026 +0530
+
+    T-005-0: design spec 005 Library and publish GET /api/v1/jobs
+
+commit 1175449d96ca2edd98912a46c9645efdc4defbcd
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 19:40:32 2026 +0530
+
+    T-006-4: assemble ExplorePage, route /, retire HomePage (spec 006 complete)
+
+commit 981f26f64f99847305a017448e35c81ac7124c42
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 19:36:28 2026 +0530
+
+    T-006-2 + T-006-3: Explore hero/tool cards and effect gallery (spec 006 wave 2)
+
+commit a77ae7b0acfccd6eda6c9d8f882bd1c6d0115d43
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 19:30:52 2026 +0530
+
+    T-006-1: shared preset hook + Explore copy/data/helpers (spec 006 wave 1)
+
+commit 1b33879d2017b41f31f4f8d6ec1c3159375fd5a2
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 19:23:40 2026 +0530
+
+    gitignore reference-images (scratch screenshots, may contain credentials)
+
+commit 0d38295b63764f64ec76328165ee351f937d7661
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 19:20:56 2026 +0530
+
+    T-002-5: R2 config blocked (no Account ID/bucket); Modal spike not run, no GPU credits spent
+
+commit b54102d86a8c0390763bed657ee7b1e0dd272635
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 18:55:05 2026 +0530
+
+    T-002-4: wire Neon (hosted Postgres) and verify the Modal CLI; R2 blocks the spike
+
+commit 162ff21281029891bb251020851dc129c5a0d641
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 18:54:40 2026 +0530
+
+    T-001-3 part 2: capture sign-up dialog (17,18) and auth flow notes
+
+commit 82ecbd4956af35e20a9eed1f851cb46d5428e328
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 13:00:56 2026 +0530
+
+    Independent review of spec 003/004 work: smoke 9/9 pass, flaky reaper test logged
+
+commit 12ff12394702706f537e126a150c60c97e4e17ff
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 09:16:02 2026 +0530
+
+    T-006-0: design spec 006 Explore (hero, tool cards, preset gallery, Recreate)
+
+commit 557d4350acabd0b48736102b1bd9307caf8b2d20
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 09:15:06 2026 +0530
+
+    T-001-3: audit reference-images (duplicate of screenshots 01-16; 0/7 gaps covered)
+
+commit e552d4040f43e54821bddf4c3385e7796cce4895
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 09:04:37 2026 +0530
+
+    T-004-5: create-video page assembly (spec 004 complete)
+
+commit 1d88e287b6c887c58a1557bb4001ca4fd7c12826
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 09:04:08 2026 +0530
+
+    T-003-7: end-to-end smoke of the generation core (spec 003 complete)
+
+commit bc75468d8ad8c5690142f2203248a1ded66d510b
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:49:57 2026 +0530
+
+    T-004-3: create-video job hooks (create, SSE watcher, active job)
+
+commit a965290de0d40b191b597da2c4a87d1d7dc9b50f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:49:30 2026 +0530
+
+    T-003-5: generation worker (claim loop, lease, completion, reaper)
+
+commit 694223b3a0c5e312876ac297d808fd97e3d60f78
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:40:40 2026 +0530
+
+    T-004-4: create-video panel components
+
+commit dcbeb4cef754c4697f5bd90527f8bc36a0d28db5
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:40:24 2026 +0530
+
+    T-003-4: jobs API (one-transaction create, read, SSE events)
+
+commit cdd24d634a6e48fbd0d142c488c99675f71f1692
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:29:40 2026 +0530
+
+    T-003-6: generation backends (local-motion, mock, modal/openrouter, selection)
+
+commit 9ab09b7a71a8ba2ca4a6b4356a5f82470532bf42
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:25:30 2026 +0530
+
+    T-004-2: create-video data hooks (guest, presets, credits, history, upload)
+
+commit bf8649869e78233b8b3fc1e3c2bbf9f242e32eae
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:25:18 2026 +0530
+
+    T-003-3: presets, uploads and credits endpoints + guest grant
+
+commit a66046ab1df3900cc479a60ab2d2ae7405d2cd06
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:16:34 2026 +0530
+
+    Fix test_migrations to truncate generation rows before the 0003 downgrade
+
+commit 129096b6dda44c78ec27052899404d830dd053b0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:16:03 2026 +0530
+
+    T-004-1: create-video web foundation (types, copy, helpers, ui primitives, vitest)
+
+commit cb5a5849d2f58218b06884d5b416ec04b619f832
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:15:47 2026 +0530
+
+    T-003-2: generation repositories incl. claim/lease/reaper SQL
+
+commit c208def1ed6d09f853c86b59717037dd9200c232
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:15:24 2026 +0530
+
+    Document Tailwind v4 styling convention in STANDARDS
+
+commit b34fac1ba0d6cdb1b90412075c11bd2c9eb919a0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:13:13 2026 +0530
+
+    Add local development runbook
+
+commit 92c75b3803d1d0e6c67d13d3fba8c687661c01ee
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:12:37 2026 +0530
+
+    Add scripts/check-links and run it in CI
+
+commit 49033e0ba52bfd2c7970127683ebe2ca2c6190fc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:12:14 2026 +0530
+
+    CI: check contract drift and ffmpeg in the image
+
+commit f9b74c043d1c505563ce1f8b0152379f3367be01
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:12:12 2026 +0530
+
+    check-standards: stop treating CSS custom properties as comments
+
+commit b1bb975fb3ae2ece28cfa7abedcfdb0366418e43
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:10:02 2026 +0530
+
+    T-003-1: generation-core data foundation (models, migrations, domain, adapters, fixtures)
+
+commit 3cb97473b3222be3018c8b99ac7f1d7a6a56e15a
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:09:32 2026 +0530
+
+    T-004-0: design spec 004 and write its five task briefs
+
+commit bb7a69aeee49f3c5bfa8b2dab32445fa84efb47c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:07:09 2026 +0530
+
+    T-003-6 slice: install ffmpeg in the app image
+
+commit ad7d02ab76e0f0aa123dd9c1348cdcecf2bce9ad
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 08:01:47 2026 +0530
+
+    T-004-0 (WIP, blocked on Claude session limit): spec 004 approved, design draft written; tasks.md and briefs outstanding
+
+commit 088bea181b7caa077248f7f8739a601a6224950d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:59:17 2026 +0530
+
+    Add README, CI workflow, and pre-commit hook
+
+commit 18723a68ef585f3d801d8e2728fcd8322e35faab
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:49:15 2026 +0530
+
+    T-003-0: capture final agent response in .agent-logs
+
+commit 869fc5ccfc71dd0e6fd45c47608fcc9d1185481c
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:48:45 2026 +0530
+
+    T-003-0: design spec 003 and publish its API contract
+    
+    Design with data model, claim/lease/reaper SQL, SSE fan-out, ModelAdapter,
+    12 verified ffmpeg motion recipes and storage; 7 parallel-safe task briefs;
+    schemas and 501 routers for presets, uploads, jobs, job events and credits;
+    openapi.json regenerated.
+
+commit 6cc9c7e0f22b7ed83e2dffda3fe340eecaa299fc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:25:38 2026 +0530
+
+    T-002-7 docs sync: PLAN, STATUS, WORKLOG, tasks.md and agent log
+
+commit f9ab53dd0275b2e2cf8f211f0b20b2ca83cb8156
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:24:46 2026 +0530
+
+    T-002-7 fix button nested inside a link on home page
+
+commit dc01f890f95b57e37954a37fd270b2e8d4017337
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:22:26 2026 +0530
+
+    Small-agent handoff prompt and first small task T-002-7
+    
+    - docs/templates/handoff-prompt-small.md: step-by-step kickoff for small models (no design, no commits, stop rules, fixed report format)
+    - docs/tasks/T-002-7: fix button nested in Link on HomePage (1 file, exact change given)
+
+commit 504b3ba09cf64973012aec714d6623874169f0b0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:20:49 2026 +0530
+
+    T-002-2 web shell, T-002-3 container, handoff kit for other agents
+    
+    - apps/web: Vite React TS shell, 5-item nav, guest session button, typed openapi client (implemented by Sonnet subagent, reviewed)
+    - Dockerfile builds web then Python image; entrypoint picks api or worker; railway.json healthcheck
+    - docs/templates/handoff-prompt.md: kickoff prompt + per-tool launch and capture table
+    - ready briefs T-003-0 (design generation core + contract) and T-004-0 (design create video)
+
+commit 0afe46615f36d088e9ece6114281afce756d6f7f
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:12:38 2026 +0530
+
+    Draft specs 003 generation core and 004 create video; deploy runbook, placeholders
+    
+    - 003: presets, presigned uploads, jobs + credit HOLD/SETTLE/RELEASE, SKIP LOCKED worker with lease/reaper, SSE, local-motion ffmpeg backend
+    - 004: create video page (single drop zone, visible preset names, cost on Generate, auto guest session, SSE progress)
+    - docs/runbooks/deploy.md; deploy and Modal spike marked as user-owned placeholders
+
+commit 0adb92c5d72b875ae86b4e47391b85e99ff40ae9
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 07:07:54 2026 +0530
+
+    T-002-1 API skeleton: health, guest session, worker heartbeat, contract export
+    
+    - FastAPI layered app (routers/services/repositories/models/schemas)
+    - GET /api/health (200/503), POST /api/v1/auth/guest (httpOnly JWT cookie), GET /api/v1/me
+    - Alembic migration 0001 app_user; worker heartbeat entrypoint
+    - 7 pytest tests against compose Postgres; ruff + mypy strict clean
+    - packages/contracts/openapi.json exported via scripts/export-openapi
+    - spec 002 walking skeleton (spec, design, tasks), T-002-2 brief
+    - Modal LTX-2.5 spike code (unverified, needs credentials)
+
+commit 1f474f64e3516b7e38c99181febbffb25ff4a2bc
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 06:58:14 2026 +0530
+
+    M1 research: explore, image-create, video-create flows and draft product map
+    
+    - 16 screenshots renamed into docs/research/screenshots (01-16)
+    - observation-only flow docs with friction notes
+    - product-map verdicts P0/P1/P2/CUT plus list of flows still to capture
+    - D-011: pixovid/ ignored
+
+commit 4624365c07a9ff07a560673069c0bf8d9455161d
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 06:54:18 2026 +0530
+
+    M0 scaffolding: agent-agnostic docs, playbooks, capture for subagents and other tools
+    
+    - AGENTS.md read order, truth hierarchy, definition of done, roles
+    - docs: PLAN, STATUS, DECISIONS, WORKLOG, STANDARDS, BUILD-PLAN, architecture, templates, playbooks
+    - .claude/skills wrappers pointing at docs/playbooks
+    - capture.py: DELEGATE (PreToolUse Agent) and SUBAGENT_RESPONSE (SubagentStop) entries
+    - scripts/agent-run: capture wrapper for non-Claude CLIs and OpenRouter
+    - scripts/check-standards: file <=200 lines, comment block <=3 lines
+
+commit 1c26bd1bfaa075b59752453ed69b36af92af2618
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 06:45:07 2026 +0530
+
+    Fix Stop-hook race in capture, record capture test results
+    
+    The Stop hook could fire before the final text was flushed to the
+    transcript; the fallback short-circuited the poll loop. Canary entries
+    and session logs committed.
+
+commit 1dcf0152d108f39433958a13132e90c863351ab0
+Author: Deepjyoti-Sarmah <deepjyotisarmah37@gmail.com>
+Date:   Sun Sep 13 05:09:01 2026 +0530
+
+    Add agent capture hooks (UserPromptSubmit + Stop -> .agent-logs/)
+    
+    Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01Ew9z3RX3MT23cCE7293sAG
+
+- 2026-09-26 · deepseek-flash (orchestrator) + 2 background workers · T-050 studio UX + sequence/face-swap flow · `apps/api/app/domain/sequence_rules.py`, `apps/api/app/services/sequence_job_creation.py`, `apps/api/tests/{test_sequence_jobs_api,sequence_helpers}.py`, `apps/web/src/features/{start,studio,sequence,face-swap}/`, `apps/web/src/api/{webMedia,studioContracts}.ts`, `DESIGN.md`, `docs/verification/T-050/` · DONE locally: sequences accept `video_faceswap`; start page four-tool tour + subject-grouped demo gallery; per-tool studio guidance (step/purpose/output/next); rail "Your work" header + fixed Swaps filter; Sequence film timeline with per-shot Swap that seeds the face-swap tool; no-slop copy pass. API 298, web 133, build + standards ok; Playwright screenshots + handoff assert. Not deployed; no paid generation (gallery reuses the 4 real stills, grouped) · see `git log`

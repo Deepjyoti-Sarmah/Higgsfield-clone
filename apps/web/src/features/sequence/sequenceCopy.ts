@@ -1,5 +1,9 @@
-// Copy in the §9 film-editing voice; short, concrete, sentence case.
+// Film-editing voice: short, concrete, sentence case.
 export const sequenceCopy = {
+  header: {
+    title: "Sequence",
+    body: "Cut two to six shots into one film. Add a shot, trim it, then render.",
+  },
   steps: {
     add: {
       number: "1",
@@ -22,12 +26,20 @@ export const sequenceCopy = {
       body: "Render the film, then download, share, or face-swap it.",
     },
   },
+  timeline: {
+    title: "Your film",
+    hint: "Drag a shot to reorder, trim its ends, or swap a face.",
+  },
   strip: {
-    emptySlot: "Shot goes here — add a clip in step 1",
+    emptySlot: "Add a shot",
+    emptyHint: "Add at least two shots to render.",
     removeShot: (position: number) => `Remove shot ${position}`,
     moveLeft: (position: number) => `Move shot ${position} left`,
     moveRight: (position: number) => `Move shot ${position} right`,
+    faceSwap: (position: number) => `Face swap shot ${position}`,
     shotLabel: (position: number, total: number) => `Shot ${position} of ${total}`,
+    swapped: "Swapped",
+    clip: "Clip",
   },
   trim: {
     stepNote: "Each tap moves 0.5 seconds.",
@@ -42,18 +54,21 @@ export const sequenceCopy = {
     fade_black: { label: "FADE", name: "Fade to black" },
   },
   picker: {
-    heading: "Your clips",
+    heading: "Add a shot",
     add: "Add",
     added: "Added",
     differentShape: (ratio: string) => `Different shape: ${ratio}`,
-    hint: "Finished clips from your rail. Add at least two.",
-    stageHint: "Tip: open any finished clip above and choose “Add to sequence”.",
-    emptyTitle: "No clips yet",
-    emptyBody: "Make one in Clip (animate a still). Your own footage comes in through the Clip tab for now.",
+    hint: "Finished clips from your rail. A face-swapped video works here too.",
+    emptyTitle: "No finished clips yet",
+    emptyBody: "Make a clip in Clip, or swap a face into a video in Face swap.",
     goToClip: "Go to Clip",
+    goToFaceSwap: "Go to Face swap",
+    fullTitle: "Sequence is full",
+    fullBody: "Six shots is the limit. Remove one to add another.",
+    faceSwapHint: "Want a different face in a shot? Swap it first, then add the result.",
   },
   music: {
-    heading: "Music",
+    heading: "Music (optional)",
     hint: "Drop an mp3, m4a or wav here, up to 10 MB.",
     silent: "Silent. Clip audio is not used.",
     remove: "Remove music",
@@ -64,17 +79,17 @@ export const sequenceCopy = {
   },
   render: {
     button: "Render · 1 credit",
-    needTwoClips: "Add one more clip to render.",
+    needTwoClips: "Add one more shot to render.",
     uploading: "Wait for the music to finish uploading.",
-    clipInvalid: "One of these clips can't be used any more. Remove it and try again.",
+    clipInvalid: "One of these shots can't be used any more. Remove it and try again.",
     limit: "That's today's job limit. It resets at midnight UTC.",
     failed: "The render didn't start. Try again.",
   },
   exportGuide: {
-    heading: "What happens next",
-    started: "Your film is rendering. It opens in your rail when it's done.",
-    download: "Download it straight from the rail.",
-    share: "Share it from the rail with a link.",
-    faceswap: "To swap a face into it, open the finished film and use it as a face swap target.",
+    heading: "Your film is rendering",
+    started: "It lands on the stage and in your rail when it's done.",
+    download: "Download the mp4 from the stage or the rail.",
+    share: "Share it with a link:",
+    faceswap: "To change a face, open the film and use it as a face swap target.",
   },
 } as const

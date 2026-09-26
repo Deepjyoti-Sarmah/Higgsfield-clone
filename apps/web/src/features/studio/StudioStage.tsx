@@ -4,6 +4,7 @@ import { railItemTitle } from "./railItemTitle"
 import { formatDuration } from "./formatDuration"
 import { StageActions } from "./StageActions"
 import { StageProgress } from "./StageProgress"
+import { studioCopy } from "./studioCopy"
 
 type StudioStageProps = {
   item: LibraryItem | null
@@ -13,6 +14,7 @@ type StudioStageProps = {
   onUseAsFaceSwapTarget: (imageUrl: string, assetId: string) => void
   sequenceFull: boolean
   onJobSettled: () => void
+  onStart: () => void
 }
 
 export type { StudioStageProps }
@@ -26,11 +28,19 @@ function PlaceholderCaption({ generatedBy }: { generatedBy: string | null | unde
   return <p className="text-[13px] text-muted">{text}</p>
 }
 
-function EmptyStage() {
+function EmptyStage({ onStart }: { onStart: () => void }) {
+  const copy = studioCopy.stage.empty
   return (
-    <div className="flex min-h-[40dvh] flex-col items-center justify-center gap-2 text-center">
-      <p className="font-display text-2xl text-text">Pick something from the rail.</p>
-      <p className="text-sm text-muted">Your work shows up here while it renders.</p>
+    <div className="flex min-h-[40dvh] flex-col items-center justify-center gap-3 px-6 text-center">
+      <p className="font-display text-2xl text-text">{copy.title}</p>
+      <p className="max-w-[65ch] text-sm leading-relaxed text-muted">{copy.body}</p>
+      <button
+        type="button"
+        onClick={onStart}
+        className="h-10 rounded-[10px] bg-accent px-5 text-sm font-medium text-accent-ink hover:bg-accent/90 pointer-coarse:h-11"
+      >
+        {copy.action}
+      </button>
     </div>
   )
 }
@@ -138,7 +148,7 @@ function StageFooter({
 
 export function StudioStage(props: StudioStageProps) {
   const { item, liveStatus, onAddToSequence, sequenceFull } = props
-  if (item === null) return <EmptyStage />
+  if (item === null) return <EmptyStage onStart={props.onStart} />
 
   const isTerminal = item.status === "succeeded" || item.status === "failed"
   return (

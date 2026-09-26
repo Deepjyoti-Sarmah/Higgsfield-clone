@@ -57,6 +57,9 @@ function useStudioActions(library: ReturnType<typeof useLibrary>) {
     setSeedTarget({ assetId, url })
     changeTab("faceswap")
   }, [changeTab])
+  const onFaceSwapClip = useCallback((item: LibraryItem) => {
+    if (item.video_url !== null) onUseAsFaceSwapTarget(item.video_url, item.id)
+  }, [onUseAsFaceSwapTarget])
   const consumeSeed = useCallback(() => setSeedImage(null), [])
   const consumeSeedTarget = useCallback(() => setSeedTarget(null), [])
   return {
@@ -66,6 +69,7 @@ function useStudioActions(library: ReturnType<typeof useLibrary>) {
     onJobStarted,
     onAnimateThis,
     onUseAsFaceSwapTarget,
+    onFaceSwapClip,
     seedImage,
     consumeSeed,
     seedTarget,
@@ -102,6 +106,7 @@ function buildComposer(
       onSeedConsumed={actions.consumeSeed}
       seedTarget={actions.seedTarget}
       onSeedTargetConsumed={actions.consumeSeedTarget}
+      onFaceSwapClip={actions.onFaceSwapClip}
       sequence={draft}
       libraryItems={items}
     />
@@ -127,7 +132,6 @@ function useStudioPanel(props: {
 }) {
   const { library, actions, draft } = props
   const selectedId = actions.searchParams.get("item")
-
   const onAddToSequence = useCallback((item: LibraryItem) => {
     const accepted = draft.addClip({
       jobId: item.id,
@@ -155,6 +159,7 @@ function useStudioPanel(props: {
       onAddToSequence={onAddToSequence}
       onUseAsFaceSwapTarget={actions.onUseAsFaceSwapTarget}
       onJobSettled={onJobSettled}
+      onStart={() => actions.changeTab("still")}
     />
   )
   const composer = buildComposer(actions, draft, library.items)

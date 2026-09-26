@@ -56,7 +56,7 @@ Token names are the `@theme` names (`--color-<name>` → `bg-<name>`, `text-<nam
   - Pressed: `scale(0.98)`. No glow.
   - A button that spends credits shows the cost in mono: `Render · 1 credit`.
   - Disabled buttons keep their label and show the reason as text next to them. There are no tooltips in place of that reason.
-- **Tabs (composer):** underline tabs, `muted` → `text`, with the active tab on a 2px `accent` underline. The labels are exactly `Still`, `Clip`, `Sequence`.
+- **Tabs (composer):** underline tabs, `muted` → `text`, with the active tab on a 2px `accent` underline. The labels are `Still`, `Clip`, `Sequence`, `Face swap`. Each tab says what it does and where its result goes; the active tool shows a one-line purpose, and a persistent "how it works" strip links Still → Clip → Sequence → Face swap.
 - **Rail item:**
   - A 56×56 thumbnail (radius 8px), the title (prompt or preset name, one line, ellipsis), a mono meta line (`clip · 0:05 · 14:02`), and a status dot on the right.
   - Selected: `sunken` background with a 2px `accent` bar on the left edge.
@@ -80,7 +80,7 @@ Token names are the `@theme` names (`--color-<name>` → `bg-<name>`, `text-<nam
 ## 5. Start Page (the only "hero")
 - An asymmetric split on desktop:
   - **left (5/12):** the display headline, one plain sentence, and one primary button, "Open the studio";
-  - **right (7/12):** the three steps **Still → Clip → Sequence**, stacked vertically, each with real media from our storage (preset preview clips and posters) and a one-line caption.
+  - **right (7/12):** the four tools **Still → Clip → Sequence → Face swap**, stacked vertically, each with real media from our storage (distinct preset preview clips and posters) and a one-line caption. The Still and Clip demos must not show the same subject.
 - Below that is one row of motion-preset chips that deep-link into the Clip tab.
 - **Not allowed:** a centred hero, three equal cards, a second CTA, stats, testimonials, "scroll" hints, and the phrase "AI-powered".
 - Below 768px everything stacks in a single column, and the media goes below the text.
@@ -110,7 +110,7 @@ Token names are the `@theme` names (`--color-<name>` → `bg-<name>`, `text-<nam
 - Film-editing words: still, clip, shot, cut, sequence, render. Sentence case, short, and concrete.
 - Numbers go in mono.
 - Say what happened and what to do next: "Render failed. Your credit was refunded." Never say "Oops" or "Something went wrong!".
-- Use the `no-ai-slop` skill (Detect mode) on every `*Copy.ts` file.
+- Use the `no-ai-slop` skill (Detect mode) on every `*Copy.ts` file. UI copy uses no em dashes.
 
 ## 10. Anti-Patterns (Banned)
 - Anything that reads as Higgsfield: black and lime, Anton, the old logo, "Higgsfield" text.
