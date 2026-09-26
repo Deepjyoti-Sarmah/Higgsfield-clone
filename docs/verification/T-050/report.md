@@ -32,6 +32,28 @@ editor did not let you add video, swap a face into a clip, and export.
 Screenshots: `start-{light,dark}-1440.png`, `studio-still-*-1440.png`, `studio-sequence-*-1440.png`,
 `studio-faceswap-*-1440.png`, `studio-sequence-*-390.png`, `swap-handoff-light-1440.png`.
 
+## Live deployment and end-to-end (2026-09-26)
+
+Deployed from `main` (commit `8423144`): Railway `api` + `worker` built and pushed, live bundle
+`index-z49uLk9P.js` matches a clean local build byte for byte. The video face-swap Modal app
+`higgsfield-video-face-swap` was deployed and `MODAL_VIDEO_FACESWAP_ENDPOINT_URL` set on both
+services. `/api/health/deep` is 5/5 ok and live `/openapi.json` exposes `video-faceswap-jobs`.
+
+The first live run caught a real bug: `complete_run` dropped `GenerationResult.duration_ms`, so
+every real clip stored a null length and video face swap rejected it with `target duration unknown`.
+Fixed in `generation_runs.py`; a one-off backfill (`apps/api/scripts/backfill_clip_durations.py`)
+set the real duration on **36 existing clips** (1 orphan object skipped).
+
+The second live run passed end to end (guest `07fc95e8...`, 43 credits):
+- source face: FLUX image `d608463f`
+- target clip: LTX `e3e4c9ab` (modal)
+- **video face swap: `797a94e0`, `generated_by=modal-video-faceswap`, 704x704 h264 + aac, 5.01s**
+- **sequence with the swapped video: `2b350261`, 1280x720 h264, 9.54s**
+- credits settled: balance 17, spent 43
+
+Evidence: `live/target-clip-poster.jpg` vs `live/swap-poster.jpg` (the face changes; the target's
+pose, clothing and light stay), `live/sequence-poster.jpg`, and the live screenshots in `live/`.
+
 ## Honest limits
 
 1. **No new demo imagery was generated.** The gallery now shows the 4 real FLUX stills with their
@@ -40,8 +62,8 @@ Screenshots: `start-{light,dark}-1440.png`, `studio-still-*-1440.png`, `studio-s
    credentials (`/api/health/deep` reports the video backend unconfigured), so no spend happened.
 2. **Face-swap output quality is backend.** The Modal `face_swap` model was not touched. What
    changed is the flow around it (guidance, copy, seeding a clip from a sequence shot).
-3. **No deploy.** The running app on port 8000 serves the new `apps/web/dist`; the Railway site
-   still serves the previous build.
+3. **Deployed and live-tested, but with a fresh guest.** The user's own rail clips were backfilled
+   to real durations; a re-run with their account would be the last confirmation.
 4. **Screenshots use a mocked rail.** Local generation backends are placeholder/local, so the
    library list was intercepted in the browser. The Sequence editor, per-shot Swap, and face-swap
    seeding are the real app code paths.
