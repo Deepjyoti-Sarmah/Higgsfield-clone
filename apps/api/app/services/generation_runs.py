@@ -109,4 +109,5 @@ async def complete_run(
         poster_key=poster_key,
         video_size=result.video_path.stat().st_size,
         poster_size=result.poster_path.stat().st_size,
+        duration_ms=result.duration_ms,
     )

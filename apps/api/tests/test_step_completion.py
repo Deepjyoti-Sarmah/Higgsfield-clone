@@ -60,7 +60,8 @@ async def job_snapshot(session_maker, job_id: uuid.UUID):
     async with session_maker() as session:
         job = await find_job(session, job_id)
         assert job is not None
-        return job.status, job.error_message, job.output_video_asset_id, job.output_poster_asset_id
+        return (job.status, job.error_message, job.output_video_asset_id,
+                job.output_poster_asset_id, job.duration_ms)
 
 
 async def ledger_rows(session_maker, job_id: uuid.UUID) -> list[tuple[str, int]]:
@@ -102,7 +103,7 @@ async def test_success_uploads_outputs_settles_credits_and_succeeds(
 
     video_key = f"users/{user_id}/jobs/{job_id}/video.mp4"
     poster_key = f"users/{user_id}/jobs/{job_id}/poster.jpg"
-    status, error, video_asset_id, poster_asset_id = await job_snapshot(session_maker, job_id)
+    status, error, video_asset_id, poster_asset_id, duration_ms = await job_snapshot(session_maker, job_id)
     assert (status, error) == ("succeeded", None)
     assert video_asset_id is not None and poster_asset_id is not None
     assert await object_storage.read_object_size(video_key) == VIDEO_SIZE
@@ -115,6 +116,7 @@ async def test_success_uploads_outputs_settles_credits_and_succeeds(
     assert ("HOLD", -PRESET_COST) in rows and ("SETTLE", 0) in rows
     assert sum(1 for kind, _ in rows if kind in {"SETTLE", "RELEASE"}) == 1
     assert await balance_of(guest_client) == GUEST_GRANT - PRESET_COST
+    assert duration_ms == 1000  # video face swap prices and gates on this
 
 
 async def test_generation_error_fails_with_the_user_message_and_releases(
@@ -128,7 +130,7 @@ async def test_generation_error_fails_with_the_user_message_and_releases(
     adapter = ScriptedModelAdapter("generation_error", user_message="Nope")
     await run_claimed(session_maker, object_storage, claimed, adapter)
 
-    status, error, _, _ = await job_snapshot(session_maker, job_id)
+    status, error, _, _, _ = await job_snapshot(session_maker, job_id)
     assert (status, error) == ("failed", "Nope")
     assert await step_snapshot(session_maker, claimed.id) == ("failed", 1, "scripted", "Nope")
     rows = await ledger_rows(session_maker, job_id)
@@ -146,7 +148,7 @@ async def test_runtime_error_fails_with_the_generic_message_and_releases(
 
     await run_claimed(session_maker, object_storage, claimed, ScriptedModelAdapter("runtime_error"))
 
-    status, error, _, _ = await job_snapshot(session_maker, job_id)
+    status, error, _, _, _ = await job_snapshot(session_maker, job_id)
     assert (status, error) == ("failed", GENERIC_FAILURE_MESSAGE)
     assert "kaboom" not in str(error)
     assert ("RELEASE", PRESET_COST) in await ledger_rows(session_maker, job_id)
@@ -191,7 +193,7 @@ async def test_lost_lease_writes_nothing(
         await session.commit()
     await asyncio.wait_for(run, timeout=5)
 
-    assert await job_snapshot(session_maker, job_id) == ("running", None, None, None)
+    assert await job_snapshot(session_maker, job_id) == ("running", None, None, None, None)
     assert await step_snapshot(session_maker, claimed.id) == ("queued", 1, None, FIRST_EXPIRY_ERROR)
     assert await ledger_rows(session_maker, job_id) == [("HOLD", -PRESET_COST)]
     assert await object_storage.read_object_size(f"users/{user_id}/jobs/{job_id}/video.mp4") is None
