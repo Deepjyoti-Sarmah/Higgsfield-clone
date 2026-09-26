@@ -1,7 +1,8 @@
 import type { LibraryItem } from "./library"
 
-export type StudioTab = "still" | "clip" | "sequence"
+export type StudioTab = "still" | "clip" | "sequence" | "faceswap"
 export type SeedImage = { assetId: string; url: string }
+export type FaceSwapSeed = SeedImage
 export type SequenceTransition = "cut" | "crossfade" | "fade_black"
 export type SequenceDraftClip = {
   jobId: string
@@ -30,4 +31,8 @@ export type ClipComposerProps = ComposerProps & {
 export type SequenceComposerProps = ComposerProps & {
   sequence: SequenceDraftControls
   libraryItems: LibraryItem[]
+}
+export type FaceSwapComposerProps = ComposerProps & {
+  seedTarget: FaceSwapSeed | null
+  onSeedConsumed: () => void
 }

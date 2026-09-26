@@ -1,4 +1,4 @@
-type GenerationBadgeKind = "video" | "image" | "sequence"
+type GenerationBadgeKind = "video" | "image" | "sequence" | "faceswap"
 
 type GenerationBadgeProps = {
   generatedBy: string | null | undefined
@@ -8,6 +8,7 @@ type GenerationBadgeProps = {
 const AI_BACKENDS = new Set(["modal", "openrouter"])
 
 function labelFor(generatedBy: string, kind: GenerationBadgeKind): string | null {
+  if (generatedBy === "modal-faceswap") return "Face swap"
   if (AI_BACKENDS.has(generatedBy)) return kind === "image" ? "AI image" : "AI video"
   if (generatedBy === "local-motion") return "Motion preview"
   if (generatedBy === "placeholder") return "Placeholder image"

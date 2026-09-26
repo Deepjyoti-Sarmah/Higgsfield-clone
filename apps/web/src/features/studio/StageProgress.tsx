@@ -5,7 +5,7 @@ import { useJobEvents } from "../../api/useJobEvents"
 import { ProgressBar } from "../../ui/ProgressBar"
 
 type StageProgressProps = {
-  kind: "video" | "image" | "sequence"
+  kind: "video" | "image" | "sequence" | "faceswap"
   jobId: string
   status: "queued" | "running" | "succeeded" | "failed" | null
   onSettled: () => void
