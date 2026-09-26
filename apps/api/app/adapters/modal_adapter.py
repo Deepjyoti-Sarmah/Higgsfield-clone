@@ -13,6 +13,7 @@ from app.adapters.model_adapter import (
     GenerationRequest,
     GenerationResult,
 )
+from app.domain.motion_prompts import compose_clip_prompt
 from app.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,8 @@ class ModalAdapter:
     async def generate_video(self, request: GenerationRequest) -> GenerationResult:
         if not self._endpoint_url:
             raise BackendNotConfiguredError("modal backend not configured: set MODAL_ENDPOINT_URL")
-        payload = await self._post_clip(request.input_image_url, request.prompt or "")
+        prompt = compose_clip_prompt(request.preset_slug, request.prompt)
+        payload = await self._post_clip(request.input_image_url, prompt)
         video_bytes, width, height, duration_ms = _parse_clip_payload(payload)
         request.work_dir.mkdir(parents=True, exist_ok=True)
         video_path = request.work_dir / VIDEO_FILENAME

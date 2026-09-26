@@ -16,6 +16,7 @@ from app.adapters.model_adapter import (
     GenerationRequest,
     GenerationResult,
 )
+from app.domain.motion_prompts import QUALITY_CLAUSE, SCENE_CLAUSE
 from app.repositories.job_steps import claim_next_queued_step
 from app.repositories.jobs import find_job
 from app.services import adapter_runs
@@ -106,7 +107,12 @@ async def test_success_writes_video_and_poster(tmp_path: Path,
     assert result.video_path.read_bytes() == video
     assert result.poster_path.read_bytes()[:2] == b"\xff\xd8"
     assert (result.width, result.height, result.duration_ms) == (960, 544, 5042)
-    assert seen[0]["json"] == {"image_url": "http://example.test/input.jpg", "prompt": "slow dolly in"}
+    posted_prompt = seen[0]["json"]["prompt"]
+    assert seen[0]["json"]["image_url"] == "http://example.test/input.jpg"
+    assert "slow dolly in" in posted_prompt
+    assert "Glide toward the subject" in posted_prompt
+    assert SCENE_CLAUSE in posted_prompt
+    assert QUALITY_CLAUSE in posted_prompt
     assert seen[0]["headers"] == {"Authorization": "Bearer wh-test"}
 
 
