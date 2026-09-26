@@ -12,13 +12,16 @@ from app.adapters.backend_selection import (
     select_image_adapter,
     select_model_adapter,
 )
+from app.adapters.face_swap_adapter import FaceSwapAdapter, FaceSwapAdapterProtocol
 from app.adapters.image_model_adapter import ImageModelAdapter
 from app.adapters.model_adapter import ModelAdapter
 from app.adapters.object_storage import ObjectStorage
 from app.db import create_database_engine, create_session_maker
+from app.domain.faceswap_rules import FACESWAP_STEP_KIND
 from app.domain.sequence_rules import STITCH_STEP_KIND
 from app.logging_setup import configure_logging
 from app.repositories.job_steps import ClaimedStep
+from app.services.faceswap_runs import run_faceswap_step
 from app.services.generation_runs import RunSettings, run_claimed_step
 from app.services.image_generation_runs import run_image_step
 from app.services.lease_reaper import REAPER_BATCH_LIMIT, reap_expired_steps
@@ -46,6 +49,7 @@ async def run_claimed_step_for_kind(
     worker_id: str,
     settings: RunSettings,
     fallback_adapter: ModelAdapter | None = None,
+    face_swap_adapter: FaceSwapAdapterProtocol | None = None,
 ) -> None:
     if claimed.kind == STITCH_STEP_KIND:
         await run_stitch_step(
@@ -61,6 +65,16 @@ async def run_claimed_step_for_kind(
             session_maker,
             storage=storage,
             adapter=image_adapter,
+            claimed=claimed,
+            worker_id=worker_id,
+            settings=settings,
+        )
+        return
+    if claimed.kind == FACESWAP_STEP_KIND:
+        await run_faceswap_step(
+            session_maker,
+            storage=storage,
+            adapter=face_swap_adapter or FaceSwapAdapter(get_settings()),
             claimed=claimed,
             worker_id=worker_id,
             settings=settings,
@@ -85,6 +99,7 @@ async def run_worker_loop() -> None:
     adapter = select_model_adapter(settings)
     fallback_adapter = select_fallback_model_adapter(settings)
     image_adapter = select_image_adapter(settings)
+    face_swap_adapter = FaceSwapAdapter(settings)
     run_settings = RunSettings(
         lease_seconds=settings.worker_lease_seconds,
         generation_timeout_seconds=settings.generation_timeout_seconds,
@@ -123,6 +138,7 @@ async def run_worker_loop() -> None:
                     adapter=adapter,
                     image_adapter=image_adapter,
                     fallback_adapter=fallback_adapter,
+                    face_swap_adapter=face_swap_adapter,
                     claimed=claimed,
                     worker_id=worker_id,
                     settings=run_settings,

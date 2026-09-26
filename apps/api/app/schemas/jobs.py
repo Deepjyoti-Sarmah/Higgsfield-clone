@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 JobStatus = Literal["queued", "running", "succeeded", "failed"]
-JobKind = Literal["video", "image", "sequence"]
+JobKind = Literal["video", "image", "sequence", "faceswap"]
 
 
 class JobCreateRequest(BaseModel):

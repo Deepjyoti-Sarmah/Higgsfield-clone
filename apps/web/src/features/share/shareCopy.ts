@@ -1,14 +1,16 @@
+import type { components } from "../../api/generated/schema"
+
+type JobKind = components["schemas"]["PublicJobResponse"]["kind"]
+
 // §9 voice for the share viewer; the viewer shows no studio or credits UI.
 export function documentTitle(name: string): string {
   return `${name} \u00b7 Reel & Still`
 }
 
-export function shareTitle(job: {
-  kind: "video" | "image" | "sequence"
-  preset_name: string | null
-}): string {
+export function shareTitle(job: { kind: JobKind; preset_name: string | null }): string {
   if (job.kind === "sequence") return "Sequence"
-  if (job.kind === "image") return "Still"
+  // faceswap renders like a still, same as an image job.
+  if (job.kind === "image" || job.kind === "faceswap") return "Still"
   return job.preset_name ?? "Clip"
 }
 
@@ -20,7 +22,7 @@ export function formatSeconds(ms: number | null): string | null {
 
 // Meta lines: "clip · 0:05", "3 shots · 0:14", "2 stills".
 export function shareMeta(job: {
-  kind: "video" | "image" | "sequence"
+  kind: JobKind
   clip_count?: number | null
   duration_ms?: number | null
   image_urls: string[]
@@ -29,7 +31,7 @@ export function shareMeta(job: {
   if (job.kind === "sequence") {
     return [`${job.clip_count ?? 0} shots`, duration].filter(Boolean).join(" \u00b7 ")
   }
-  if (job.kind === "image") return `${job.image_urls.length} stills`
+  if (job.kind === "image" || job.kind === "faceswap") return `${job.image_urls.length} stills`
   return ["clip", duration].filter(Boolean).join(" \u00b7 ")
 }
 

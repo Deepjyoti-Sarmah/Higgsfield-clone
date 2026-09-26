@@ -1,0 +1,3 @@
+FACESWAP_CREDIT_COST = 8
+FACESWAP_STEP_KIND = "swap_face"
+FACESWAP_BACKEND = "modal-faceswap"

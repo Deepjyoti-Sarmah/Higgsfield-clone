@@ -10,6 +10,9 @@ from app.models.job_image import JobImage
 from app.repositories.assets import find_assets_by_ids
 from app.settings import Settings
 
+# faceswap jobs store their single output the same way a still does.
+STILL_LIKE_KINDS = ("image", "faceswap")
+
 
 async def find_images_by_job(
     session: AsyncSession,
@@ -17,7 +20,7 @@ async def find_images_by_job(
     settings: Settings,
     jobs: list[Job],
 ) -> dict[uuid.UUID, list[tuple[uuid.UUID, str]]]:
-    image_job_ids = [job.id for job in jobs if job.kind == "image"]
+    image_job_ids = [job.id for job in jobs if job.kind in STILL_LIKE_KINDS]
     if not image_job_ids:
         return {}
     result = await session.execute(

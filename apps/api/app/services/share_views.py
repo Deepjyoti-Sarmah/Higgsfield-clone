@@ -10,6 +10,7 @@ from app.repositories.jobs import find_job
 from app.repositories.presets import find_active_preset
 from app.repositories.sequence_jobs import count_clips_by_job
 from app.services import library_media
+from app.services.library_media import STILL_LIKE_KINDS
 from app.settings import Settings
 
 
@@ -59,7 +60,8 @@ async def _kind_extras(
     settings: Settings,
     job: Job,
 ) -> PublicJobView:
-    image_urls = await _image_urls(session, storage, settings, job) if job.kind == "image" else []
+    is_still_like = job.kind in STILL_LIKE_KINDS
+    image_urls = await _image_urls(session, storage, settings, job) if is_still_like else []
     counts = await count_clips_by_job(session, [job.id]) if job.kind == "sequence" else {}
     return PublicJobView(
         job=job,

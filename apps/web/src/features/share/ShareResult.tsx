@@ -11,7 +11,8 @@ type ShareResultProps = {
 export function ShareResult({ job }: ShareResultProps) {
   const title = shareCopy.page.shareTitle(job)
   const meta = shareCopy.page.shareMeta(job)
-  const videoUrl = job.kind === "image" ? null : job.video_url
+  // faceswap renders like a still, same as an image job.
+  const videoUrl = job.kind === "image" || job.kind === "faceswap" ? null : job.video_url
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <Link to="/" className="text-accent" aria-label="Reel & Still home">

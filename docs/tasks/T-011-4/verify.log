@@ -1,0 +1,68 @@
+# verify T-011-4
+when: 2026-09-26T01:43:56Z
+root: /home/deepjyoti/Documents/Assigment/Higgsfield/.worktrees/T-011-4
+head: b9634bdf0235ba14beae7f2b5e60d0774f8d9977
+fingerprint: daf659f504f101485c12194c47104680ab5d7e1b
+
+## command
+docker compose up -d --wait db minio && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run alembic downgrade 0007 && uv --directory apps/api run alembic upgrade head && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q && scripts/export-openapi && npm --prefix apps/web run gen:api && npm --prefix apps/web run typecheck
+
+## output (exit 0)
+All checks passed!
+Success: no issues found in 59 source files
+........................................................................ [ 26%]
+........................................................................ [ 53%]
+........................................................................ [ 79%]
+.......................................................                  [100%]
+=============================== warnings summary ===============================
+tests/test_uploads_api.py::test_gif_and_oversized_uploads_are_rejected
+  /home/deepjyoti/Documents/Assigment/Higgsfield/apps/api/.venv/lib/python3.12/site-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseSubprocessTransport.__del__ at 0x7fed161d9580>
+  
+  Traceback (most recent call last):
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/base_subprocess.py", line 126, in __del__
+      self.close()
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/base_subprocess.py", line 104, in close
+      proto.pipe.close()
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/unix_events.py", line 568, in close
+      self._close(None)
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/unix_events.py", line 592, in _close
+      self._loop.call_soon(self._call_connection_lost, exc)
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 799, in call_soon
+      self._check_closed()
+    File "/home/deepjyoti/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 545, in _check_closed
+      raise RuntimeError('Event loop is closed')
+  RuntimeError: Event loop is closed
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+tests/test_uploads_api.py::test_complete_with_a_declared_size_mismatch_deletes_the_object
+tests/test_uploads_api.py::test_complete_with_an_oversized_object_is_rejected
+  /home/deepjyoti/Documents/Assigment/Higgsfield/apps/api/.venv/lib/python3.12/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+271 passed, 3 warnings in 62.76s (0:01:02)
+wrote packages/contracts/openapi.json
+
+> web@0.0.0 gen:api
+> openapi-typescript ../../packages/contracts/openapi.json -o src/api/generated/schema.d.ts
+
+✨ openapi-typescript 7.13.0
+🚀 ../../packages/contracts/openapi.json → src/api/generated/schema.d.ts [83ms]
+
+> web@0.0.0 typecheck
+> tsc -b
+
+ Container higgsfield-minio-1 Running 
+ Container higgsfield-db-1 Running 
+ Container higgsfield-db-1 Waiting 
+ Container higgsfield-minio-1 Waiting 
+ Container higgsfield-minio-1 Healthy 
+ Container higgsfield-db-1 Healthy
+
+## check-standards (exit 0)
+check-standards: ok (0 violations)
+
+RESULT: PASS
