@@ -11,6 +11,6 @@ Generated 2026-09-26T02:01:08Z. States: open → claimed ⇄ blocked → submitt
 | T-011-2 | Always send the video model a real prompt | accepted | sonnet-5@claude-code | 2026-09-26T01:27:37Z |
 | T-011-3 | Face swap endpoint on Modal | accepted | sonnet-5@claude-code | 2026-09-26T01:56:39Z |
 | T-011-4 | Face swap jobs (contract, data, create/read, worker step) | accepted | sonnet-5@claude-code | 2026-09-26T01:46:22Z |
-| T-011-5 | Face swap tab in the studio | submitted | sonnet-5@claude-code | 2026-09-26T01:57:55Z |
+| T-011-5 | Face swap tab in the studio | accepted | sonnet-5@claude-code | 2026-09-26T02:01:08Z |
 | T-011-6 | Clip trim in sequences (API + stitcher) | accepted | sonnet-5@claude-code | 2026-09-26T02:01:08Z |
 | T-043 | Switch the docs and templates to the `scripts/task` protocol | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:08:05Z |
