@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { apiClient } from "../../api/client"
 import type { components } from "../../api/generated/schema"
 
@@ -9,6 +9,17 @@ export type SessionContextValue = {
   status: SessionStatus
   user: User | null
   startGuestSession: () => Promise<boolean>
+}
+
+async function requestGuest(
+  setUser: (user: User) => void,
+  setStatus: (status: SessionStatus) => void,
+): Promise<boolean> {
+  const { data, error } = await apiClient.POST("/api/v1/auth/guest")
+  if (error || !data) return false
+  setUser(data)
+  setStatus("signed-in")
+  return true
 }
 
 export function useSession(): SessionContextValue {
@@ -30,14 +41,19 @@ export function useSession(): SessionContextValue {
     void loadCurrentUser()
   }, [loadCurrentUser])
 
-  const startGuestSession = useCallback(async () => {
-    const { data, error } = await apiClient.POST("/api/v1/auth/guest")
-    if (error || !data) {
-      return false
+  // Every hook's runner and the guest button call this; one shared request stops two guests
+  // being minted at once, which left a job owned by a guest whose cookie was then overwritten.
+  const pendingGuestRef = useRef<Promise<boolean> | null>(null)
+  const isSignedInRef = useRef(false)
+  isSignedInRef.current = status === "signed-in"
+  const startGuestSession = useCallback((): Promise<boolean> => {
+    if (isSignedInRef.current) return Promise.resolve(true)
+    if (pendingGuestRef.current === null) {
+      pendingGuestRef.current = requestGuest(setUser, setStatus).finally(() => {
+        pendingGuestRef.current = null
+      })
     }
-    setUser(data)
-    setStatus("signed-in")
-    return true
+    return pendingGuestRef.current
   }, [])
 
   return { status, user, startGuestSession }
