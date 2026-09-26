@@ -9,3 +9,8 @@ Implemented in-checkout before scripts/task existed and merged in 0e30009. Orche
 ### 2026-09-26T00:08:05Z · claude-opus-5.5@claude-code · NOTE
 
 submitted at 518eb7fca24439ed3bbebdc7abaf2d646b5e9d65
+
+### 2026-09-26T00:08:05Z · claude-opus-5.5@claude-code · REVIEW
+
+ACCEPTED
+Re-verified from the committed tree (check-links, check-standards, line counts). Implemented by an external agent; reviewed by Claude Opus 5.5. Every command in the docs matches scripts/task.

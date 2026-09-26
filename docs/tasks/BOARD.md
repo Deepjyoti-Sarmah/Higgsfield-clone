@@ -7,4 +7,4 @@ Generated 2026-09-26T00:08:05Z. States: open → claimed ⇄ blocked → submitt
 | T-010-1 | Publish the spec 010 contract (schemas, 501 stubs, openapi.json) | open | - | - |
 | T-010-2 | Data for sequences (migration 0007, models, sequence_rules, guest cap) | open | - | - |
 | T-010-5 | Design tokens, fonts, brand mark, top bar and UI primitives | open | - | - |
-| T-043 | Switch the docs and templates to the `scripts/task` protocol | submitted | claude-opus-5.5@claude-code | 2026-09-26T00:08:05Z |
+| T-043 | Switch the docs and templates to the `scripts/task` protocol | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:08:05Z |
