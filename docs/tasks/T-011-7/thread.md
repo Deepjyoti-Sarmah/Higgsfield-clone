@@ -9,3 +9,7 @@ SequenceDraftClip gained durationMs/trimStartMs/trimEndMs (per brief). StudioPag
 ### 2026-09-26T02:53:22Z · sonnet-5@claude-code · ANSWER
 
 Self-resolved: added the durationMs field at the one StudioPage.tsx call site (mechanical, out-of-scope, documented in report.md), same precedent as T-011-6. Unblocking to submit.
+
+### 2026-09-26T02:53:26Z · sonnet-5@claude-code · NOTE
+
+submitted at 5b193a3699fbf0720ea0ec76e33636352c055afc
