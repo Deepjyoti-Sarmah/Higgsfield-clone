@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { fetchJobForProgress } from "../../api/jobProgress"
+import { isTerminalJobStatus } from "../../api/jobStatus"
+import { useJobEvents } from "../../api/useJobEvents"
 import { ProgressBar } from "../../ui/ProgressBar"
 
 type StageProgressProps = {
   kind: "video" | "image" | "sequence"
   jobId: string
   status: "queued" | "running" | "succeeded" | "failed" | null
+  onSettled: () => void
 }
 
 function useElapsedSeconds(): number {
@@ -16,9 +20,21 @@ function useElapsedSeconds(): number {
   return seconds
 }
 
-export function StageProgress({ kind, status }: StageProgressProps) {
+// The Library row is a snapshot; watch the job itself and refresh the Library once it ends.
+function useLiveStatus(kind: StageProgressProps["kind"], jobId: string, onSettled: () => void) {
+  const fetchJob = useCallback((id: string) => fetchJobForProgress(kind, id), [kind])
+  const watch = useJobEvents(jobId, fetchJob)
+  const live = watch.status
+  useEffect(() => {
+    if (live !== null && isTerminalJobStatus(live)) onSettled()
+  }, [live, onSettled])
+  return live
+}
+
+export function StageProgress({ kind, jobId, status, onSettled }: StageProgressProps) {
   const elapsed = useElapsedSeconds()
-  const phase = status ?? "queued"
+  const live = useLiveStatus(kind, jobId, onSettled)
+  const phase = live ?? status ?? "queued"
   return (
     <div className="w-full max-w-md space-y-3 text-center">
       <p className="font-display text-2xl text-text">

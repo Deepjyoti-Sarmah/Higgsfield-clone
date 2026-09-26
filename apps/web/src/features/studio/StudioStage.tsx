@@ -11,6 +11,7 @@ type StudioStageProps = {
   onAnimateThis: (item: LibraryItem, imageUrl: string, assetId: string) => void
   onAddToSequence: (item: LibraryItem) => void
   sequenceFull: boolean
+  onJobSettled: () => void
 }
 
 export type { StudioStageProps }
@@ -134,7 +135,7 @@ export function StudioStage(props: StudioStageProps) {
         {isTerminal ? (
           <StageMedia item={item} onPickImage={(url, assetId) => props.onAnimateThis(item, url, assetId)} />
         ) : (
-          <StageProgress kind={item.kind} jobId={item.id} status={liveStatus} />
+          <StageProgress kind={item.kind} jobId={item.id} status={liveStatus} onSettled={props.onJobSettled} />
         )}
       </div>
       <StageFooter

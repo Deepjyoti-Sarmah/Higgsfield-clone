@@ -109,6 +109,7 @@ function useStudioPanel(props: {
       sequenceFull={draft.draft.clips.length >= MAX_SEQUENCE_CLIPS}
       onAnimateThis={actions.onAnimateThis}
       onAddToSequence={onAddToSequence}
+      onJobSettled={library.reloadLibrary}
     />
   )
   const composer = buildComposer(actions, draft, library.items, actions.consumeSeed)
