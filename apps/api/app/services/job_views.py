@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.adapters.object_storage import ObjectStorage
 from app.models.asset import Asset
 from app.models.job import Job
-from app.models.job_image import JobImage
 from app.repositories.assets import find_assets_by_ids
 from app.repositories.jobs import find_user_job, list_owned_jobs
 from app.repositories.presets import find_active_preset, list_active_presets
@@ -77,13 +76,11 @@ async def list_owned_jobs_view(
         return []
     preset_names = {preset.slug: preset.name for preset in await list_active_presets(session)}
     assets = await find_assets_by_ids(session, _referenced_asset_ids(jobs))
-    image_urls_by_job = await library_media.find_image_urls_by_job(session, storage, settings, jobs)
-    image_assets_by_job = await library_media.find_image_assets_by_job(session, jobs)
+    images_by_job = await library_media.find_images_by_job(session, storage, settings, jobs)
     clip_counts = await count_clips_by_job(session, [job.id for job in jobs])
     return [
         _library_item_view(
-            storage, settings, job, preset_names, assets, image_urls_by_job,
-            image_assets_by_job, clip_counts,
+            storage, settings, job, preset_names, assets, images_by_job, clip_counts,
         )
         for job in jobs
     ]
@@ -106,16 +103,12 @@ def _library_item_view(
     job: Job,
     preset_names: dict[str, str],
     assets: dict[uuid.UUID, Asset],
-    image_urls_by_job: dict[uuid.UUID, list[str]],
-    image_assets_by_job: dict[uuid.UUID, list[JobImage]],
+    images_by_job: dict[uuid.UUID, list[tuple[uuid.UUID, str]]],
     clip_counts: dict[uuid.UUID, int],
 ) -> LibraryItemView:
     if job.kind == "image":
-        image_urls = image_urls_by_job.get(job.id, [])
-        images = [
-            (image.asset_id, library_media.asset_url(storage, settings, assets, image.asset_id))
-            for image in image_assets_by_job.get(job.id, [])
-        ]
+        images = images_by_job.get(job.id, [])
+        image_urls = [url for _, url in images]
         return LibraryItemView(
             job=job,
             preset_name=None,
@@ -123,7 +116,7 @@ def _library_item_view(
             thumbnail_url=image_urls[0] if image_urls else None,
             video_url=None,
             image_urls=image_urls,
-            images=[(asset_id, url) for asset_id, url in images if url is not None],
+            images=images,
         )
     poster_url = library_media.asset_url(storage, settings, assets, job.output_poster_asset_id)
     input_url = library_media.asset_url(storage, settings, assets, job.input_asset_id)

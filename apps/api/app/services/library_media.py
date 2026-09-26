@@ -11,12 +11,12 @@ from app.repositories.assets import find_assets_by_ids
 from app.settings import Settings
 
 
-async def find_image_urls_by_job(
+async def find_images_by_job(
     session: AsyncSession,
     storage: ObjectStorage,
     settings: Settings,
     jobs: list[Job],
-) -> dict[uuid.UUID, list[str]]:
+) -> dict[uuid.UUID, list[tuple[uuid.UUID, str]]]:
     image_job_ids = [job.id for job in jobs if job.kind == "image"]
     if not image_job_ids:
         return {}
@@ -27,29 +27,22 @@ async def find_image_urls_by_job(
     )
     job_images = list(result.scalars())
     assets = await find_assets_by_ids(session, [image.asset_id for image in job_images])
-    urls_by_job: dict[uuid.UUID, list[str]] = {job_id: [] for job_id in image_job_ids}
+    images_by_job: dict[uuid.UUID, list[tuple[uuid.UUID, str]]] = {job_id: [] for job_id in image_job_ids}
     for image in job_images:
         url = asset_url(storage, settings, assets, image.asset_id)
         if url is not None:
-            urls_by_job[image.job_id].append(url)
-    return urls_by_job
-
-
-async def find_image_assets_by_job(
-    session: AsyncSession, jobs: list[Job]
-) -> dict[uuid.UUID, list[JobImage]]:
-    image_job_ids = [job.id for job in jobs if job.kind == "image"]
-    if not image_job_ids:
-        return {}
-    result = await session.execute(
-        select(JobImage)
-        .where(JobImage.job_id.in_(image_job_ids))
-        .order_by(JobImage.job_id, JobImage.position)
-    )
-    images_by_job: dict[uuid.UUID, list[JobImage]] = {job_id: [] for job_id in image_job_ids}
-    for image in result.scalars():
-        images_by_job[image.job_id].append(image)
+            images_by_job[image.job_id].append((image.asset_id, url))
     return images_by_job
+
+
+async def find_image_urls_by_job(
+    session: AsyncSession,
+    storage: ObjectStorage,
+    settings: Settings,
+    jobs: list[Job],
+) -> dict[uuid.UUID, list[str]]:
+    images_by_job = await find_images_by_job(session, storage, settings, jobs)
+    return {job_id: [url for _, url in images] for job_id, images in images_by_job.items()}
 
 
 def asset_url(

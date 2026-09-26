@@ -91,6 +91,8 @@ async def test_the_library_is_kind_agnostic_and_lists_image_jobs(
     assert items[image_id]["video_url"] is None
     assert len(items[image_id]["image_urls"]) == 1
     assert items[image_id]["thumbnail_url"] == items[image_id]["image_urls"][0]
+    # Regression: `images` must carry the same stills with their asset ids (Animate this needs them).
+    assert [image["url"] for image in items[image_id]["images"]] == items[image_id]["image_urls"]
 
 
 async def test_image_jobs_sort_alongside_video_jobs_newest_first(
