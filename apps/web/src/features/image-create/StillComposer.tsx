@@ -61,7 +61,7 @@ export function StillComposer({ onJobStarted }: StillComposerProps) {
   return (
     <div className="flex flex-col gap-5 px-4 py-5 sm:px-6">
       <StillPromptField prompt={prompt} onPromptChange={setPrompt} />
-      {options !== null && <ImageSettingsRow options={options} />}
+      {options !== null && <ImageSettingsRow options={options} settings={settingsState} />}
       <StillActions
         cost={cost}
         blocked={blocked}

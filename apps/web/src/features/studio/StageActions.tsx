@@ -31,7 +31,7 @@ function StillActions({ item, onAnimateThis, onUseAsFaceSwapTarget }: {
   onUseAsFaceSwapTarget: StageActionsProps["onUseAsFaceSwapTarget"]
 }) {
   const firstImage = item.images[0]
-  if (item.kind !== "image" || !firstImage) return null
+  if ((item.kind !== "image" && item.kind !== "faceswap") || !firstImage) return null
   return (
     <>
       <ActionButton

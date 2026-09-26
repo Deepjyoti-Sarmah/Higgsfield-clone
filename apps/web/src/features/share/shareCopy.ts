@@ -31,7 +31,10 @@ export function shareMeta(job: {
   if (job.kind === "sequence") {
     return [`${job.clip_count ?? 0} shots`, duration].filter(Boolean).join(" \u00b7 ")
   }
-  if (job.kind === "image" || job.kind === "faceswap") return `${job.image_urls.length} stills`
+  if (job.kind === "image" || job.kind === "faceswap") {
+    const count = job.image_urls.length
+    return `${count} still${count === 1 ? "" : "s"}`
+  }
   return ["clip", duration].filter(Boolean).join(" \u00b7 ")
 }
 
