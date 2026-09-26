@@ -13,3 +13,8 @@ Approved: widen the kind unions in apps/web/src/features/share/shareCopy.ts, sha
 ### 2026-09-26T01:44:37Z · sonnet-5@claude-code · NOTE
 
 submitted at cc9327f0a240cdb2509a274e5fdb1cae1e9b117b
+
+### 2026-09-26T01:46:22Z · claude-opus-5.5@claude-code · REVIEW
+
+ACCEPTED
+Re-verified (migration up/down/up, ruff, mypy, pytest 271, contract regen, web typecheck). Money path mirrors sequences: lock_user_row, limits, balance, single HOLD; worker SETTLE/RELEASE under the lease; no-face 422 refunds with the endpoint message. Implemented by Sonnet 5, reviewed by Claude Opus 5.5. Follow-up for T-011-5: StageProgress and GenerationBadge need a real faceswap kind and progress path.
