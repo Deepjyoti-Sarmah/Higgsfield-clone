@@ -4,7 +4,7 @@ import { useOutletContext } from "react-router-dom"
 import type { LibraryItem } from "../../api/library"
 import { useLibrary } from "../../api/library"
 import type { SessionContextValue } from "../session/useSession"
-import type { SeedImage, StudioTab } from "../../api/studioContracts"
+import type { FaceSwapSeed, SeedImage, StudioTab } from "../../api/studioContracts"
 import { useSequenceDraft } from "./useSequenceDraft"
 import { MAX_SEQUENCE_CLIPS } from "./draftOps"
 import { StudioRail } from "./StudioRail"
@@ -33,13 +33,14 @@ function MobileLibraryBar({ onOpen }: { onOpen: () => void }) {
 }
 
 function readTab(raw: string | null): StudioTab {
-  const values: StudioTab[] = ["still", "clip", "sequence"]
+  const values: StudioTab[] = ["still", "clip", "sequence", "faceswap"]
   return values.includes(raw as StudioTab) ? (raw as StudioTab) : "still"
 }
 
 function useStudioActions(library: ReturnType<typeof useLibrary>) {
   const { searchParams, setParam } = useStudioParams()
   const [seedImage, setSeedImage] = useState<SeedImage | null>(null)
+  const [seedTarget, setSeedTarget] = useState<FaceSwapSeed | null>(null)
   const selectItem = useCallback((jobId: string) => setParam("item", jobId), [setParam])
   const changeTab = useCallback((next: StudioTab) => setParam("tab", next), [setParam])
   const onJobStarted = useCallback((jobId: string) => {
@@ -51,8 +52,24 @@ function useStudioActions(library: ReturnType<typeof useLibrary>) {
     setSeedImage({ assetId, url })
     changeTab("clip")
   }, [changeTab])
+  const onUseAsFaceSwapTarget = useCallback((url: string, assetId: string) => {
+    setSeedTarget({ assetId, url })
+    changeTab("faceswap")
+  }, [changeTab])
   const consumeSeed = useCallback(() => setSeedImage(null), [])
-  return { searchParams, selectItem, changeTab, onJobStarted, onAnimateThis, seedImage, consumeSeed }
+  const consumeSeedTarget = useCallback(() => setSeedTarget(null), [])
+  return {
+    searchParams,
+    selectItem,
+    changeTab,
+    onJobStarted,
+    onAnimateThis,
+    onUseAsFaceSwapTarget,
+    seedImage,
+    consumeSeed,
+    seedTarget,
+    consumeSeedTarget,
+  }
 }
 
 function buildRail(
@@ -74,7 +91,6 @@ function buildComposer(
   actions: ReturnType<typeof useStudioActions>,
   draft: ReturnType<typeof useSequenceDraft>,
   items: LibraryItem[],
-  onSeedConsumed: () => void,
 ) {
   return (
     <ComposerTabs
@@ -82,7 +98,9 @@ function buildComposer(
       onTabChange={actions.changeTab}
       onJobStarted={actions.onJobStarted}
       seedImage={actions.seedImage}
-      onSeedConsumed={onSeedConsumed}
+      onSeedConsumed={actions.consumeSeed}
+      seedTarget={actions.seedTarget}
+      onSeedTargetConsumed={actions.consumeSeedTarget}
       sequence={draft}
       libraryItems={items}
     />
@@ -116,10 +134,11 @@ function useStudioPanel(props: {
       sequenceFull={draft.draft.clips.length >= MAX_SEQUENCE_CLIPS}
       onAnimateThis={actions.onAnimateThis}
       onAddToSequence={onAddToSequence}
+      onUseAsFaceSwapTarget={actions.onUseAsFaceSwapTarget}
       onJobSettled={onJobSettled}
     />
   )
-  const composer = buildComposer(actions, draft, library.items, actions.consumeSeed)
+  const composer = buildComposer(actions, draft, library.items)
   return { rail, stage, composer }
 }
 

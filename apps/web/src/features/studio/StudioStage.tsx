@@ -10,16 +10,12 @@ type StudioStageProps = {
   liveStatus: "queued" | "running" | "succeeded" | "failed" | null
   onAnimateThis: (item: LibraryItem, imageUrl: string, assetId: string) => void
   onAddToSequence: (item: LibraryItem) => void
+  onUseAsFaceSwapTarget: (imageUrl: string, assetId: string) => void
   sequenceFull: boolean
   onJobSettled: () => void
 }
 
 export type { StudioStageProps }
-
-// GenerationBadge/StageProgress predate faceswap; it renders like a still, so treat it as one here.
-function badgeKind(kind: LibraryItem["kind"]): "video" | "image" | "sequence" {
-  return kind === "faceswap" ? "image" : kind
-}
 
 function PlaceholderCaption({ generatedBy }: { generatedBy: string | null | undefined }) {
   if (generatedBy !== "placeholder" && generatedBy !== "local-motion") return null
@@ -96,16 +92,24 @@ function CaptionLine({ item }: { item: LibraryItem }) {
     <div className="flex items-center gap-3">
       <span className="truncate text-sm text-text">{railItemTitle(item)}</span>
       <span className="truncate font-mono text-[13px] text-muted">{meta}</span>
-      <GenerationBadge generatedBy={item.generated_by} kind={badgeKind(item.kind)} />
+      <GenerationBadge generatedBy={item.generated_by} kind={item.kind} />
     </div>
   )
 }
 
-function StageFooter({ item, liveStatus, onAddToSequence, onAnimateThis, sequenceFull }: {
+function StageFooter({
+  item,
+  liveStatus,
+  onAddToSequence,
+  onAnimateThis,
+  onUseAsFaceSwapTarget,
+  sequenceFull,
+}: {
   item: LibraryItem
   liveStatus: StudioStageProps["liveStatus"]
   onAddToSequence: (item: LibraryItem) => void
   onAnimateThis: StudioStageProps["onAnimateThis"]
+  onUseAsFaceSwapTarget: StudioStageProps["onUseAsFaceSwapTarget"]
   sequenceFull: boolean
 }) {
   const isLive = liveStatus === "queued" || liveStatus === "running"
@@ -123,6 +127,7 @@ function StageFooter({ item, liveStatus, onAddToSequence, onAnimateThis, sequenc
         item={item}
         onAddToSequence={onAddToSequence}
         onAnimateThis={onAnimateThis}
+        onUseAsFaceSwapTarget={onUseAsFaceSwapTarget}
         sequenceFull={sequenceFull}
       />
     </div>
@@ -141,7 +146,7 @@ export function StudioStage(props: StudioStageProps) {
           <StageMedia item={item} onPickImage={(url, assetId) => props.onAnimateThis(item, url, assetId)} />
         ) : (
           <StageProgress
-            kind={badgeKind(item.kind)}
+            kind={item.kind}
             jobId={item.id}
             status={liveStatus}
             onSettled={props.onJobSettled}
@@ -153,6 +158,7 @@ export function StudioStage(props: StudioStageProps) {
         liveStatus={liveStatus}
         onAddToSequence={onAddToSequence}
         onAnimateThis={props.onAnimateThis}
+        onUseAsFaceSwapTarget={props.onUseAsFaceSwapTarget}
         sequenceFull={sequenceFull}
       />
     </div>

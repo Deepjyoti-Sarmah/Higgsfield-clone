@@ -5,6 +5,7 @@ export function railItemTitle(item: LibraryItem): string {
   if (item.kind === "sequence") {
     return `Sequence · ${item.clip_count ?? 0} shots`
   }
+  if (item.kind === "faceswap") return "Face swap"
   if (item.prompt) return item.prompt
   if (item.preset_name) return item.preset_name
   return "Untitled"
