@@ -16,3 +16,4 @@ STITCH_STEP_KIND = "stitch_video"
 # "ffmpeg" is not a paid backend, so sequences stay out of paid-spend accounting.
 STITCH_BACKEND = "ffmpeg"
 MAX_AUDIO_BYTES = 10 * 1024 * 1024
+MIN_TRIMMED_SECONDS = 1.0

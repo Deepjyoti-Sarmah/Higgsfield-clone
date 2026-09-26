@@ -82,12 +82,17 @@ export function renderReason(blocker: RenderBlocker): string | null {
 export type SequenceClipPayload = SequenceDraftClip["transitionIn"] extends never ? never : {
   job_id: string
   transition_in: SequenceTransition
+  trim_start_ms: number
+  trim_end_ms: number | null
 }
 
 // Server stores clips[0] as cut regardless, so the payload says cut there too.
+// Trim is not editable yet (T-011-7 adds the UI); every clip renders untrimmed.
 export function toPayloadClips(draft: SequenceDraft): SequenceClipPayload[] {
   return draft.clips.map((clip, index) => ({
     job_id: clip.jobId,
     transition_in: index === 0 ? "cut" : clip.transitionIn,
+    trim_start_ms: 0,
+    trim_end_ms: null,
   }))
 }

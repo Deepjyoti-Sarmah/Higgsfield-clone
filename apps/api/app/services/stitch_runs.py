@@ -140,6 +140,7 @@ async def run_stitch(
     if inputs.audio_storage_key is not None:
         audio_path = work_dir / "audio"
         await storage.download_to_path(inputs.audio_storage_key, audio_path)
+    trims = [(clip.trim_start_ms, clip.trim_end_ms) for clip in inputs.clips]
     return await stitch_clips(
-        clip_paths, [clip.transition_in for clip in inputs.clips], audio_path, work_dir
+        clip_paths, [clip.transition_in for clip in inputs.clips], audio_path, work_dir, trims
     )

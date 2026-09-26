@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import CheckConstraint, ForeignKey, Index, SmallInteger, String
+from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, SmallInteger, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -16,6 +16,10 @@ class JobSequenceClip(Base):
             name="ck_job_sequence_clip_transition",
         ),
         Index("ix_job_sequence_clip_source_job", "source_job_id"),
+        CheckConstraint(
+            "trim_end_ms IS NULL OR trim_end_ms > trim_start_ms",
+            name="ck_job_sequence_clip_trim",
+        ),
     )
 
     job_id: Mapped[uuid.UUID] = mapped_column(
@@ -26,3 +30,5 @@ class JobSequenceClip(Base):
         UUID(as_uuid=True), ForeignKey("job.id"), nullable=False
     )
     transition_in: Mapped[str] = mapped_column(String(16), nullable=False)
+    trim_start_ms: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    trim_end_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)

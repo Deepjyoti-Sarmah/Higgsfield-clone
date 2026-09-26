@@ -13,15 +13,31 @@ class StitchResult:
     duration_ms: int
 
 
+def _trimmed_seconds(
+    durations: list[float], trims: list[tuple[int, int | None]] | None
+) -> list[float]:
+    if trims is None:
+        return durations
+    lengths = []
+    for duration, (start_ms, end_ms) in zip(durations, trims, strict=True):
+        end_seconds = min(end_ms / 1000, duration) if end_ms is not None else duration
+        lengths.append(end_seconds - start_ms / 1000)
+    return lengths
+
+
 async def stitch_clips(
     clip_paths: list[Path],
     transitions: list[str],
     audio_path: Path | None,
     work_dir: Path,
+    trims: list[tuple[int, int | None]] | None = None,
 ) -> StitchResult:
-    seconds = [await probe_duration_seconds(path) for path in clip_paths]
+    durations = [await probe_duration_seconds(path) for path in clip_paths]
+    seconds = _trimmed_seconds(durations, trims)
     video_path = work_dir / "video.mp4"
-    argv, total = build_stitch_command(clip_paths, seconds, transitions, audio_path, video_path)
+    argv, total = build_stitch_command(
+        clip_paths, seconds, transitions, audio_path, video_path, trims
+    )
     await run_ffmpeg(argv)
     poster_path = work_dir / "poster.jpg"
     await run_ffmpeg([

@@ -44,6 +44,8 @@ async def read_owned_sequence_job(
             position=clip.position,
             job_id=clip.source_job_id,
             transition_in=cast("SequenceTransition", clip.transition_in),
+            trim_start_ms=clip.trim_start_ms,
+            trim_end_ms=clip.trim_end_ms,
             thumbnail_url=_ready_url(storage, settings, assets.get(poster_id))
             if poster_id is not None
             else None,

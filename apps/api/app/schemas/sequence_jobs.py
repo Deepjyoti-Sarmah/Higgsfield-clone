@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.jobs import JobStatus
 
@@ -12,6 +12,14 @@ SequenceTransition = Literal["cut", "crossfade", "fade_black"]
 class SequenceClipIn(BaseModel):
     job_id: uuid.UUID
     transition_in: SequenceTransition = "cut"  # ignored for clips[0]; stored as "cut"
+    trim_start_ms: int = Field(default=0, ge=0)
+    trim_end_ms: int | None = Field(default=None, ge=1)
+
+    @model_validator(mode="after")
+    def _check_trim_order(self) -> "SequenceClipIn":
+        if self.trim_end_ms is not None and self.trim_end_ms <= self.trim_start_ms:
+            raise ValueError("trim_end_ms must be greater than trim_start_ms")
+        return self
 
 
 class SequenceJobCreateRequest(BaseModel):
@@ -31,6 +39,8 @@ class SequenceClipResponse(BaseModel):
     position: int
     job_id: uuid.UUID
     transition_in: SequenceTransition
+    trim_start_ms: int
+    trim_end_ms: int | None
     thumbnail_url: str | None
 
 

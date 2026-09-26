@@ -9,8 +9,8 @@ vi.mock("./client", () => ({
 const { createSequenceJob, sequenceRequestBody } = await import("./sequenceJobs")
 
 const CLIPS = [
-  { job_id: "job-a", transition_in: "cut" as const },
-  { job_id: "job-b", transition_in: "crossfade" as const },
+  { job_id: "job-a", transition_in: "cut" as const, trim_start_ms: 0, trim_end_ms: null },
+  { job_id: "job-b", transition_in: "crossfade" as const, trim_start_ms: 0, trim_end_ms: null },
 ]
 
 function run() {
