@@ -1,6 +1,6 @@
 import type { LibraryItem } from "../../api/library"
 import type { SequenceDraftControls } from "../../api/studioContracts"
-import { clipEligibility } from "./sequenceDraftView"
+import { clipEligibility, DEFAULT_CLIP_DURATION_MS } from "./sequenceDraftView"
 import { useClipAspects } from "./useClipAspects"
 import { sequenceCopy } from "./sequenceCopy"
 
@@ -40,7 +40,12 @@ function ClipCard({ item, aspect, firstAspect, isInDraft, sequence }: ClipCardPr
         type="button"
         disabled={!verdict.eligible || isInDraft}
         onClick={() =>
-          sequence.addClip({ jobId: item.id, posterUrl: item.thumbnail_url, aspect })
+          sequence.addClip({
+            jobId: item.id,
+            posterUrl: item.thumbnail_url,
+            aspect,
+            durationMs: item.duration_ms ?? DEFAULT_CLIP_DURATION_MS,
+          })
         }
         className="h-8 rounded-md border border-border px-2 text-xs font-medium text-text hover:border-accent/60 disabled:cursor-not-allowed disabled:opacity-50"
       >

@@ -7,6 +7,7 @@ import {
   readStoredDraft,
   removeClipFromDraft,
   setClipTransition,
+  setClipTrim,
   withAudio,
   writeStoredDraft,
 } from "./draftOps"
@@ -35,6 +36,10 @@ export function useSequenceDraft(): SequenceDraftControls {
     (index, transition) => setDraft((prev) => setClipTransition(prev, index, transition)),
     [],
   )
+  const setTrim = useCallback<SequenceDraftControls["setTrim"]>(
+    (index, trimStartMs, trimEndMs) => setDraft((prev) => setClipTrim(prev, index, trimStartMs, trimEndMs)),
+    [],
+  )
   const setAudio = useCallback<SequenceDraftControls["setAudio"]>(
     (audio) => setDraft((prev) => withAudio(prev, audio)),
     [],
@@ -42,7 +47,7 @@ export function useSequenceDraft(): SequenceDraftControls {
   const clearDraft = useCallback(() => setDraft(EMPTY_DRAFT), [])
 
   return useMemo(
-    () => ({ draft, addClip, removeClip, moveClip, setTransition, setAudio, clearDraft }),
-    [draft, addClip, removeClip, moveClip, setTransition, setAudio, clearDraft],
+    () => ({ draft, addClip, removeClip, moveClip, setTransition, setTrim, setAudio, clearDraft }),
+    [draft, addClip, removeClip, moveClip, setTransition, setTrim, setAudio, clearDraft],
   )
 }

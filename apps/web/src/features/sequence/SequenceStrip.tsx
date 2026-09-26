@@ -1,8 +1,9 @@
 import { useState } from "react"
 import type { DragEvent as ReactDragEvent } from "react"
-import type { SequenceDraftControls } from "../../api/studioContracts"
+import type { SequenceDraftClip, SequenceDraftControls } from "../../api/studioContracts"
 import { sequenceCopy } from "./sequenceCopy"
 import { TransitionChip } from "./TransitionChip"
+import { TrimControls } from "./TrimControls"
 
 type SequenceStripProps = {
   sequence: SequenceDraftControls
@@ -88,22 +89,24 @@ function RemoveButton({ index, jobId, sequence }: {
   )
 }
 
-function ClipSlot({ index, jobId, posterUrl, sequence }: {
+function ClipSlot({ index, clip, sequence }: {
   index: number
-  jobId: string
-  posterUrl: string | null
+  clip: SequenceDraftClip
   sequence: SequenceDraftControls
 }) {
   return (
-    <SlotChrome index={index} jobId={jobId} sequence={sequence}>
-      {posterUrl ? (
-        <img src={posterUrl} alt="" className="h-[68px] w-[120px] rounded-lg object-cover" />
-      ) : (
-        <div className="flex h-[68px] w-[120px] items-center justify-center font-mono text-xs text-faint">
-          {index + 1}
-        </div>
-      )}
-    </SlotChrome>
+    <div className="flex flex-col items-center gap-1">
+      <SlotChrome index={index} jobId={clip.jobId} sequence={sequence}>
+        {clip.posterUrl ? (
+          <img src={clip.posterUrl} alt="" className="h-[68px] w-[120px] rounded-lg object-cover" />
+        ) : (
+          <div className="flex h-[68px] w-[120px] items-center justify-center font-mono text-xs text-faint">
+            {index + 1}
+          </div>
+        )}
+      </SlotChrome>
+      <TrimControls index={index} clip={clip} sequence={sequence} />
+    </div>
   )
 }
 
@@ -129,7 +132,7 @@ export function SequenceStrip({ sequence }: SequenceStripProps) {
               onCycle={(next) => sequence.setTransition(index, next)}
             />
           )}
-          <ClipSlot index={index} jobId={clip.jobId} posterUrl={clip.posterUrl} sequence={sequence} />
+          <ClipSlot index={index} clip={clip} sequence={sequence} />
         </div>
       ))}
       {Array.from({ length: trailingEmpty }).map((_, index) => (

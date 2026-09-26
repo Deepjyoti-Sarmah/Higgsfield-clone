@@ -18,12 +18,20 @@ export function AppShell({ rightSlot, creditsSlot, outletContext, fullBleed = fa
             <BrandMark className="h-6 w-6 text-accent" />
             <BrandWordmark />
           </Link>
-          <Link
-            to="/studio"
-            className="rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
-          >
-            Studio
-          </Link>
+          <nav className="flex items-center gap-1" aria-label="Tools">
+            <Link
+              to="/studio"
+              className="rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
+            >
+              Studio
+            </Link>
+            <Link
+              to="/studio?tab=faceswap"
+              className="rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
+            >
+              Face swap
+            </Link>
+          </nav>
           <div className="ml-auto flex items-center gap-3">
             {creditsSlot}
             {rightSlot}

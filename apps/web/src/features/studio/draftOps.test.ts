@@ -26,11 +26,12 @@ import {
   readStoredDraft,
   removeClipFromDraft,
   setClipTransition,
+  setClipTrim,
   withAudio,
   writeStoredDraft,
 } from "./draftOps"
 
-const CLIP = { jobId: "job-1", posterUrl: null, aspect: null }
+const CLIP = { jobId: "job-1", posterUrl: null, aspect: null, durationMs: 5000 }
 
 function fill(n: number) {
   let draft = EMPTY_DRAFT
@@ -77,6 +78,21 @@ describe("sequence draft rules", () => {
   it("returns an empty draft for corrupt storage", () => {
     sessionStorage.setItem("reel-still.sequence-draft", "not json")
     expect(readStoredDraft()).toEqual(EMPTY_DRAFT)
+  })
+})
+
+describe("sequence draft trim", () => {
+  it("defaults each clip's trim to its full known length", () => {
+    const draft = fill(1)
+    expect(draft.clips[0].trimStartMs).toBe(0)
+    expect(draft.clips[0].trimEndMs).toBe(5000)
+  })
+
+  it("sets a clip's trim without touching the others", () => {
+    const draft = fill(2)
+    const trimmed = setClipTrim(draft, 1, 500, 4000)
+    expect(trimmed.clips[1]).toMatchObject({ trimStartMs: 500, trimEndMs: 4000 })
+    expect(trimmed.clips[0]).toMatchObject({ trimStartMs: 0, trimEndMs: 5000 })
   })
 })
 
