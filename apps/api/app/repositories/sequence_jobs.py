@@ -30,15 +30,19 @@ async def insert_sequence_job(
 
 
 async def insert_sequence_clips(
-    session: AsyncSession, job_id: uuid.UUID, clips: list[tuple[uuid.UUID, str]]
+    session: AsyncSession,
+    job_id: uuid.UUID,
+    clips: list[tuple[uuid.UUID, str, int, int | None]],
 ) -> None:
-    for position, (source_id, transition) in enumerate(clips):
+    for position, (source_id, transition, trim_start_ms, trim_end_ms) in enumerate(clips):
         session.add(
             JobSequenceClip(
                 job_id=job_id,
                 source_job_id=source_id,
                 position=position,
                 transition_in="cut" if position == 0 else transition,
+                trim_start_ms=trim_start_ms,
+                trim_end_ms=trim_end_ms,
             )
         )
     await session.flush()

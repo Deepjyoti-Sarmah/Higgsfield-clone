@@ -2813,6 +2813,24 @@
             ],
             "title": "Transition In",
             "default": "cut"
+          },
+          "trim_start_ms": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Trim Start Ms",
+            "default": 0
+          },
+          "trim_end_ms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trim End Ms"
           }
         },
         "type": "object",
@@ -2841,6 +2859,21 @@
             ],
             "title": "Transition In"
           },
+          "trim_start_ms": {
+            "type": "integer",
+            "title": "Trim Start Ms"
+          },
+          "trim_end_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trim End Ms"
+          },
           "thumbnail_url": {
             "anyOf": [
               {
@@ -2858,6 +2891,8 @@
           "position",
           "job_id",
           "transition_in",
+          "trim_start_ms",
+          "trim_end_ms",
           "thumbnail_url"
         ],
         "title": "SequenceClipResponse"

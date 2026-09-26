@@ -107,7 +107,10 @@ async def create_sequence_job(
         credit_cost=SEQUENCE_CREDIT_COST,
     )
     await insert_sequence_clips(
-        session, job.id, [(clip.job_id, clip.transition_in) for clip in clips]
+        session,
+        job.id,
+        [(clip.job_id, clip.transition_in, clip.trim_start_ms, clip.trim_end_ms)
+         for clip in clips],
     )
     await insert_job_step(session, job.id, STITCH_STEP_KIND)
     await insert_ledger_entry(

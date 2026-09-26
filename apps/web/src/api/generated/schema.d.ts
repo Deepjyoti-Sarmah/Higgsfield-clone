@@ -875,6 +875,13 @@ export interface components {
              * @enum {string}
              */
             transition_in: "cut" | "crossfade" | "fade_black";
+            /**
+             * Trim Start Ms
+             * @default 0
+             */
+            trim_start_ms: number;
+            /** Trim End Ms */
+            trim_end_ms?: number | null;
         };
         /** SequenceClipResponse */
         SequenceClipResponse: {
@@ -890,6 +897,10 @@ export interface components {
              * @enum {string}
              */
             transition_in: "cut" | "crossfade" | "fade_black";
+            /** Trim Start Ms */
+            trim_start_ms: number;
+            /** Trim End Ms */
+            trim_end_ms: number | null;
             /** Thumbnail Url */
             thumbnail_url: string | null;
         };

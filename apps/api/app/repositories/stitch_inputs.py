@@ -13,6 +13,8 @@ from app.repositories.sequence_jobs import find_clip_source_jobs, list_sequence_
 class StitchClipInput:
     storage_key: str
     transition_in: str
+    trim_start_ms: int
+    trim_end_ms: int | None
 
 
 @dataclass(frozen=True)
@@ -43,8 +45,12 @@ async def load_stitch_inputs(session: AsyncSession, job_id: uuid.UUID) -> Stitch
         asset = assets.get(video_id)
         if asset is None:
             return None
-        stitched.append(StitchClipInput(storage_key=asset.storage_key,
-                                        transition_in=clip.transition_in))
+        stitched.append(StitchClipInput(
+            storage_key=asset.storage_key,
+            transition_in=clip.transition_in,
+            trim_start_ms=clip.trim_start_ms,
+            trim_end_ms=clip.trim_end_ms,
+        ))
     return StitchInputs(user_id=job.user_id, job_id=job.id, clips=stitched,
                         audio_storage_key=await _audio_key(session, job))
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.domain.sequence_rules import (
+    MIN_TRIMMED_SECONDS,
     MUSIC_FADE_SECONDS,
     OUTPUT_FPS,
     OUTPUT_HEIGHT,
@@ -13,7 +14,13 @@ NORMALISE_CHAIN = (
     f"pad={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=black,"
     f"setsar=1,fps={OUTPUT_FPS},format=yuv420p,settb=AVTB"
 )
-MIN_CLIP_SECONDS = 1.0
+
+
+def _trim_prefix(start_ms: int, end_ms: int | None) -> str:
+    start = start_ms / 1000
+    if end_ms is None:
+        return f"trim=start={start},setpts=PTS-STARTPTS,"
+    return f"trim=start={start}:end={end_ms / 1000},setpts=PTS-STARTPTS,"
 
 
 def _fold_segment(
@@ -39,9 +46,10 @@ def build_stitch_command(
     transitions: list[str],
     audio_path: Path | None,
     output_path: Path,
+    trims: list[tuple[int, int | None]] | None = None,
 ) -> tuple[list[str], float]:
-    if any(length < MIN_CLIP_SECONDS for length in clip_seconds):
-        raise ValueError(f"clips must be at least {MIN_CLIP_SECONDS} s long")
+    if any(length < MIN_TRIMMED_SECONDS for length in clip_seconds):
+        raise ValueError(f"clips must be at least {MIN_TRIMMED_SECONDS} s long")
     argv: list[str] = []
     for clip in clip_paths:
         argv += ["-i", str(clip)]
@@ -49,7 +57,8 @@ def build_stitch_command(
         argv += ["-i", str(audio_path)]
     filters: list[str] = []
     for index in range(len(clip_paths)):
-        filters.append(f"[{index}:v]{NORMALISE_CHAIN}[v{index}]")
+        trim = _trim_prefix(*trims[index]) if trims is not None else ""
+        filters.append(f"[{index}:v]{trim}{NORMALISE_CHAIN}[v{index}]")
     previous = "[v0]"
     total = clip_seconds[0]
     for index in range(1, len(clip_paths)):
