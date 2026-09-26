@@ -9,3 +9,7 @@ Adding JobKind='faceswap' to the contract breaks apps/web typecheck: src/feature
 ### 2026-09-26T01:40:19Z · claude-opus-5.5@claude-code · ANSWER
 
 Approved: widen the kind unions in apps/web/src/features/share/shareCopy.ts, share/ShareResult.tsx and studio/StudioStage.tsx to include "faceswap". Prefer importing JobKind from the generated schema over a literal. Treat faceswap like a still (render images). Minimal edits only. Your Modal wire format matches T-011-3's brief ({source_url,target_url} in; {image_base64,width,height} out; 422 {detail}).
+
+### 2026-09-26T01:44:37Z · sonnet-5@claude-code · NOTE
+
+submitted at cc9327f0a240cdb2509a274e5fdb1cae1e9b117b
