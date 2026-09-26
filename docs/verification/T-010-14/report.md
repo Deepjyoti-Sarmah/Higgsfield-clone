@@ -37,3 +37,11 @@ Only `GET /api/v1/me` 401 (logged-out probe on a cold visit) and the matching "F
 
 - Not one single context: the run was split across contexts because of the fixes and script timeouts (the guest cookie was reused for steps 5-6). Steps 7 and 8 used new signed-out contexts as asked.
 - The sequence was rendered four times (1 credit each) while diagnosing P1.
+
+## P1 root cause (T-010-15)
+
+Repro on live with the same 2 clips + XFADE:
+- With music attached: draft stays in sessionStorage with 2 clips, stage stays empty, no `/sequence-jobs/<id>` or SSE request is ever made. The `aside` DOM node survived, so there is no remount.
+- Without music: draft becomes `{"clips":[],"audio":null}`, the stage shows progress after ~2 s, and the SSE and `/sequence-jobs/<id>` requests fire.
+
+Cause: `useSequenceDraft` returned a new `setAudio` every render, closed over that render's draft. `MusicDropZone`'s `useSyncReadyAudio` effect depends on `setAudio`, so while an uploaded music file was in the "ready" state it re-ran after every render and re-wrote the draft with `{...draft, audio}`, undoing `clearDraft` and keeping the render loop busy. Fix: stable functional updaters (`setDraft(prev => ...)`) and a no-op `withAudio` for the same audio (`useSequenceDraft.ts`, `draftOps.ts`, tests in `draftOps.test.ts`).

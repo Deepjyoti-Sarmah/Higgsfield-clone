@@ -54,3 +54,11 @@ export function writeStoredDraft(draft: SequenceDraft): void {
     // Private-browsing storage may be unavailable; the draft then lives in memory only.
   }
 }
+
+// Applied to the latest draft, and a no-op for the same audio, so a repeated sync cannot undo a clear.
+export function withAudio(draft: SequenceDraft, audio: SequenceDraft["audio"]): SequenceDraft {
+  const current = draft.audio
+  if (current === audio) return draft
+  if (current !== null && audio !== null && current.assetId === audio.assetId) return draft
+  return { ...draft, audio }
+}

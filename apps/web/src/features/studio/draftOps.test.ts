@@ -26,6 +26,7 @@ import {
   readStoredDraft,
   removeClipFromDraft,
   setClipTransition,
+  withAudio,
   writeStoredDraft,
 } from "./draftOps"
 
@@ -76,5 +77,20 @@ describe("sequence draft rules", () => {
   it("returns an empty draft for corrupt storage", () => {
     sessionStorage.setItem("reel-still.sequence-draft", "not json")
     expect(readStoredDraft()).toEqual(EMPTY_DRAFT)
+  })
+})
+
+describe("withAudio", () => {
+  const music = { assetId: "a1", name: "music.wav" }
+
+  it("keeps the same draft when the same audio is set again", () => {
+    const draft = { clips: [], audio: music }
+    expect(withAudio(draft, { ...music })).toBe(draft)
+  })
+
+  it("applies to the latest draft, so a sync after clearing leaves the clips empty", () => {
+    const cleared = withAudio(EMPTY_DRAFT, music)
+    expect(cleared.clips).toEqual([])
+    expect(cleared.audio).toEqual(music)
   })
 })
