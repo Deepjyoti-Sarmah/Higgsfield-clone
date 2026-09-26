@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
-from tasklib.paths import TaskError, find_current_root, run_git, task_dir, utc_now
+from tasklib.paths import TaskError, find_current_root, find_main_root, run_git, task_dir, utc_now
 
 
 def extract_verify_command(work_root, task):
@@ -67,12 +68,21 @@ def compute_fingerprint(work_root, task):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def build_verify_env(work_root):
+    # docker compose names a project after its folder; in a worktree that would start a second
+    # stack on the same ports, so verify always targets the main checkout's compose project.
+    env = dict(os.environ)
+    main_name = find_main_root(work_root).name.lower()
+    env.setdefault("COMPOSE_PROJECT_NAME", re.sub(r"[^a-z0-9_-]", "", main_name))
+    return env
+
+
 def run_verify(task):
     work_root = find_current_root(Path.cwd())
     block = extract_verify_command(work_root, task)
     shell = subprocess.run(
         ["bash", "-o", "pipefail", "-c", block],
-        cwd=work_root, capture_output=True, text=True,
+        cwd=work_root, capture_output=True, text=True, env=build_verify_env(work_root),
     )
     checker = str(work_root / "scripts" / "check-standards")
     graded = subprocess.run(
