@@ -343,7 +343,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "input_image" | "output_video" | "output_poster";
+            kind: "input_image" | "input_audio" | "output_video" | "output_poster";
             /**
              * Status
              * @enum {string}
