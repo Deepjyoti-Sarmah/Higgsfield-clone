@@ -137,6 +137,8 @@ def capture(scheme: str) -> None:
         mpage.route("**/api/v1/jobs*", fulfill_jobs)
         mpage.goto(BASE + "/studio", wait_until="load")
         mpage.wait_for_timeout(2000)
+        overflow = mpage.evaluate("document.documentElement.scrollWidth - window.innerWidth")
+        print("MOBILE " + scheme + " overflow px:", overflow)
         studio_sequence(mpage)
         shot(mpage, "studio-sequence-" + scheme + "-390.png", full=True)
         mobile.close()

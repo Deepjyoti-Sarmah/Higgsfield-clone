@@ -21,13 +21,13 @@ export function AppShell({ rightSlot, creditsSlot, outletContext, fullBleed = fa
           <nav className="flex items-center gap-1" aria-label="Tools">
             <Link
               to="/studio"
-              className="rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
+              className="shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
             >
               Studio
             </Link>
             <Link
               to="/studio?tab=faceswap"
-              className="rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text"
+              className="hidden shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-text md:inline-flex"
             >
               Face swap
             </Link>
