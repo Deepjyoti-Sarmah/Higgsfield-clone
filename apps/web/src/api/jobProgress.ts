@@ -7,7 +7,7 @@ export type ProgressJob = {
   error_message?: string | null
 }
 
-type JobKind = "video" | "image" | "sequence" | "faceswap"
+type JobKind = "video" | "image" | "sequence" | "faceswap" | "video_faceswap"
 
 type FetchOutcome = { data: ProgressJob | undefined; response: Response }
 
@@ -29,6 +29,7 @@ export function progressPathFor(kind: JobKind): string {
   if (kind === "image") return "/api/v1/image-jobs/{job_id}"
   if (kind === "sequence") return "/api/v1/sequence-jobs/{job_id}"
   if (kind === "faceswap") return "/api/v1/faceswap-jobs/{job_id}"
+  if (kind === "video_faceswap") return "/api/v1/video-faceswap-jobs/{job_id}"
   return "/api/v1/jobs/{job_id}"
 }
 
@@ -49,6 +50,12 @@ export function fetchJobForProgress(kind: JobKind, jobId: string): Promise<Fetch
   if (kind === "faceswap") {
     return readJob(async () => {
       const result = await apiClient.GET("/api/v1/faceswap-jobs/{job_id}", params)
+      return { data: result.data, response: result.response }
+    })
+  }
+  if (kind === "video_faceswap") {
+    return readJob(async () => {
+      const result = await apiClient.GET("/api/v1/video-faceswap-jobs/{job_id}", params)
       return { data: result.data, response: result.response }
     })
   }

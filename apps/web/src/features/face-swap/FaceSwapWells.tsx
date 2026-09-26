@@ -19,13 +19,18 @@ export function FaceSwapWells({ faceUpload, targetUpload, heldTarget }: FaceSwap
         onDropSeed={() => undefined}
         upload={faceUpload}
       />
-      <ImageWell
-        label={faceSwapCopy.target.label}
-        hint={faceSwapCopy.target.hint}
-        seedUrl={heldTarget.active !== null ? heldTarget.active.url : null}
-        onDropSeed={heldTarget.drop}
-        upload={targetUpload}
-      />
+      <div className="flex-1">
+        <ImageWell
+          label={faceSwapCopy.target.label}
+          hint={faceSwapCopy.target.hint}
+          seedUrl={heldTarget.active !== null ? heldTarget.active.url : null}
+          onDropSeed={heldTarget.drop}
+          upload={targetUpload}
+        />
+        {heldTarget.active === null && (
+          <p className="mt-1 text-xs text-muted">{faceSwapCopy.target.seedHint}</p>
+        )}
+      </div>
     </div>
   )
 }

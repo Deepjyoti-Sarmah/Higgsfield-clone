@@ -17,12 +17,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
-JOB_KIND_CHECK = "kind IN ('video', 'image', 'sequence', 'faceswap')"
+JOB_KIND_CHECK = "kind IN ('video', 'image', 'sequence', 'faceswap', 'video_faceswap')"
 JOB_INPUTS_BY_KIND_CHECK = (
     "(kind = 'video' AND preset_slug IS NOT NULL AND input_asset_id IS NOT NULL)"
     " OR (kind = 'image' AND preset_slug IS NULL AND input_asset_id IS NULL)"
     " OR (kind = 'sequence' AND preset_slug IS NULL AND input_asset_id IS NULL)"
     " OR (kind = 'faceswap' AND preset_slug IS NULL AND input_asset_id IS NULL)"
+    " OR (kind = 'video_faceswap' AND preset_slug IS NULL AND input_asset_id IS NULL)"
 )
 JOB_IMAGE_PARAMS_CHECK = (
     "(kind = 'image' AND aspect_ratio IS NOT NULL AND quality IS NOT NULL"
@@ -32,11 +33,13 @@ JOB_IMAGE_PARAMS_CHECK = (
     " AND image_count IS NULL)"
     " OR (kind = 'faceswap' AND aspect_ratio IS NULL AND quality IS NULL"
     " AND image_count IS NULL)"
+    " OR (kind = 'video_faceswap' AND aspect_ratio IS NULL AND quality IS NULL"
+    " AND image_count IS NULL)"
 )
 JOB_FACESWAP_ASSETS_CHECK = (
-    "(kind = 'faceswap' AND face_source_asset_id IS NOT NULL"
+    "(kind IN ('faceswap', 'video_faceswap') AND face_source_asset_id IS NOT NULL"
     " AND face_target_asset_id IS NOT NULL)"
-    " OR (kind != 'faceswap' AND face_source_asset_id IS NULL"
+    " OR (kind NOT IN ('faceswap', 'video_faceswap') AND face_source_asset_id IS NULL"
     " AND face_target_asset_id IS NULL)"
 )
 JOB_AUDIO_CHECK = "audio_asset_id IS NULL OR kind = 'sequence'"

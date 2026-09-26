@@ -25,6 +25,12 @@ function failureMessage(failure: "limit" | "invalid" | "error" | null): string |
   return null
 }
 
+function readinessMessage(props: FaceSwapActionsProps): string | null {
+  if (props.blocked !== null || props.isSubmitting) return null
+  if (props.insufficient !== null || props.failure !== null) return null
+  return faceSwapCopy.submit.ready
+}
+
 export function FaceSwapActions(props: FaceSwapActionsProps) {
   const label = props.isSubmitting ? faceSwapCopy.submit.submitting : faceSwapCopy.submit.withCost(props.cost)
   return (
@@ -39,6 +45,9 @@ export function FaceSwapActions(props: FaceSwapActionsProps) {
       </button>
       {blockedMessage(props.blocked) !== null && (
         <p className="text-[13px] text-faint">{blockedMessage(props.blocked)}</p>
+      )}
+      {readinessMessage(props) !== null && (
+        <p className="text-[13px] text-muted">{readinessMessage(props)}</p>
       )}
       {props.insufficient !== null && (
         <p role="alert" className="text-[13px] text-danger">

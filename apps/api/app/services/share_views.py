@@ -63,6 +63,7 @@ async def _kind_extras(
     is_still_like = job.kind in STILL_LIKE_KINDS
     image_urls = await _image_urls(session, storage, settings, job) if is_still_like else []
     counts = await count_clips_by_job(session, [job.id]) if job.kind == "sequence" else {}
+    show_duration = job.kind in ("sequence", "video_faceswap")
     return PublicJobView(
         job=job,
         preset_name=None,
@@ -70,7 +71,7 @@ async def _kind_extras(
         video_url=None,
         image_urls=image_urls,
         clip_count=counts.get(job.id),
-        duration_ms=job.duration_ms if job.kind == "sequence" else None,
+        duration_ms=job.duration_ms if show_duration else None,
     )
 
 

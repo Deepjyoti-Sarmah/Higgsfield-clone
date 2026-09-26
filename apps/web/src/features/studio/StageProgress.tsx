@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { fetchJobForProgress } from "../../api/jobProgress"
+import type { LibraryItem } from "../../api/library"
 import { isTerminalJobStatus } from "../../api/jobStatus"
 import { useJobEvents } from "../../api/useJobEvents"
 import { ProgressBar } from "../../ui/ProgressBar"
 
 type StageProgressProps = {
-  kind: "video" | "image" | "sequence" | "faceswap"
+  kind: LibraryItem["kind"]
   jobId: string
   status: "queued" | "running" | "succeeded" | "failed" | null
   onSettled: () => void

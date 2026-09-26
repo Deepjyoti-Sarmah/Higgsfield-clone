@@ -1,6 +1,7 @@
 import { useState } from "react"
 import type { DragEvent as ReactDragEvent } from "react"
 import type { SequenceDraftClip, SequenceDraftControls } from "../../api/studioContracts"
+import { formatSecondsShort } from "./sequenceDraftView"
 import { sequenceCopy } from "./sequenceCopy"
 import { TransitionChip } from "./TransitionChip"
 import { TrimControls } from "./TrimControls"
@@ -89,13 +90,18 @@ function RemoveButton({ index, jobId, sequence }: {
   )
 }
 
-function ClipSlot({ index, clip, sequence }: {
+function ClipSlot({ index, clip, total, sequence }: {
   index: number
   clip: SequenceDraftClip
+  total: number
   sequence: SequenceDraftControls
 }) {
+  const trimmedMs = clip.trimEndMs - clip.trimStartMs
   return (
     <div className="flex flex-col items-center gap-1">
+      <p className="font-mono text-[10px] text-muted">
+        {sequenceCopy.strip.shotLabel(index + 1, total)} · {formatSecondsShort(trimmedMs)}
+      </p>
       <SlotChrome index={index} jobId={clip.jobId} sequence={sequence}>
         {clip.posterUrl ? (
           <img src={clip.posterUrl} alt="" className="h-[68px] w-[120px] rounded-lg object-cover" />
@@ -132,7 +138,7 @@ export function SequenceStrip({ sequence }: SequenceStripProps) {
               onCycle={(next) => sequence.setTransition(index, next)}
             />
           )}
-          <ClipSlot index={index} clip={clip} sequence={sequence} />
+          <ClipSlot index={index} clip={clip} total={clips.length} sequence={sequence} />
         </div>
       ))}
       {Array.from({ length: trailingEmpty }).map((_, index) => (

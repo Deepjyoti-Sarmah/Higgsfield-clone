@@ -7,6 +7,7 @@ import { sequenceCopy } from "./sequenceCopy"
 type ClipPickerProps = {
   libraryItems: LibraryItem[]
   sequence: SequenceDraftControls
+  onGoToClipTab?: () => void
 }
 
 type ClipCardProps = {
@@ -61,17 +62,37 @@ function isCandidate(item: LibraryItem): boolean {
   return item.kind === VIDEO_ELIGIBLE_KIND
 }
 
-export function ClipPicker({ libraryItems, sequence }: ClipPickerProps) {
+function EmptyPicker({ onGoToClipTab }: { onGoToClipTab?: () => void }) {
+  return (
+    <div className="flex flex-col items-start gap-2 rounded-lg border border-dashed border-border bg-sunken p-3">
+      <p className="text-[13px] font-medium text-text">{sequenceCopy.picker.emptyTitle}</p>
+      <p className="text-[13px] text-faint">{sequenceCopy.picker.emptyBody}</p>
+      {onGoToClipTab && (
+        <button
+          type="button"
+          onClick={onGoToClipTab}
+          className="h-8 rounded-md border border-border bg-surface px-2 text-xs font-medium text-text hover:border-accent/60"
+        >
+          {sequenceCopy.picker.goToClip}
+        </button>
+      )}
+    </div>
+  )
+}
+
+export function ClipPicker({ libraryItems, sequence, onGoToClipTab }: ClipPickerProps) {
   const aspects = useClipAspects(libraryItems)
   const draftJobIds = new Set(sequence.draft.clips.map((clip) => clip.jobId))
   const firstAspect = sequence.draft.clips.find((clip) => clip.aspect !== null)?.aspect ?? null
   const candidates = libraryItems.filter(isCandidate)
 
-  if (candidates.length === 0) return null
+  if (candidates.length === 0) return <EmptyPicker onGoToClipTab={onGoToClipTab} />
 
   return (
     <div className="flex flex-col gap-2">
       <p className="text-[13px] font-medium text-muted">{sequenceCopy.picker.heading}</p>
+      <p className="text-[13px] text-faint">{sequenceCopy.picker.hint}</p>
+      <p className="text-[13px] text-faint">{sequenceCopy.picker.stageHint}</p>
       <div className="flex gap-2 overflow-x-auto pb-1">
         {candidates.map((item) => (
           <ClipCard

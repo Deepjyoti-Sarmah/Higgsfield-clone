@@ -46,6 +46,19 @@ function StillActions({ item, onAnimateThis, onUseAsFaceSwapTarget }: {
   )
 }
 
+function ClipActions({ item, onUseAsFaceSwapTarget }: {
+  item: LibraryItem
+  onUseAsFaceSwapTarget: StageActionsProps["onUseAsFaceSwapTarget"]
+}) {
+  if ((item.kind !== "video" && item.kind !== "video_faceswap") || !item.video_url) return null
+  return (
+    <ActionButton
+      label="Use as swap video"
+      onClick={() => onUseAsFaceSwapTarget(item.video_url as string, item.id)}
+    />
+  )
+}
+
 function ShareLinks({ item }: { item: LibraryItem }) {
   return (
     <>
@@ -76,10 +89,12 @@ export function StageActions({
   sequenceFull,
 }: StageActionsProps) {
   if (item.status !== "succeeded") return null
+  const isClip = item.kind === "video" || item.kind === "video_faceswap"
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       <StillActions item={item} onAnimateThis={onAnimateThis} onUseAsFaceSwapTarget={onUseAsFaceSwapTarget} />
-      {item.kind === "video" && (
+      <ClipActions item={item} onUseAsFaceSwapTarget={onUseAsFaceSwapTarget} />
+      {isClip && (
         <ActionButton
           label={sequenceFull ? "Sequence is full" : "Add to sequence"}
           disabled={sequenceFull}

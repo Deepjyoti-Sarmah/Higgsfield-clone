@@ -1,5 +1,5 @@
 import type { SequenceDraftClip, SequenceDraftControls } from "../../api/studioContracts"
-import { clampTrim, formatTrimRange, TRIM_STEP_MS } from "./sequenceDraftView"
+import { clampTrim, formatSecondsShort, TRIM_STEP_MS } from "./sequenceDraftView"
 import { sequenceCopy } from "./sequenceCopy"
 
 type TrimControlsProps = {
@@ -25,38 +25,46 @@ function TrimStepButton({ glyph, label, onClick }: {
   )
 }
 
-// Two steppers (in, out) in 0.5 s steps, clamped to stay in bounds with at least 1 s of clip left.
+function TrimRow({ value, earlierLabel, laterLabel, onEarlier, onLater }: {
+  value: string
+  earlierLabel: string
+  laterLabel: string
+  onEarlier: () => void
+  onLater: () => void
+}) {
+  return (
+    <div className="flex items-center justify-between gap-1">
+      <TrimStepButton glyph="−" label={earlierLabel} onClick={onEarlier} />
+      <span className="flex-1 text-center font-mono text-[9px] text-muted">{value}</span>
+      <TrimStepButton glyph="+" label={laterLabel} onClick={onLater} />
+    </div>
+  )
+}
+
+// Two steppers (start, end) in 0.5 s steps, clamped to stay in bounds with at least 1 s of clip left.
 export function TrimControls({ index, clip, sequence }: TrimControlsProps) {
   const { trimStartMs, trimEndMs, durationMs } = clip
   const position = index + 1
+  const copy = sequenceCopy.trim
   const nudge = (startDeltaMs: number, endDeltaMs: number) => {
     const next = clampTrim(durationMs, trimStartMs + startDeltaMs, trimEndMs + endDeltaMs)
     sequence.setTrim(index, next.trimStartMs, next.trimEndMs)
   }
   return (
-    <div className="flex w-[120px] shrink-0 items-center justify-between gap-1 px-0.5 pt-1">
-      <TrimStepButton
-        glyph="−"
-        label={sequenceCopy.strip.trimStartEarlier(position)}
-        onClick={() => nudge(-TRIM_STEP_MS, 0)}
+    <div className="flex w-[120px] shrink-0 flex-col gap-0.5 px-0.5 pt-1">
+      <TrimRow
+        value={`Starts ${formatSecondsShort(trimStartMs)}`}
+        earlierLabel={copy.startEarlier(position)}
+        laterLabel={copy.startLater(position)}
+        onEarlier={() => nudge(-TRIM_STEP_MS, 0)}
+        onLater={() => nudge(TRIM_STEP_MS, 0)}
       />
-      <span className="flex-1 text-center font-mono text-[9px] text-muted">
-        {formatTrimRange(trimStartMs, trimEndMs)}
-      </span>
-      <TrimStepButton
-        glyph="+"
-        label={sequenceCopy.strip.trimStartLater(position)}
-        onClick={() => nudge(TRIM_STEP_MS, 0)}
-      />
-      <TrimStepButton
-        glyph="−"
-        label={sequenceCopy.strip.trimEndEarlier(position)}
-        onClick={() => nudge(0, -TRIM_STEP_MS)}
-      />
-      <TrimStepButton
-        glyph="+"
-        label={sequenceCopy.strip.trimEndLater(position)}
-        onClick={() => nudge(0, TRIM_STEP_MS)}
+      <TrimRow
+        value={`Ends ${formatSecondsShort(trimEndMs)}`}
+        earlierLabel={copy.endEarlier(position)}
+        laterLabel={copy.endLater(position)}
+        onEarlier={() => nudge(0, -TRIM_STEP_MS)}
+        onLater={() => nudge(0, TRIM_STEP_MS)}
       />
     </div>
   )

@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     modal_endpoint_url: str = ""
     modal_image_endpoint_url: str = ""
     modal_faceswap_endpoint_url: str = ""
+    modal_video_faceswap_endpoint_url: str = ""
     modal_webhook_secret: str = ""
     openrouter_api_key: str = ""
     paid_budget_cents: int = 500

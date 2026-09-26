@@ -45,13 +45,27 @@ function ShowcaseCell({ url, poster, caption, isVideo }: CellProps) {
   )
 }
 
+const TILES = [
+  SHOWCASE.still,
+  SHOWCASE.clip,
+  SHOWCASE.faceswap,
+  SHOWCASE.sequence,
+  SHOWCASE.orbitClip,
+  SHOWCASE.canyonStill,
+] as const
+
 export function ShowcaseRow() {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2fr_1fr_1fr_1fr]">
-      <ShowcaseCell url={SHOWCASE.still.url} poster={SHOWCASE.still.poster} caption={SHOWCASE.still.caption} isVideo={false} />
-      <ShowcaseCell url={SHOWCASE.clip.url} poster={SHOWCASE.clip.poster} caption={SHOWCASE.clip.caption} isVideo />
-      <ShowcaseCell url={SHOWCASE.faceswap.url} poster={SHOWCASE.faceswap.poster} caption={SHOWCASE.faceswap.caption} isVideo={false} />
-      <ShowcaseCell url={SHOWCASE.sequence.url} poster={SHOWCASE.sequence.poster} caption={SHOWCASE.sequence.caption} isVideo />
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {TILES.map((tile) => (
+        <ShowcaseCell
+          key={tile.caption}
+          url={tile.url}
+          poster={tile.poster}
+          caption={tile.caption}
+          isVideo={tile.url.endsWith(".mp4")}
+        />
+      ))}
     </div>
   )
 }

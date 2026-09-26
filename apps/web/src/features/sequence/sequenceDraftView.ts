@@ -31,6 +31,11 @@ export function formatTrimRange(trimStartMs: number, trimEndMs: number): string 
   return `${formatTrimPoint(trimStartMs)}–${formatTrimPoint(trimEndMs)}`
 }
 
+// Plain-seconds readout for the trim steppers, e.g. 500 -> "0.5s".
+export function formatSecondsShort(ms: number): string {
+  return `${(Math.max(0, Math.round(ms / 100)) / 10).toFixed(1)}s`
+}
+
 const TRANSITION_INDEX = new Map(TRANSITION_CYCLE.map((transition, index) => [transition, index]))
 
 // The chip cycles cut → crossfade → fade_black → cut.

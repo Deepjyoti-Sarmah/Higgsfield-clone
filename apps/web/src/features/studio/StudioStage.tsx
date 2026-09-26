@@ -39,7 +39,7 @@ function TerminalMedia({ item, onPickImage }: {
   item: LibraryItem
   onPickImage: (url: string, assetId: string) => void
 }) {
-  if (item.kind === "video" || item.kind === "sequence") {
+  if (item.kind === "video" || item.kind === "sequence" || item.kind === "video_faceswap") {
     return (
       <video
         controls
@@ -88,11 +88,13 @@ function CaptionLine({ item }: { item: LibraryItem }) {
     duration,
     item.generated_by,
   ].filter(Boolean).join(" · ")
+  // GenerationBadge only knows still/clip kinds; swapped videos read as clips.
+  const badgeKind = item.kind === "video_faceswap" ? "video" : item.kind
   return (
     <div className="flex items-center gap-3">
       <span className="truncate text-sm text-text">{railItemTitle(item)}</span>
       <span className="truncate font-mono text-[13px] text-muted">{meta}</span>
-      <GenerationBadge generatedBy={item.generated_by} kind={item.kind} />
+      <GenerationBadge generatedBy={item.generated_by} kind={badgeKind} />
     </div>
   )
 }

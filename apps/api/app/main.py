@@ -20,6 +20,7 @@ from app.routers import (
     share,
     share_page,
     uploads,
+    video_faceswap_jobs,
 )
 from app.services.job_event_broker import JobEventBroker
 from app.settings import get_settings
@@ -66,6 +67,7 @@ def create_app() -> FastAPI:
     app.include_router(image_jobs.router)
     app.include_router(sequence_jobs.router)
     app.include_router(faceswap_jobs.router)
+    app.include_router(video_faceswap_jobs.router)
     app.include_router(share.router)
     # Before the SPA catch-all: Starlette matches in registration order, so /v/{job_id}
     # must be registered first or the catch-all would serve the bare shell without meta tags.

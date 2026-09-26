@@ -11,6 +11,7 @@ export function shareTitle(job: { kind: JobKind; preset_name: string | null }): 
   if (job.kind === "sequence") return "Sequence"
   // faceswap renders like a still, same as an image job.
   if (job.kind === "image" || job.kind === "faceswap") return "Still"
+  if (job.kind === "video_faceswap") return "Swap"
   return job.preset_name ?? "Clip"
 }
 
@@ -34,6 +35,9 @@ export function shareMeta(job: {
   if (job.kind === "image" || job.kind === "faceswap") {
     const count = job.image_urls.length
     return `${count} still${count === 1 ? "" : "s"}`
+  }
+  if (job.kind === "video_faceswap") {
+    return ["swap", duration].filter(Boolean).join(" \u00b7 ")
   }
   return ["clip", duration].filter(Boolean).join(" \u00b7 ")
 }
