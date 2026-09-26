@@ -14,6 +14,6 @@ Waves (no two tasks in a wave share a file):
 - [x] T-011-5 · Face swap tab in the studio
 - [x] T-011-6 · Clip trim in sequences (API + stitcher)
 - [x] T-011-7 · Trim UI, tool links, real showcase
-- [ ] T-011-9 · Real showcase on the start page (split from T-011-7)
+- [x] T-011-9 · Real showcase on the start page (split from T-011-7)
 - [ ] T-011-10 · Fix the five T-011-8 live findings
 - [x] T-011-8 · Live verification of spec 011
