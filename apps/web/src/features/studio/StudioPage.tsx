@@ -1,5 +1,5 @@
 import { announceCreditsChanged } from "../../api/creditsSignal"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import type { LibraryItem } from "../../api/library"
 import { useLibrary } from "../../api/library"
@@ -108,6 +108,18 @@ function buildComposer(
   )
 }
 
+// Backstop: the terminal transition normally comes from the job watcher's
+// SSE/poll callback, but a dropped event (e.g. the per-origin EventSource
+// cap) would otherwise leave StageActions stuck on a stale snapshot.
+function useLibraryHealPoll(selectedItem: LibraryItem | null, reloadLibrary: () => void) {
+  const isSelectedItemLive = selectedItem?.status === "queued" || selectedItem?.status === "running"
+  useEffect(() => {
+    if (!isSelectedItemLive) return
+    const timer = window.setInterval(reloadLibrary, 5000)
+    return () => window.clearInterval(timer)
+  }, [isSelectedItemLive, reloadLibrary])
+}
+
 function useStudioPanel(props: {
   library: ReturnType<typeof useLibrary>
   actions: ReturnType<typeof useStudioActions>
@@ -132,6 +144,7 @@ function useStudioPanel(props: {
     announceCreditsChanged()
   }, [reloadLibrary])
   const selectedItem = library.items.find((item) => item.id === selectedId) ?? null
+  useLibraryHealPoll(selectedItem, reloadLibrary)
   const rail = buildRail(library, selectedId, actions)
   const stage = (
     <StudioStage

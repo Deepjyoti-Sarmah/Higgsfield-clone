@@ -21,6 +21,15 @@ describe("share meta", () => {
       shareMeta({ kind: "image", clip_count: null, duration_ms: null, image_urls: ["a", "b"] }),
     ).toBe("2 stills")
   })
+
+  it("uses the singular for a single still, including face swaps", () => {
+    expect(
+      shareMeta({ kind: "image", clip_count: null, duration_ms: null, image_urls: ["a"] }),
+    ).toBe("1 still")
+    expect(
+      shareMeta({ kind: "faceswap", clip_count: null, duration_ms: null, image_urls: ["a"] }),
+    ).toBe("1 still")
+  })
 })
 
 describe("share title", () => {

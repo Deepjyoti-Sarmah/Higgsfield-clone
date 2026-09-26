@@ -22,6 +22,25 @@ function useOutsideClose(rootRef: React.RefObject<HTMLDivElement | null>, close:
   }, [rootRef, close])
 }
 
+// A document listener (not a bubbled onKeyDown) so Escape closes the panel
+// no matter where focus landed inside it, then returns focus to the button.
+function useEscapeClose(
+  isOpen: boolean,
+  close: () => void,
+  returnFocusTo: React.RefObject<HTMLButtonElement | null>,
+) {
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return
+      close()
+      returnFocusTo.current?.focus()
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [isOpen, close, returnFocusTo])
+}
+
 function PopoverSurface({ session, onClose }: { session: GuestSessionSource; onClose: () => void }) {
   const rootRef = useRef<HTMLDivElement>(null)
   useOutsideClose(rootRef, onClose)
@@ -42,15 +61,13 @@ export function CreditsButton({ session }: CreditsButtonProps) {
 function CreditsControl({ session }: CreditsButtonProps) {
   const { isOpen, openCredits, closeCredits } = useCreditsPopover()
   const balance = useCreditBalance(session)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  useEscapeClose(isOpen, closeCredits, buttonRef)
 
   return (
-    <div
-      className="relative"
-      onKeyDown={(event) => {
-        if (event.key === "Escape") closeCredits()
-      }}
-    >
+    <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         aria-haspopup="dialog"
         aria-label="Credits"
