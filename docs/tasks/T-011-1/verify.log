@@ -1,0 +1,17 @@
+# verify T-011-1
+when: 2026-09-26T01:37:31Z
+root: /home/deepjyoti/Documents/Assigment/Higgsfield/.worktrees/T-011-1
+head: 14ab6fa366bec90023c3738407b246257d75e593
+fingerprint: ca0102f06fa15573b7131fdd289e4fc727ee936a
+
+## command
+apps/api/.venv/bin/python -m pytest apps/gpu/tests -q && apps/api/.venv/bin/python -m py_compile apps/gpu/ltx_video.py apps/gpu/fit_input.py
+
+## output (exit 0)
+.....                                                                    [100%]
+5 passed in 0.20s
+
+## check-standards (exit 0)
+check-standards: ok (0 violations)
+
+RESULT: PASS
