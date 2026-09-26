@@ -1,6 +1,6 @@
 # Spec 011: Output quality, face swap, clip trimming
 
-**Status:** APPROVED (user, 2026-09-26: "make the images and videos that can be used and the face swap and video editing feature work … take inspiration from pixovid")  ·  **Priority:** P0 (resubmission day)
+**Status:** DONE (live, verified 2026-09-26) · was APPROVED (user, 2026-09-26: "make the images and videos that can be used and the face swap and video editing feature work … take inspiration from pixovid")  ·  **Priority:** P0 (resubmission day)
 **Research refs:** the live audit on 2026-09-26 (below); Pixovid (`pixovid/`, ideas only, no code: separate tool entry points for Video / Image / Face swap, FaceFusion-style swap with a GFPGAN enhancer pass).
 
 ## Problem (measured, not guessed)
