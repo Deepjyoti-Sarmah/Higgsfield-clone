@@ -5,6 +5,10 @@ export const sequenceCopy = {
     removeShot: (position: number) => `Remove shot ${position}`,
     moveLeft: (position: number) => `Move shot ${position} left`,
     moveRight: (position: number) => `Move shot ${position} right`,
+    trimStartEarlier: (position: number) => `Shot ${position}: start earlier`,
+    trimStartLater: (position: number) => `Shot ${position}: start later`,
+    trimEndEarlier: (position: number) => `Shot ${position}: end earlier`,
+    trimEndLater: (position: number) => `Shot ${position}: end later`,
   },
   transitions: {
     cut: { label: "CUT", name: "Cut" },

@@ -7,6 +7,7 @@ import type { SessionContextValue } from "../session/useSession"
 import type { FaceSwapSeed, SeedImage, StudioTab } from "../../api/studioContracts"
 import { useSequenceDraft } from "./useSequenceDraft"
 import { MAX_SEQUENCE_CLIPS } from "./draftOps"
+import { DEFAULT_CLIP_DURATION_MS } from "../sequence/sequenceDraftView"
 import { StudioRail } from "./StudioRail"
 import { StudioStage } from "./StudioStage"
 import { ComposerTabs } from "./ComposerTabs"
@@ -116,7 +117,12 @@ function useStudioPanel(props: {
   const selectedId = actions.searchParams.get("item")
 
   const onAddToSequence = useCallback((item: LibraryItem) => {
-    const accepted = draft.addClip({ jobId: item.id, posterUrl: item.thumbnail_url, aspect: null })
+    const accepted = draft.addClip({
+      jobId: item.id,
+      posterUrl: item.thumbnail_url,
+      aspect: null,
+      durationMs: item.duration_ms ?? DEFAULT_CLIP_DURATION_MS,
+    })
     if (!accepted) window.alert(`Sequence is full (${MAX_SEQUENCE_CLIPS} clips).`)
   }, [draft])
 

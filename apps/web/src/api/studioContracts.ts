@@ -9,6 +9,9 @@ export type SequenceDraftClip = {
   posterUrl: string | null
   aspect: number | null
   transitionIn: SequenceTransition
+  durationMs: number
+  trimStartMs: number
+  trimEndMs: number
 }
 export type SequenceDraft = {
   clips: SequenceDraftClip[]
@@ -16,10 +19,11 @@ export type SequenceDraft = {
 }
 export type SequenceDraftControls = {
   draft: SequenceDraft
-  addClip: (clip: Omit<SequenceDraftClip, "transitionIn">) => boolean
+  addClip: (clip: Omit<SequenceDraftClip, "transitionIn" | "trimStartMs" | "trimEndMs">) => boolean
   removeClip: (index: number) => void
   moveClip: (from: number, to: number) => void
   setTransition: (index: number, transition: SequenceTransition) => void
+  setTrim: (index: number, trimStartMs: number, trimEndMs: number) => void
   setAudio: (audio: SequenceDraft["audio"]) => void
   clearDraft: () => void
 }
