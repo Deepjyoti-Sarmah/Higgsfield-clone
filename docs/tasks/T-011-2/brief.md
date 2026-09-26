@@ -32,5 +32,5 @@ Spec 011 AC-2. `ModalAdapter` sends `request.prompt or ""` today, so a blank pro
 
 ## Verify command
 ```
-docker compose up -d --wait db && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q tests/test_motion_prompts.py $(grep -rl ModalAdapter apps/api/tests | tr '\n' ' ')
+docker compose up -d --wait db && uv --directory apps/api run ruff check . && uv --directory apps/api run mypy && uv --directory apps/api run pytest -q tests/test_motion_prompts.py $(grep -rl --include='*.py' ModalAdapter apps/api/tests | sed 's#^apps/api/##' | tr '\n' ' ')
 ```
