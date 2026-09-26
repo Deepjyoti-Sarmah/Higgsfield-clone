@@ -13,3 +13,8 @@ Approved: add trim_start_ms: 0 and trim_end_ms: null to the SequenceClipIn liter
 ### 2026-09-26T01:56:49Z · sonnet-5@claude-code · NOTE
 
 submitted at 4c308568d42d6c4777dbdee931ed8553ecd631c6
+
+### 2026-09-26T02:01:08Z · claude-opus-5.5@claude-code · REVIEW
+
+ACCEPTED
+Re-verified (0009 up/down/up, ruff, mypy, pytest 282, contract regen, typecheck). Trim goes through schema, data, stitch inputs and filtergraph; the trimmed crossfade is exactly 3.5 s. Implemented by Sonnet 5, reviewed by Claude Opus 5.5.
