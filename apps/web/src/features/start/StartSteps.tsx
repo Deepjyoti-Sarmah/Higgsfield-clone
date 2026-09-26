@@ -1,11 +1,6 @@
 import type { ReactNode } from "react"
-import type { Preset } from "../../api/presets"
 import { startCopy } from "./startCopy"
 import { ClipStepMedia, SequenceStepMedia, StillStepMedia } from "./StartStepMedia"
-
-type StartStepsProps = {
-  clipPreset: Preset | null
-}
 
 function StepRow({ label, caption, children }: {
   label: string
@@ -23,14 +18,14 @@ function StepRow({ label, caption, children }: {
   )
 }
 
-export function StartSteps({ clipPreset }: StartStepsProps) {
+export function StartSteps() {
   return (
     <div className="flex flex-col gap-6">
       <StepRow label={startCopy.steps.still.label} caption={startCopy.steps.still.caption}>
         <StillStepMedia />
       </StepRow>
       <StepRow label={startCopy.steps.clip.label} caption={startCopy.steps.clip.caption}>
-        <ClipStepMedia preset={clipPreset} />
+        <ClipStepMedia />
       </StepRow>
       <StepRow label={startCopy.steps.sequence.label} caption={startCopy.steps.sequence.caption}>
         <SequenceStepMedia />

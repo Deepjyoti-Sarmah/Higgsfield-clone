@@ -1,12 +1,12 @@
 import { usePresets } from "../../api/presets"
 import { ButtonLink } from "../../ui/ButtonLink"
 import { PresetChipRow } from "./PresetChipRow"
+import { ShowcaseRow } from "./ShowcaseRow"
 import { StartSteps } from "./StartSteps"
 import { startCopy } from "./startCopy"
 
 export function StartPage() {
   const presetsState = usePresets()
-  const clipPreset = presetsState.presets[0] ?? null
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
@@ -21,8 +21,11 @@ export function StartPage() {
           <ButtonLink to="/studio">{startCopy.cta}</ButtonLink>
         </div>
         <div className="lg:col-span-7">
-          <StartSteps clipPreset={clipPreset} />
+          <StartSteps />
         </div>
+      </div>
+      <div className="mt-10">
+        <ShowcaseRow />
       </div>
       <div className="mt-12">
         <PresetChipRow presetsState={presetsState} />

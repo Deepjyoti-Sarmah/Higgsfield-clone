@@ -26,3 +26,37 @@ export const SHOWCASE_STILLS = [
   { title: "PORTRAIT", url: "/showcase/sample-03.jpg", aspect: "IMAGE" },
   { title: "FOREST PATH", url: "/showcase/sample-04.jpg", aspect: "IMAGE" },
 ] as const
+
+// T-011-9: real outputs of the fixed pipeline, written by the T-011-8 live run
+// into docs/tasks/T-011-7/showcase.json. One typed constant, four captioned items.
+type ShowcaseItem = { url: string; poster: string | null; caption: string }
+
+export const SHOWCASE: {
+  still: ShowcaseItem
+  clip: ShowcaseItem
+  faceswap: ShowcaseItem
+  sequence: ShowcaseItem
+} = {
+  still: {
+    url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/f2ed03d3-c210-4aa5-85c1-412935faed0d/image-1.png",
+    poster: null,
+    caption: "still",
+  },
+  clip: {
+    url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/739eab6b-df2e-462e-b333-56faeff67a27/video.mp4",
+    poster:
+      "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/739eab6b-df2e-462e-b333-56faeff67a27/poster.jpg",
+    caption: "clip · dolly in · 0:05",
+  },
+  faceswap: {
+    url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/cf9d0ef2-f575-43e5-9627-57598421c642/image-1.png",
+    poster: null,
+    caption: "face swap",
+  },
+  sequence: {
+    url: "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/video.mp4",
+    poster:
+      "https://pub-e14a8ad582a945a7a46dd46e2b138ec2.r2.dev/users/62fc7a93-fbfc-49a6-a228-05a5c6184337/jobs/42e05b9f-08be-4876-bdce-1cac0b608ab5/poster.jpg",
+    caption: "2 shots · 0:07",
+  },
+}
