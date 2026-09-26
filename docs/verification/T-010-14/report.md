@@ -2,7 +2,7 @@
 
 Site: https://api-production-8afc.up.railway.app. Bundle under test: `index-C-L3mFa5.js`. Playwright + Chromium, 1440x900, light theme unless noted. No code changed.
 
-**Overall: FAIL.** One new blocker: after Render, the stage never shows the sequence (progress or result) until a reload. Everything else works after the fixes.
+**Overall: PASS** (closing pass on bundle `index-DJITqEpT.js`, after e77192d). The earlier blocker P1 is fixed and re-verified. Everything else works after the fixes.
 
 ## Steps
 
@@ -23,7 +23,7 @@ Credit path for the guest: 60 grant, still 10, clip 20, clip 20, sequence 1 (twi
 
 ## Problems
 
-- **P1 (blocker, open): the stage ignores a freshly rendered sequence.** After "Render · 1 credit" the URL gets `item=0801359c-...` and the rail shows the item, but the stage stays "Pick something from the rail. Your work shows up here while it renders." for 2+ minutes, with 0 videos. A reload of `/studio?item=630c2eb2-...` shows the stage correctly: "2 shots · 0:10 · ffmpeg", "Stitched", Download, Share. Same class as the fixed still bug. Not an id mix-up: 0801359c... was my second render and 630c2eb2... the first; the URL item always equalled the API job id (checked on 3 renders: 0801359c, 17f2d13a, 87eeb37e). `onJobStarted` receives the 202 `data.id` (`apps/web/src/api/sequenceJobs.ts`). Also seen on each render: the Sequence draft (2 clips, XFADE, music) is not cleared, the new rail row is not highlighted, no console/page errors, and no `/jobs` refetch after the navigation. Screenshot: `05-seq-render-watch.png`.
+- **P1 (blocker, FIXED and re-verified, see "Closing pass"): the stage ignores a freshly rendered sequence.** After "Render · 1 credit" the URL gets `item=0801359c-...` and the rail shows the item, but the stage stays "Pick something from the rail. Your work shows up here while it renders." for 2+ minutes, with 0 videos. A reload of `/studio?item=630c2eb2-...` shows the stage correctly: "2 shots · 0:10 · ffmpeg", "Stitched", Download, Share. Same class as the fixed still bug. Not an id mix-up: 0801359c... was my second render and 630c2eb2... the first; the URL item always equalled the API job id (checked on 3 renders: 0801359c, 17f2d13a, 87eeb37e). `onJobStarted` receives the 202 `data.id` (`apps/web/src/api/sequenceJobs.ts`). Also seen on each render: the Sequence draft (2 clips, XFADE, music) is not cleared, the new rail row is not highlighted, no console/page errors, and no `/jobs` refetch after the navigation. Screenshot: `05-seq-render-watch.png`.
 - **P2 (fixed, see table):** empty `images` for stills, stuck "Rendering", "Describe the image first." hint, seed lost on "Animate this", double guest POST, stale balance.
 - **P3 (minor):** ledger rows read "Hold" / "Settled" / "Welcome grant", not HOLD / SETTLE / TOPUP as in AC-7. Cosmetic.
 - **P4 (minor):** share page top bar still shows a "Studio" link ("Reel & Still | Studio | Sequence | 2 shots · 0:10 | Make your own"). AC-18 asks for no studio UI.
@@ -45,3 +45,16 @@ Repro on live with the same 2 clips + XFADE:
 - Without music: draft becomes `{"clips":[],"audio":null}`, the stage shows progress after ~2 s, and the SSE and `/sequence-jobs/<id>` requests fire.
 
 Cause: `useSequenceDraft` returned a new `setAudio` every render, closed over that render's draft. `MusicDropZone`'s `useSyncReadyAudio` effect depends on `setAudio`, so while an uploaded music file was in the "ready" state it re-ran after every render and re-wrote the draft with `{...draft, audio}`, undoing `clearDraft` and keeping the render loop busy. Fix: stable functional updaters (`setDraft(prev => ...)`) and a no-op `withAudio` for the same audio (`useSequenceDraft.ts`, `draftOps.ts`, tests in `draftOps.test.ts`).
+
+## Closing pass (fresh context, new guest, 60 credits, bundle `index-DJITqEpT.js`)
+
+One `POST /auth/guest`. Two uploaded clips (`248d008e-a8be-4f24-9cee-6d6f39fdfbed`, `e8e15db0-cbef-4410-8bf1-72829173299b`), then the Sequence tab with both clips and XFADE.
+
+| Run | Sequence job | Strip cleared | Stage progress | Plays without reload | Balance |
+|---|---|---|---|---|---|
+| With music (`music.wav`) | `6358dca9-e7f4-4a69-a824-8cf35c7623ad` | yes | "Queued/Rendering" shown ~11 s after the click | yes, "2 shots · 0:10 · ffmpeg", "Stitched" at ~29 s | 20 -> 19 |
+| Without music | `bb1a6912-0b64-4581-a03d-847dd99d8eea` | yes | ~12 s | yes, ~27 s | 19 -> 18 |
+
+Screenshots: `final-music-*.png`, `final-nomusic-*.png`. No page errors; the only console error is the `/me` 401 on a cold visit.
+
+Remaining notes (not blockers): the URL/progress appears ~8-9 s after the click, not ~2 s, because the `POST /sequence-jobs` response is slow; the two minors P3 and P4 stand as accepted by the orchestrator.
