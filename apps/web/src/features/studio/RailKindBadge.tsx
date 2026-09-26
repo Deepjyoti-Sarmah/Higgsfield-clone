@@ -14,7 +14,7 @@ type RailKindBadgeProps = {
 
 export function RailKindBadge({ kind }: RailKindBadgeProps) {
   return (
-    <span className="shrink-0 rounded-md border border-border bg-sunken px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-muted">
+    <span className="shrink-0 rounded border border-border bg-sunken px-1.5 font-mono text-[10px] leading-4 uppercase tracking-wide text-muted">
       {KIND_LABEL[kind] ?? kind}
     </span>
   )

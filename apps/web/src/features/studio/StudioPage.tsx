@@ -175,10 +175,10 @@ export function StudioPage() {
   const { rail, stage, composer } = useStudioPanel({ library, actions, draft })
 
   return (
-    <div className="grid min-h-[calc(100dvh-3.5rem-2.5rem)] grid-rows-[1fr_auto] max-lg:grid-cols-1 lg:grid-cols-[288px_1fr]">
-      <aside className="hidden min-h-0 overflow-y-auto border-r border-border lg:block">{rail}</aside>
+    <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[288px_1fr]">
+      <aside className="hidden min-h-0 overflow-y-auto border-r border-border bg-surface lg:block">{rail}</aside>
       <RailDrawer isOpen={drawer.isDrawerOpen} onClose={drawer.closeDrawer}>{rail}</RailDrawer>
-      <div className="flex min-h-0 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-col">
         <MobileLibraryBar onOpen={drawer.openDrawer} />
         {stage}
         {composer}

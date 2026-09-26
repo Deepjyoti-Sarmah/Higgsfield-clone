@@ -29,7 +29,9 @@ function StudioRedirect({ tab }: { tab: "clip" | "still" }) {
 
 export function App() {
   const session = useSession()
-  const isSharePage = useLocation().pathname.startsWith("/v/")
+  const { pathname } = useLocation()
+  const isSharePage = pathname.startsWith("/v/")
+  const isStudioPage = pathname.startsWith("/studio")
   const rightSlot =
     session.status === "signed-in" && session.user ? (
       <SessionBadge user={session.user} />
@@ -43,6 +45,8 @@ export function App() {
         <Route
           element={
             <AppShell
+              fullBleed={isStudioPage}
+              hideFooter={isStudioPage}
               rightSlot={isSharePage ? null : rightSlot}
               creditsSlot={isSharePage ? null : <CreditsButton session={session} />}
               outletContext={session}

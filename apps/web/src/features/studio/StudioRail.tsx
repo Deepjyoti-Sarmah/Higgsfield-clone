@@ -19,10 +19,10 @@ type StudioRailProps = {
 
 function RailSkeletonRows() {
   return (
-    <div className="space-y-2 p-3" aria-busy="true">
+    <div className="space-y-1 p-3" aria-busy="true">
       {[0, 1, 2, 3, 4].map((row) => (
-        <div key={row} className="flex items-center gap-3">
-          <Skeleton className="h-16 w-16" />
+        <div key={row} className="flex items-center gap-3 px-1">
+          <Skeleton className="h-14 w-14" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
@@ -86,13 +86,13 @@ function RailHeader({ count, isLoading, onNew }: {
   onNew: () => void
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-border bg-surface px-3 py-2">
+    <div className="flex items-center justify-between gap-2 border-b border-border bg-surface px-4 py-2.5">
       <div className="min-w-0">
         <h2 className="truncate font-body text-sm font-semibold text-text">{studioCopy.rail.heading}</h2>
         {isLoading ? (
           <Skeleton className="mt-1 h-3 w-20" />
         ) : (
-          <p className="font-mono text-[11px] tabular-nums text-muted">{studioCopy.rail.count(count)}</p>
+          <p className="font-mono text-xs tabular-nums text-muted">{studioCopy.rail.count(count)}</p>
         )}
       </div>
       <button
@@ -115,7 +115,7 @@ function RailRows({ items, selectedId, onSelect }: {
     <nav aria-label="Library" className="pb-6">
       {groupRailItemsByDay(items).map((group) => (
         <section key={group.heading}>
-          <h3 className="px-3 pb-1 pt-4 font-mono text-[11px] uppercase tracking-wide text-muted">
+          <h3 className="px-4 pb-1 pt-4 font-mono text-[11px] uppercase tracking-wide text-muted">
             {group.heading}
           </h3>
           {group.items.map((item) => (
@@ -151,7 +151,7 @@ export function StudioRail({ library, selectedId, onSelect, onOpenStudioComposer
     <div className="flex min-h-0 flex-col">
       <RailHeader count={library.items.length} isLoading={library.status === "loading"} onNew={onOpenStudioComposer} />
       {hasItems && (
-        <div className="sticky top-0 z-10 border-b border-border bg-surface p-2">
+        <div className="sticky top-0 z-10 border-b border-border bg-surface px-4 py-2.5">
           <RailKindFilter active={filter} counts={counts} onChange={setFilter} />
         </div>
       )}

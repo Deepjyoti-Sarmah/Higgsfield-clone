@@ -1,5 +1,5 @@
 import { expect, test } from "vitest"
-import { formatCreatedAt } from "./formatCreatedAt"
+import { formatCreatedAt, formatCreatedTime } from "./formatCreatedAt"
 
 test("formats an evening UTC timestamp", () => {
   expect(formatCreatedAt("2026-09-13T19:40:00Z")).toBe("13 Sep 2026, 19:40")
@@ -7,6 +7,11 @@ test("formats an evening UTC timestamp", () => {
 
 test("renders midnight with a two-digit hour", () => {
   expect(formatCreatedAt("2026-09-13T00:05:00Z")).toBe("13 Sep 2026, 00:05")
+})
+
+test("formats the time only for the day-grouped rail", () => {
+  expect(formatCreatedTime("2026-09-13T19:40:00Z")).toBe("19:40")
+  expect(formatCreatedTime("")).toBe("")
 })
 
 test("returns an empty string for empty input", () => {

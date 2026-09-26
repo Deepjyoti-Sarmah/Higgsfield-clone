@@ -16,7 +16,7 @@ function filterLabel(value: RailKindFilter, count: number): string {
 
 export function RailKindFilter({ active, counts, onChange }: RailKindFilterProps) {
   return (
-    <div role="group" aria-label={studioCopy.rail.filterLabel} className="flex flex-wrap gap-1.5">
+    <div role="group" aria-label={studioCopy.rail.filterLabel} className="flex flex-wrap gap-1">
       {FILTER_ORDER.map((value) => {
         const isActive = value === active
         return (
@@ -26,7 +26,7 @@ export function RailKindFilter({ active, counts, onChange }: RailKindFilterProps
             aria-pressed={isActive}
             aria-label={filterLabel(value, counts[value])}
             onClick={() => onChange(value)}
-            className={`h-8 rounded-full border px-3 font-mono text-xs tabular-nums transition-colors pointer-coarse:h-11 ${
+            className={`h-7 rounded-full border px-2.5 font-mono text-xs tabular-nums transition-colors pointer-coarse:h-11 ${
               isActive
                 ? "border-transparent bg-accent text-accent-ink"
                 : "border-border bg-surface text-muted hover:border-accent/60 hover:text-text"

@@ -7,9 +7,18 @@ type AppShellProps = {
   creditsSlot?: ReactNode
   outletContext?: unknown
   fullBleed?: boolean
+  hideFooter?: boolean
 }
 
-export function AppShell({ rightSlot, creditsSlot, outletContext, fullBleed = false }: AppShellProps) {
+function ShellFooter() {
+  return (
+    <footer className="border-t border-border px-4 py-4 text-xs text-muted sm:px-6">
+      Reel &amp; Still · a small studio for short films
+    </footer>
+  )
+}
+
+export function AppShell({ rightSlot, creditsSlot, outletContext, fullBleed = false, hideFooter = false }: AppShellProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-bg text-text">
       <header className="sticky top-0 z-20 h-14 shrink-0 border-b border-border bg-bg/95 backdrop-blur">
@@ -38,12 +47,10 @@ export function AppShell({ rightSlot, creditsSlot, outletContext, fullBleed = fa
           </div>
         </div>
       </header>
-      <main className={fullBleed ? "flex-1" : "flex-1 px-4 py-10 sm:px-6"}>
+      <main className={fullBleed ? "flex min-h-0 flex-1 flex-col" : "flex-1 px-4 py-10 sm:px-6"}>
         <Outlet context={outletContext} />
       </main>
-      <footer className="border-t border-border px-4 py-4 text-xs text-muted sm:px-6">
-        Reel &amp; Still · a small studio for short films
-      </footer>
+      {!hideFooter && <ShellFooter />}
     </div>
   )
 }

@@ -15,7 +15,7 @@ function GuidanceLine({ label, value }: { label: string; value: string }) {
 export function ComposerExplainer({ tab }: ComposerExplainerProps) {
   const tool = studioCopy.tools[tab]
   return (
-    <div className="px-3 pb-2 pt-2 sm:px-4" aria-live="polite">
+    <div className="px-4 pb-2.5 pt-2.5 sm:px-6" aria-live="polite">
       <p className="text-sm text-text">
         <span className="font-medium">Step {tool.step}: {tool.label}. </span>
         {tool.purpose}
