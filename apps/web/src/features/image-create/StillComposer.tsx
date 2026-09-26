@@ -64,7 +64,7 @@ export function StillComposer({ onJobStarted }: StillComposerProps) {
       {options !== null && <ImageSettingsRow options={options} />}
       <StillActions
         cost={cost}
-        blocked={blocked ?? "no-prompt"}
+        blocked={blocked}
         isBlocked={blocked !== null}
         isSubmitting={submitState.isSubmitting}
         insufficient={submitState.insufficient}
@@ -77,7 +77,7 @@ export function StillComposer({ onJobStarted }: StillComposerProps) {
 
 function StillActions(props: {
   cost: number
-  blocked: keyof typeof BLOCKED_LINES
+  blocked: keyof typeof BLOCKED_LINES | null
   isBlocked: boolean
   isSubmitting: boolean
   insufficient: ImageInsufficient | null
