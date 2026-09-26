@@ -1,3 +1,4 @@
+import { announceCreditsChanged } from "../../api/creditsSignal"
 import { useCallback, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import type { LibraryItem } from "../../api/library"
@@ -43,6 +44,7 @@ function useStudioActions(library: ReturnType<typeof useLibrary>) {
   const changeTab = useCallback((next: StudioTab) => setParam("tab", next), [setParam])
   const onJobStarted = useCallback((jobId: string) => {
     library.reloadLibrary()
+    announceCreditsChanged()
     selectItem(jobId)
   }, [library, selectItem])
   const onAnimateThis = useCallback((_item: LibraryItem, url: string, assetId: string) => {
@@ -100,6 +102,11 @@ function useStudioPanel(props: {
     if (!accepted) window.alert(`Sequence is full (${MAX_SEQUENCE_CLIPS} clips).`)
   }, [draft])
 
+  const { reloadLibrary } = library
+  const onJobSettled = useCallback(() => {
+    reloadLibrary()
+    announceCreditsChanged()
+  }, [reloadLibrary])
   const selectedItem = library.items.find((item) => item.id === selectedId) ?? null
   const rail = buildRail(library, selectedId, actions)
   const stage = (
@@ -109,7 +116,7 @@ function useStudioPanel(props: {
       sequenceFull={draft.draft.clips.length >= MAX_SEQUENCE_CLIPS}
       onAnimateThis={actions.onAnimateThis}
       onAddToSequence={onAddToSequence}
-      onJobSettled={library.reloadLibrary}
+      onJobSettled={onJobSettled}
     />
   )
   const composer = buildComposer(actions, draft, library.items, actions.consumeSeed)

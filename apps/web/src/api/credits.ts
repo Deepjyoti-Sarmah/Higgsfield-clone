@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { listenForCreditsChanged } from "./creditsSignal"
 import { apiClient } from "./client"
 import type { components } from "./generated/schema"
 import { useGuestSessionRunner } from "./guestSession"
@@ -92,6 +93,8 @@ export type CreditBalanceState = {
 export function useCreditBalance(session: GuestSessionSource): CreditBalanceState {
   const runWithGuestSession = useGuestSessionRunner(session)
   const balanceState = useBalanceState(runWithGuestSession)
+  const { reload } = balanceState
+  useEffect(() => listenForCreditsChanged(reload), [reload])
 
   return {
     status: balanceState.status,
