@@ -13,5 +13,5 @@ Waves (no two tasks in a wave share a file):
 - [x] T-011-4 · Face swap jobs (contract, data, create/read, worker)
 - [x] T-011-5 · Face swap tab in the studio
 - [x] T-011-6 · Clip trim in sequences (API + stitcher)
-- [ ] T-011-7 · Trim UI, tool links, real showcase
+- [x] T-011-7 · Trim UI, tool links, real showcase
 - [ ] T-011-8 · Live verification of spec 011
