@@ -119,3 +119,12 @@ Superseded by D-015.
 - The deployed stack runs the real model: `GET /api/health/deep` reports `image_backend: "modal"` (STATUS line "Real text→image backend LIVE", 2026-09-14), and generated stills feed Clip create as first-class inputs (spec 010 AC-10).
 
 **Rejected:** keeping D-014's "the real model is P2" framing — it stopped being true the moment `flux_image.py` went live, and the docs must match the running system.
+
+## D-016 · 2026-09-26 · Clip endpoint rebuilt for fidelity; face swap on Modal with research-licensed weights
+**Why:**
+- The live audit found real clips drifting off the input image (an empty prompt, an unfitted input, the model reloading per call). `apps/gpu/ltx_video.py` loads LTX once per container and crops the input to a landscape, portrait or square output. `apps/api/app/domain/motion_prompts.py` always composes a prompt from the preset motion, the user text and a keep-the-scene clause. Measured SSIM against the input: 0.89 / 0.60 / 0.65 at frames 0 / 60 / last, at 64 s per clip (it was 122 s). Railway `MODAL_ENDPOINT_URL` now points at `higgsfield-ltx-video`; the old `higgsfield-ltx-spike` URL is kept for rollback.
+- Face swap runs on `apps/gpu/face_swap.py` (insightface `buffalo_l` detection, `inswapper_128` swap, GFPGAN 1.4 restore, feathered paste) behind `MODAL_FACESWAP_ENDPOINT_URL`, costing 8 credits through the usual HOLD/SETTLE/RELEASE.
+- **Licence:** `inswapper_128` and `buffalo_l` are insightface models for **non-commercial research use only**; GFPGAN is Apache-2.0. That's acceptable for this assignment demo; a commercial launch would need a licensed swapper.
+- **Known limits:** onnxruntime falls back to CPU in the face-swap image (missing `libcublasLt.so.12`), so a warm swap takes about 7 s. Only the largest source face is used; every target face is swapped.
+
+**Rejected:** paid third-party APIs (no keys available); a CPU-only FaceFusion container on Railway (about 5 GB image, slow).
