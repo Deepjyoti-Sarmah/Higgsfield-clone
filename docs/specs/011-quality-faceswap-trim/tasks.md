@@ -8,7 +8,7 @@ Waves (no two tasks in a wave share a file):
 - W4: T-011-8 live verification (browser pass on the public URL, AC-8) — orchestrator + verifier session
 
 - [ ] T-011-1 · Faithful, warm LTX clip endpoint on Modal
-- [ ] T-011-2 · Always send the video model a real prompt
+- [x] T-011-2 · Always send the video model a real prompt
 - [ ] T-011-3 · Face swap endpoint on Modal
 - [ ] T-011-4 · Face swap jobs (contract, data, create/read, worker)
 - [ ] T-011-5 · Face swap tab in the studio
