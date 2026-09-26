@@ -1,0 +1,21 @@
+# verify T-043
+when: 2026-09-26T00:08:05Z
+root: /home/deepjyoti/Documents/Assigment/Higgsfield/.worktrees/T-043
+head: 347a1553c25a2fbe344010137e88202e21eaf7ce
+fingerprint: 6b46f3caa5c3d8fe0d4e97e8e666e0fe365ab795
+
+## command
+scripts/check-links && scripts/check-standards && wc -l AGENTS.md docs/playbooks/multi-harness.md docs/playbooks/task-run.md
+
+## output (exit 0)
+check-links: ok (0 broken)
+check-standards: ok (0 violations)
+   95 AGENTS.md
+   58 docs/playbooks/multi-harness.md
+   13 docs/playbooks/task-run.md
+  166 total
+
+## check-standards (exit 0)
+check-standards: ok (0 violations)
+
+RESULT: PASS
