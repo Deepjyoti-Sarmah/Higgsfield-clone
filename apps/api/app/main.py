@@ -11,6 +11,7 @@ from app.logging_setup import configure_logging
 from app.routers import (
     auth,
     credits,
+    faceswap_jobs,
     health,
     image_jobs,
     jobs,
@@ -64,6 +65,7 @@ def create_app() -> FastAPI:
     app.include_router(credits.router)
     app.include_router(image_jobs.router)
     app.include_router(sequence_jobs.router)
+    app.include_router(faceswap_jobs.router)
     app.include_router(share.router)
     # Before the SPA catch-all: Starlette matches in registration order, so /v/{job_id}
     # must be registered first or the catch-all would serve the bare shell without meta tags.

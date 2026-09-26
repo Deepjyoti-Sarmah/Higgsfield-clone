@@ -12,6 +12,7 @@ from app.repositories.presets import find_active_preset, list_active_presets
 from app.repositories.sequence_jobs import count_clips_by_job
 from app.schemas.jobs import LibraryImageResponse, LibraryItemResponse
 from app.services import library_media
+from app.services.library_media import STILL_LIKE_KINDS
 from app.settings import Settings
 
 
@@ -106,7 +107,7 @@ def _library_item_view(
     images_by_job: dict[uuid.UUID, list[tuple[uuid.UUID, str]]],
     clip_counts: dict[uuid.UUID, int],
 ) -> LibraryItemView:
-    if job.kind == "image":
+    if job.kind in STILL_LIKE_KINDS:
         images = images_by_job.get(job.id, [])
         image_urls = [url for _, url in images]
         return LibraryItemView(

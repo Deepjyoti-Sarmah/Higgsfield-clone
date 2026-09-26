@@ -16,6 +16,11 @@ type StudioStageProps = {
 
 export type { StudioStageProps }
 
+// GenerationBadge/StageProgress predate faceswap; it renders like a still, so treat it as one here.
+function badgeKind(kind: LibraryItem["kind"]): "video" | "image" | "sequence" {
+  return kind === "faceswap" ? "image" : kind
+}
+
 function PlaceholderCaption({ generatedBy }: { generatedBy: string | null | undefined }) {
   if (generatedBy !== "placeholder" && generatedBy !== "local-motion") return null
   const text =
@@ -91,7 +96,7 @@ function CaptionLine({ item }: { item: LibraryItem }) {
     <div className="flex items-center gap-3">
       <span className="truncate text-sm text-text">{railItemTitle(item)}</span>
       <span className="truncate font-mono text-[13px] text-muted">{meta}</span>
-      <GenerationBadge generatedBy={item.generated_by} kind={item.kind} />
+      <GenerationBadge generatedBy={item.generated_by} kind={badgeKind(item.kind)} />
     </div>
   )
 }
@@ -135,7 +140,12 @@ export function StudioStage(props: StudioStageProps) {
         {isTerminal ? (
           <StageMedia item={item} onPickImage={(url, assetId) => props.onAnimateThis(item, url, assetId)} />
         ) : (
-          <StageProgress kind={item.kind} jobId={item.id} status={liveStatus} onSettled={props.onJobSettled} />
+          <StageProgress
+            kind={badgeKind(item.kind)}
+            jobId={item.id}
+            status={liveStatus}
+            onSettled={props.onJobSettled}
+          />
         )}
       </div>
       <StageFooter
