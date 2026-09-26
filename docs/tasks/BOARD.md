@@ -4,7 +4,7 @@ Generated 2026-09-26T00:08:21Z. States: open → claimed ⇄ blocked → submitt
 
 | Task | Title | State | Owner | Since (UTC) |
 |---|---|---|---|---|
-| T-010-1 | Publish the spec 010 contract (schemas, 501 stubs, openapi.json) | open | - | - |
+| T-010-1 | Publish the spec 010 contract (schemas, 501 stubs, openapi.json) | claimed | claude-opus-5.5@claude-code | 2026-09-26T00:08:21Z |
 | T-010-2 | Data for sequences (migration 0007, models, sequence_rules, guest cap) | open | - | - |
 | T-010-5 | Design tokens, fonts, brand mark, top bar and UI primitives | claimed | claude-opus-5.5@claude-code | 2026-09-26T00:08:14Z |
 | T-043 | Switch the docs and templates to the `scripts/task` protocol | accepted | claude-opus-5.5@claude-code | 2026-09-26T00:08:05Z |
