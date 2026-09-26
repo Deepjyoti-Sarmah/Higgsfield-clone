@@ -77,9 +77,9 @@ describe("render blockers", () => {
 describe("payload clips", () => {
   it("forces the first transition to cut", () => {
     expect(toPayloadClips(draftOf(["crossfade", "fade_black", "cut"]))).toEqual([
-      { job_id: "job-0", transition_in: "cut" },
-      { job_id: "job-1", transition_in: "fade_black" },
-      { job_id: "job-2", transition_in: "cut" },
+      { job_id: "job-0", transition_in: "cut", trim_start_ms: 0, trim_end_ms: null },
+      { job_id: "job-1", transition_in: "fade_black", trim_start_ms: 0, trim_end_ms: null },
+      { job_id: "job-2", transition_in: "cut", trim_start_ms: 0, trim_end_ms: null },
     ])
   })
 })
