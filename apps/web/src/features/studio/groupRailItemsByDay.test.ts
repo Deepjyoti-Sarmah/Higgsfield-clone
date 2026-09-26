@@ -36,7 +36,7 @@ describe("groupRailItemsByDay", () => {
       [item("a", "2026-09-25T09:00:00Z"), item("b", "2026-09-20T09:00:00Z")],
       NOW,
     )
-    expect(groups[1].heading).toBe("2026-09-20")
+    expect(groups[1].heading).toBe("20 Sep")
     expect(groups[0].items[0].id).toBe("a")
   })
 

@@ -9,10 +9,29 @@ function dayKey(iso: string): string {
   return iso.slice(0, 10)
 }
 
+const dayFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric", month: "short", timeZone: "UTC",
+})
+const dayYearFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+})
+
+// Older groups read "14 Sep" (or "14 Sep 2025" outside the current year), not a raw ISO date.
+// Keep the DESIGN "Sep" spelling (en-GB CLDR renders September as "Sept").
+function headingForDay(day: string, today: string): string {
+  const date = new Date(`${day}T00:00:00Z`)
+  if (Number.isNaN(date.getTime())) return day
+  const format = day.slice(0, 4) === today.slice(0, 4) ? dayFormat : dayYearFormat
+  return format
+    .formatToParts(date)
+    .map((part) => (part.type === "month" && part.value === "Sept" ? "Sep" : part.value))
+    .join("")
+}
+
 function headingFor(day: string, today: string, yesterday: string): string {
   if (day === today) return "Today"
   if (day === yesterday) return "Yesterday"
-  return day
+  return headingForDay(day, today)
 }
 
 // Groups newest first into Today / Yesterday / date headings.
